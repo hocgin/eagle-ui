@@ -1,0 +1,13 @@
+html, body, #root {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    transition: all .2s;
+}

@@ -1,0 +1,64 @@
+@paddingWidth: 24px;
+.component {
+  min-height: 100%;
+
+  .sider {
+    box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+    z-index: 2;
+
+    .logo {
+      height: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 16px;
+    }
+  }
+
+  .header {
+    background: #fff;
+    padding: 0;
+    display: flex;
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    z-index: 1;
+
+    .trigger {
+      font-size: 18px;
+      line-height: 64px;
+      padding: 0 @paddingWidth;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .toolbar {
+      flex-direction: row;
+      display: flex;
+
+      .btn {
+        padding: 0 20px;
+        display: flex;
+        box-sizing: border-box;
+        align-items: center;
+        height: 100%;
+        cursor: pointer;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.025);
+        }
+      }
+
+      .username {
+        a {
+          color: unset;
+        }
+      }
+    }
+  }
+
+  .content {
+    padding: 12px @paddingWidth 16px;
+    background-color: #fff;
+    .breadcrumb {
+      margin-bottom: 8px;
+    }
+  }
+
+}
