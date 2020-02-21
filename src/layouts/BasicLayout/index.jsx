@@ -2,27 +2,34 @@ import { Avatar, Badge, Breadcrumb, Dropdown, Icon, Input, Layout, Menu } from '
 import React from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
+import { connect } from 'dva';
 
 const { Search } = Input;
 const { Header, Sider, Content, Footer } = Layout;
 
+@connect(({ global, account: { currentAccount }, loading }) => {
+  let { nickname, avatar } = currentAccount;
+  return {
+    nickname: nickname,
+    avatar: avatar,
+  };
+}, dispatch => ({
+  $getCurrentAccountInfo: (args = {}) => dispatch({ type: 'account/getCurrentAccountInfo', ...args }),
+}))
 class Index extends React.Component {
 
   state = {
     collapsed: false,
   };
 
-  toggle = () => {
-    this.setState(({ collapsed }) => {
-      return ({
-        collapsed: !collapsed,
-      });
-    });
-  };
+  componentDidMount() {
+    let { $getCurrentAccountInfo } = this.props;
+    $getCurrentAccountInfo();
+  }
 
   render() {
     let { collapsed } = this.state;
-    let { children } = this.props;
+    let { children, nickname, avatar } = this.props;
     const userDropdownMenus = (<Menu>
       <Menu.Item>退出登录</Menu.Item>
     </Menu>);
@@ -73,7 +80,7 @@ class Index extends React.Component {
               <div className={classnames(styles.btn, styles.username)}>
                 <Dropdown overlay={userDropdownMenus}>
                   <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                    <Avatar shape="circle" icon="user"/> hocgin
+                    <Avatar shape="circle" icon="user" src={avatar}/> {nickname}
                   </a>
                 </Dropdown>
               </div>
@@ -102,6 +109,14 @@ class Index extends React.Component {
       </Layout>
     );
   }
+
+  toggle = () => {
+    this.setState(({ collapsed }) => {
+      return ({
+        collapsed: !collapsed,
+      });
+    });
+  };
 }
 
 export default Index;

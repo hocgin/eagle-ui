@@ -10,8 +10,7 @@ export default {
       return history.listen(({ pathname, search }) => {
         const query = qs.parse(search);
         switch (pathname) {
-          case '/': {
-            // TODO
+          case '/login': {
             break;
           }
           default: {

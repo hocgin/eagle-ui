@@ -1,10 +1,18 @@
-import Config from '@/utils/config';
+import Config from '@/config';
 import hash from 'hash.js';
+import Utils from '@/utils/utils';
+import LocalStorage from '@/utils/localstorage';
 
 export default function request(
     url,
     options,
 ) {
+
+    // 补充host
+    if (!`${url}`.startsWith('http')) {
+        url = `${Config.host()}${url}`
+    }
+
     const defaultOptions = {
         credentials: 'include',
     };
@@ -22,6 +30,7 @@ export default function request(
                 ...newOptions.headers,
             };
 
+            newOptions.headers['Content-Type'] = 'application/json; charset=UTF-8';
             newOptions.headers['Origin'] = url;
             newOptions.body = JSON.stringify(newOptions.body);
         } else {
@@ -33,9 +42,14 @@ export default function request(
         }
     }
 
-    // 补充host
-    if (!`${url}`.startsWith('http')) {
-        url = `${Config.host()}${url}`
+    // 设置
+    let token = LocalStorage.getToken();
+    console.log('token', token);
+    if (token && !`${url}`.includes('/login')) {
+        newOptions.headers = {
+            ...newOptions.headers,
+            Token: `Bearer ${token}`,
+        };
     }
 
     // 请求缓存
