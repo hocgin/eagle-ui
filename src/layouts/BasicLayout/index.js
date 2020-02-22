@@ -7,10 +7,9 @@ import isEqual from 'lodash/isEqual';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import MenuUtils from './menus';
-import Menus from './components/Menus';
+import SiderMenus from './components/SiderMenus';
 
 const { Search } = Input;
-const { SubMenu } = Menu;
 const { Header, Sider, Content, Footer } = Layout;
 
 // Conversion router to menu.
@@ -71,10 +70,10 @@ class BasicLayout extends React.Component {
                width={250}
                trigger={null} collapsible collapsed={collapsed}>
           <div className={styles.logo}/>
-          <Menus data={this.getMenuData()}
-                 {...this.props}
-                 defaultOpenKeys={defaultOpenKeys}
-                 className={styles.menus} onClick={this.onClickItem}/>
+          <SiderMenus {...this.props}
+                      data={this.getMenuData()}
+                      defaultOpenKeys={defaultOpenKeys}
+                      className={styles.menus} onClick={this.onClickItem}/>
         </Sider>
         {/*右侧*/}
         <Layout>

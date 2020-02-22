@@ -5,7 +5,7 @@ export default class MenuUtils {
    * @param routes
    * @return [{
    *   "code": "dashboard",
-   *   "url": "/dashboard",
+   *   "path": "/dashboard",
    *   "icon": "",
    *   "title: "",
    *   "children": []
@@ -20,7 +20,11 @@ export default class MenuUtils {
         return null;
       }
       return {
-        ...item,
+        ...{
+          code: item.code,
+          icon: item.icon,
+          path: item.path,
+        },
         title,
         children: MenuUtils.getMenu(children, routes),
       };
@@ -43,7 +47,7 @@ export default class MenuUtils {
    * 根据 keyPath 来解析出 keyPathItems
    * @param treeData [{
    *   "code": "dashboard",
-   *   "url": "/dashboard",
+   *   "path": "/dashboard",
    *   "icon": "",
    *   "title": "",
    *   "children": []
@@ -51,7 +55,7 @@ export default class MenuUtils {
    * @param keyPath ["index", "dashboard"]
    * @return [{
    *   "code": "dashboard",
-   *   "url": "/dashboard",
+   *   "path": "/dashboard",
    *   "icon": "",
    *   "title": ""
    *   }]

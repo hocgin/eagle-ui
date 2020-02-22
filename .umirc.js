@@ -12,13 +12,13 @@ export default {
     component: '../layouts/BasicLayout',
     routes: [
       { code: 'index', icon: 'home', path: '/home' },
-      { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/dashboard' },
+      { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
       // 测试
       {
         code: 'devtools', icon: 'test', path: '/devtools',
         routes: [
           { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
-          { code: 'dashboard', icon: 'dashboard', path: '/devtools/test3', component: '../pages/dashboard' },
+          { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
         ],
       },
     ],

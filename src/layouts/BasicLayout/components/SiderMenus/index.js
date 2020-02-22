@@ -47,21 +47,7 @@ const getFlatMenuKeys = (menus) => {
  */
 const getMenuMatches = (flatMenuKeys, path) => flatMenuKeys.filter(item => item && pathToRegexp(item).test(path));
 
-/**
- * 按顺序设置路径
- * @param menu
- * @return {*}
- */
-const getFlatSidleMenuKeys = menu =>
-  menu.reduce((keys, item) => {
-    keys.push(item.path);
-    if (item.children) {
-      return keys.concat(getFlatMenuKeys(item.children));
-    }
-    return keys;
-  }, []);
-
-class Index extends React.PureComponent {
+class SiderMenus extends React.PureComponent {
   state = {
     openKeys: [],
   };
@@ -69,7 +55,6 @@ class Index extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
     // 以数组形式提取树的路径
     this.flatMenuKeys = getFlatMenuKeys(props.data);
     let { location: { pathname } } = props;
@@ -84,18 +69,40 @@ class Index extends React.PureComponent {
   /**
    * 获得菜单上一级节点
    * @param pathname
-   * @return {*[]}
+   * @return ["key", "key"]
    */
   getDefaultCollapsedSubMenus = (pathname) => {
     let { data } = this.props;
-    return Utils.urlToList(pathname)
-      .map(item => getMenuMatches(getFlatSidleMenuKeys(data), item)[0])
+
+    let targetLink = [];
+    const getLinks = (link, data) => {
+      (data || []).forEach(item => {
+        let newLink = [...link, {
+          ...item,
+          hasChildren: (item.children.length > 0),
+        }];
+        if (item.path === pathname) {
+          targetLink = newLink;
+          return;
+        }
+        if (item.children) {
+          getLinks(newLink, item.children);
+        }
+      });
+    };
+
+    getLinks([], data);
+    console.log('link', targetLink, pathname);
+
+    return (targetLink || []).map(item => item.path)
       .filter(item => item);
   };
 
   render() {
     let {
-      data = [], className, onClick,
+      data = [],
+      className,
+      onClick,
       location: { pathname },
     } = this.props;
     let { openKeys } = this.state;
@@ -194,4 +201,4 @@ class Index extends React.PureComponent {
   };
 }
 
-export default Index;
+export default SiderMenus;
