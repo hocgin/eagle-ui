@@ -11,7 +11,16 @@ export default {
     path: '/',
     component: '../layouts/BasicLayout',
     routes: [
-      { path: '/', component: '../pages/index' },
+      { code: 'index', icon: 'home', path: '/home' },
+      { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/dashboard' },
+      // 测试
+      {
+        code: 'devtools', icon: 'test', path: '/devtools',
+        routes: [
+          { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
+          { code: 'dashboard', icon: 'dashboard', path: '/devtools/test3', component: '../pages/dashboard' },
+        ],
+      },
     ],
   },
   ],

@@ -19,4 +19,11 @@ export default class AccountApi {
     });
   }
 
+  static getCurrentAccountAuthority(payload) {
+    let queryString = stringify(payload);
+    return request(`/api/account/authority?${queryString}`, {
+      method: 'GET',
+    });
+  }
+
 }

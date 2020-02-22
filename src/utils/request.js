@@ -44,7 +44,6 @@ export default function request(
 
     // 设置
     let token = LocalStorage.getToken();
-    console.log('token', token);
     if (token && !`${url}`.includes('/login')) {
         newOptions.headers = {
             ...newOptions.headers,

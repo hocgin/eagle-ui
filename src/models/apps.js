@@ -1,4 +1,5 @@
 import qs from 'query-string';
+import { router } from 'umi';
 
 export default {
   namespace: 'apps',
@@ -11,6 +12,10 @@ export default {
         const query = qs.parse(search);
         switch (pathname) {
           case '/login': {
+            break;
+          }
+          case '/dashboard': {
+            router.push('/home/dashboard');
             break;
           }
           default: {

@@ -14,7 +14,10 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "hash.js": "latest",
-    "qs": "latest"
+    "qs": "latest",
+    "memoize-one": "latest",
+    "lodash": "latest",
+    "path-to-regexp": "latest"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
