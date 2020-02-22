@@ -13,12 +13,29 @@ export default {
     routes: [
       { code: 'index', icon: 'home', path: '/home' },
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
+      // 用户
+      // 【用户】-【权限】
+      { path: '/user/authority', component: '../pages/User/Authority' },
       // 测试
       {
         code: 'devtools', icon: 'test', path: '/devtools',
         routes: [
           { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
           { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
+        ],
+      },
+      //【账号】
+      {
+        path: '/account',
+        routes: [
+          {
+            path: '/account/settings',
+            component: '../pages/Account/Settings/_layout',
+            routes: [
+              { path: '/account/settings', redirect: '/account/settings/base' },
+              { path: '/account/settings/base', component: '../pages/Account/Settings/BaseView' },
+            ],
+          },
         ],
       },
     ],
@@ -30,7 +47,7 @@ export default {
       antd: true,
       dva: true,
       dynamicImport: false,
-      title: 'eagle-ui',
+      title: 'EAGLE UI',
       dll: false,
 
       routes: {

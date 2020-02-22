@@ -1,6 +1,6 @@
 import Config from '@/config';
 import hash from 'hash.js';
-import Utils from '@/utils/utils';
+import { Global } from '@/utils/constant/global';
 import LocalStorage from '@/utils/localstorage';
 
 export default function request(
@@ -44,7 +44,7 @@ export default function request(
 
     // 设置
     let token = LocalStorage.getToken();
-    if (token && !`${url}`.includes('/login')) {
+    if (token && !`${url}`.includes(Global.LOGIN_PAGE)) {
         newOptions.headers = {
             ...newOptions.headers,
             Token: `Bearer ${token}`,

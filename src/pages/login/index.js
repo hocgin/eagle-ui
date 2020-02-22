@@ -9,6 +9,7 @@ import Utils from '@/utils/utils';
 }, dispatch => ({
   $login: (args = {}) => dispatch({ type: 'account/login', ...args }),
 }))
+@Form.create()
 class index extends React.Component {
 
   componentDidMount() {
@@ -83,4 +84,4 @@ class index extends React.Component {
   };
 }
 
-export default Form.create()(index);
+export default index;

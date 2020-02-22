@@ -9,6 +9,7 @@ import { connect } from 'dva';
 import MenuUtils from './menus';
 import SiderMenus from './components/SiderMenus';
 import { getDefaultCollapsedSubMenus } from '@/layouts/BasicLayout/components/SiderMenus';
+import Link from 'umi/link';
 
 const { Search } = Input;
 const { Header, Sider, Content, Footer } = Layout;
@@ -59,7 +60,9 @@ class BasicLayout extends React.Component {
     }
 
     const userDropdownMenus = (<Menu>
-      <Menu.Item>个人资料</Menu.Item>
+      <Menu.Item>
+        <Link to={'/account/settings'}>个人资料</Link>
+      </Menu.Item>
       <Menu.Item>修改密码</Menu.Item>
       <Menu.Item>退出登录</Menu.Item>
     </Menu>);
@@ -103,7 +106,7 @@ class BasicLayout extends React.Component {
               </div>
               <div className={classnames(styles.btn, styles.username)}>
                 <Dropdown overlay={userDropdownMenus}>
-                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                  <a onClick={e => e.preventDefault()}>
                     <Avatar shape="circle" icon="user" src={avatar}/> {nickname}
                   </a>
                 </Dropdown>
