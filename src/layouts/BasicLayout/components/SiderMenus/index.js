@@ -47,56 +47,59 @@ const getFlatMenuKeys = (menus) => {
  */
 const getMenuMatches = (flatMenuKeys, path) => flatMenuKeys.filter(item => item && pathToRegexp(item).test(path));
 
+
+/**
+ * 获得该路径的上阶菜单
+ * @param pathname
+ * @param data
+ * @return {['key', 'key']}
+ */
+export const getDefaultCollapsedSubMenus = (pathname, data = []) => {
+  let targetLink = [];
+  const getLinks = (link, data) => {
+    (data || []).forEach(item => {
+      let newLink = [...link, {
+        ...item,
+        hasChildren: (item.children.length > 0),
+      }];
+      if (item.path === pathname) {
+        targetLink = newLink;
+        return;
+      }
+      if (item.children) {
+        getLinks(newLink, item.children);
+      }
+    });
+  };
+
+  getLinks([], data);
+
+  return (targetLink || []);
+};
+
 class SiderMenus extends React.PureComponent {
   state = {
     openKeys: [],
   };
 
-
   constructor(props) {
     super(props);
     // 以数组形式提取树的路径
-    this.flatMenuKeys = getFlatMenuKeys(props.data);
+    let { data } = props;
+    this.flatMenuKeys = getFlatMenuKeys(data);
     let { location: { pathname } } = props;
     this.state = {
-      openKeys: this.getDefaultCollapsedSubMenus(pathname),
+      openKeys: getDefaultCollapsedSubMenus(pathname, data).map(item => item.path).filter(item => item),
     };
   }
 
+  /**
+   * 根据路径获取当前菜单的key
+   * @param pathname
+   * @return {any[]}
+   */
   getSelectedMenuKeys = pathname =>
     Utils.urlToList(pathname).map(item => getMenuMatches(this.flatMenuKeys, item).pop());
-
-  /**
-   * 获得菜单上一级节点
-   * @param pathname
-   * @return ["key", "key"]
-   */
-  getDefaultCollapsedSubMenus = (pathname) => {
-    let { data } = this.props;
-
-    let targetLink = [];
-    const getLinks = (link, data) => {
-      (data || []).forEach(item => {
-        let newLink = [...link, {
-          ...item,
-          hasChildren: (item.children.length > 0),
-        }];
-        if (item.path === pathname) {
-          targetLink = newLink;
-          return;
-        }
-        if (item.children) {
-          getLinks(newLink, item.children);
-        }
-      });
-    };
-
-    getLinks([], data);
-    console.log('link', targetLink, pathname);
-
-    return (targetLink || []).map(item => item.path)
-      .filter(item => item);
-  };
 
   render() {
     let {

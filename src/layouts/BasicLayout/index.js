@@ -8,6 +8,7 @@ import classnames from 'classnames';
 import { connect } from 'dva';
 import MenuUtils from './menus';
 import SiderMenus from './components/SiderMenus';
+import { getDefaultCollapsedSubMenus } from '@/layouts/BasicLayout/components/SiderMenus';
 
 const { Search } = Input;
 const { Header, Sider, Content, Footer } = Layout;
@@ -35,8 +36,6 @@ class BasicLayout extends React.Component {
   state = {
     collapsed: false,
     menuData: [],
-    openMenus: [],
-    selectedKeys: [],
   };
 
   constructor(...args) {
@@ -50,30 +49,36 @@ class BasicLayout extends React.Component {
   }
 
   render() {
-    let { collapsed, openMenus } = this.state;
+    let { collapsed } = this.state;
     let {
       children, nickname, avatar,
       menus, location: { pathname },
     } = this.props;
+    if (menus.length <= 0) {
+      return (<></>);
+    }
+
     const userDropdownMenus = (<Menu>
       <Menu.Item>个人资料</Menu.Item>
       <Menu.Item>修改密码</Menu.Item>
       <Menu.Item>退出登录</Menu.Item>
     </Menu>);
+    let menuData = this.getMenuData();
     let menu = this.matchParamsPath(pathname);
     let defaultOpenKeys = menu ? [menu.code] : null;
+    let openMenus = getDefaultCollapsedSubMenus(pathname, menuData);
 
     return (<>
-      {menus.length > 0 && <Layout className={styles.component}>
+      <Layout className={styles.component}>
         {/*左侧*/}
         <Sider className={styles.sider}
                width={250}
                trigger={null} collapsible collapsed={collapsed}>
           <div className={styles.logo}/>
           <SiderMenus {...this.props}
-                      data={this.getMenuData()}
+                      data={menuData}
                       defaultOpenKeys={defaultOpenKeys}
-                      className={styles.menus} onClick={this.onClickItem}/>
+                      className={styles.menus}/>
         </Sider>
         {/*右侧*/}
         <Layout>
@@ -89,7 +94,7 @@ class BasicLayout extends React.Component {
                 <Search
                   placeholder="搜索.."
                   onSearch={value => console.log(value)}
-                  style={{ width: 200 }}/>
+                  style={{ width: 230, marginRight: 40 }}/>
               </div>
               <div className={styles.btn}>
                 <Badge count={1}>
@@ -123,7 +128,7 @@ class BasicLayout extends React.Component {
           </Content>
           <Footer>Hi.</Footer>
         </Layout>
-      </Layout>}
+      </Layout>
     </>);
   }
 
@@ -155,10 +160,10 @@ class BasicLayout extends React.Component {
 
   /**
    * 将菜单扁平化
-   * @return {
+   * @return {{
    *   '/': {},
    *   '/index': {},
-   *}
+   *}}
    */
   getBreadcrumbNameMap() {
     let menuData = this.getMenuData();
@@ -186,17 +191,6 @@ class BasicLayout extends React.Component {
     });
   };
 
-  /**
-   * 点击菜单
-   */
-  onClickItem = ({ item, key, keyPath, domEvent }) => {
-    let { menus } = this.props;
-    let openMenus = MenuUtils.getItems(menus, keyPath.reverse());
-    console.log('打开菜单路径', item, key, keyPath, openMenus);
-    this.setState({
-      openMenus,
-    });
-  };
 }
 
 export default BasicLayout;
