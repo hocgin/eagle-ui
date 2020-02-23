@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Dropdown, Icon, Menu } from 'antd';
+import { Button, Dropdown, Icon } from 'antd';
 import styles from './index.less';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 export default class Toolbar extends React.PureComponent {
     static propTypes = {
@@ -17,8 +18,8 @@ export default class Toolbar extends React.PureComponent {
     };
 
     render() {
-        const { children, menu, selectedRows } = this.props;
-        return (<div className={styles.tableListOperator}>
+        const { children, menu, selectedRows, className, style } = this.props;
+        return (<div className={classnames(styles.tableListOperator, className)} style={style}>
             {children}
             {selectedRows.length > 0 &&
             menu && (<Dropdown overlay={menu}>

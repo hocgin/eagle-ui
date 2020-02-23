@@ -16,6 +16,7 @@ export default {
       // 用户
       // 【用户】-【权限】
       { path: '/user/authority', component: '../pages/User/Authority' },
+      { path: '/user/role', component: '../pages/User/Role' },
       // 测试
       {
         code: 'devtools', icon: 'test', path: '/devtools',
