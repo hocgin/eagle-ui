@@ -1,49 +1,51 @@
 import React from 'react';
 import styles from './index.less';
 import Toolbar from '@/components/Toolbar';
-import { Button, Card, DatePicker, Form } from 'antd';
+import { Card } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import SearchBar from '@/components/SearchBar';
+import PropTypes from 'prop-types';
 
 class ComplexTable extends React.PureComponent {
+  static propTypes = {
+    tableLoading: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    tableLoading: false,
+  };
+
   render() {
     let {
-      toolbarEnabled = true, toolbarTitle = null, toolbarMenu = null, toolbarSelectedRows = [],
-      tableColumns = [], tableData = [], tableSelectedRows = [],
+      // Toolbar
+      toolbarEnabled = true, toolbarTitle = null, toolbarMenu = null, toolbarChildren = null,
+      // SearchBar
+      searchBarEnabled = true, searchBarChildren = (form) => form, onClickSearch = null,
+      // Table
+      tableColumns = [], tableData = [], tableLoading, selectedRows = [],
     } = this.props;
     return (<Card className={styles.component} bordered={false} bodyStyle={{ padding: 0 }}>
         {/*搜索栏*/}
-        <SearchBar className={styles.searchBar} onSubmit={null}>
-          {form => [
-            <Form.Item label="创建日期">
-              {form.getFieldDecorator('createdAt')(
-                <DatePicker
-                  style={{ width: '100%' }}
-                  placeholder="请输入更新日期"
-                />,
-              )}
-            </Form.Item>,
-          ]}
-        </SearchBar>
+        {searchBarEnabled && <SearchBar className={styles.searchBar} onSubmit={onClickSearch}>
+          {form => searchBarChildren(form)}
+        </SearchBar>}
         {/*工具条*/}
-        <div className={styles.toolbar}>
+        {toolbarEnabled && <div className={styles.toolbar}>
           <div className={styles.toolbarTitle}>{toolbarTitle}</div>
-          <Toolbar menu={toolbarMenu}
-                   selectedRows={toolbarSelectedRows}>
-            <Button htmlType="button"
-                    icon="plus"
-                    type="primary">新建</Button>
-            {/*<Divider type="vertical"/>*/}
+          <Toolbar menu={toolbarMenu} selectedRows={selectedRows}>
+            {toolbarChildren}
           </Toolbar>
-        </div>
+        </div>}
         {/*数据展示*/}
-        <StandardTable
-          selectedRows={tableSelectedRows}
-          data={tableData}
-          columns={tableColumns}/>
+        <StandardTable key="id" selectedRows={selectedRows} loading={tableLoading} data={tableData} columns={tableColumns}
+                       onChange={this.onChangeStandardTable}/>
       </Card>
     );
   }
+
+  onChangeStandardTable = (pagination, filtersArg, sorter) => {
+
+  };
 }
 
 export default ComplexTable;

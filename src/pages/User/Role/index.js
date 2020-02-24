@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './index.less';
-import { Menu } from 'antd';
+import { Button, DatePicker, Form, Menu } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
+import CreateModal from '@/pages/User/Role/Modal/CreateModal';
 
 class index extends React.Component {
 
@@ -32,9 +33,21 @@ class index extends React.Component {
     );
     return (
       <div className={styles.page}>
+        <CreateModal visible={true}/>
         <ComplexTable toolbarTitle={'角色列表'}
                       toolbarMenu={BatchMenus}
-                      toolbarSelectedRows={selectedRows}
+                      selectedRows={selectedRows}
+                      toolbarChildren={<Button htmlType="button" icon="plus" type="primary">新建</Button>}
+                      searchBarChildren={form => [
+                        <Form.Item label="创建日期">
+                          {form.getFieldDecorator('createdAt')(
+                            <DatePicker
+                              style={{ width: '100%' }}
+                              placeholder="请输入更新日期"
+                            />,
+                          )}
+                        </Form.Item>,
+                      ]}
                       tableData={{
                         list: [{ 'name': '超级管理员' }, { 'name': '超级管理员' }],
                         pagination: {

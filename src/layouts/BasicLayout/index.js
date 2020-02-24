@@ -41,6 +41,8 @@ class BasicLayout extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this.fastMatchParamsPath = memoizeOne(this.matchParamsPath, isEqual);
+    this.fastGetDefaultCollapsedSubMenus = memoizeOne(getDefaultCollapsedSubMenus, isEqual);
   }
 
   componentDidMount() {
@@ -67,9 +69,9 @@ class BasicLayout extends React.Component {
       <Menu.Item>退出登录</Menu.Item>
     </Menu>);
     let menuData = this.getMenuData();
-    let menu = this.matchParamsPath(pathname);
+    let menu = this.fastMatchParamsPath(pathname);
     let defaultOpenKeys = menu ? [menu.code] : null;
-    let openMenus = getDefaultCollapsedSubMenus(pathname, menuData);
+    let openMenus = this.fastGetDefaultCollapsedSubMenus(pathname, menuData);
 
     return (<>
       <Layout className={styles.component}>

@@ -6,15 +6,16 @@ import Toolbar from '@/components/Toolbar';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import SearchBar from '@/components/SearchBar';
 import classnames from 'classnames';
+import CreateModal from '@/pages/User/Authority/Modal/CreateModal';
 
 const { TreeNode } = Tree;
 
-@connect(({ global, authority: { result = [] }, loading, ...rest }) => {
+@connect(({ global, authority: { authorityTree = [] }, loading, ...rest }) => {
   return {
-    result: result,
+    data: authorityTree,
   };
 }, dispatch => ({
-  $searchAuthority: (args = {}) => dispatch({ type: 'authority/search', ...args }),
+  $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
 }))
 class index extends React.Component {
   state = {
@@ -22,8 +23,8 @@ class index extends React.Component {
   };
 
   componentDidMount() {
-    let { $searchAuthority } = this.props;
-    $searchAuthority();
+    let { $getAuthorityTree } = this.props;
+    $getAuthorityTree();
   }
 
   componentWillUnmount() {
@@ -45,14 +46,14 @@ class index extends React.Component {
 
   render() {
     let { selectedRows } = this.state;
-    let { result } = this.props;
+    let { data } = this.props;
     const toolbarMenus = (
-      <Menu onClick={null}>
-        <Menu.Item>新增节点</Menu.Item>
-        <Menu.Item>修改节点</Menu.Item>
-        <Menu.Item>赋予角色</Menu.Item>
+      <Menu onClick={this.onClickMenuItem}>
+        <Menu.Item key="add">新增节点</Menu.Item>
+        <Menu.Item key="update">修改节点</Menu.Item>
+        <Menu.Item key="grant">赋予角色</Menu.Item>
         <Menu.Divider/>
-        <Menu.Item>删除节点</Menu.Item>
+        <Menu.Item key="delete">删除节点</Menu.Item>
       </Menu>
     );
 
@@ -85,9 +86,10 @@ class index extends React.Component {
           </div>
           <Tree
             onSelect={this.onSelectRows}>
-            {this.renderTreeNodes(result)}
+            {this.renderTreeNodes(data)}
           </Tree>
         </Card>
+        <CreateModal visible={true} parentId={1}/>
       </PageHeaderWrapper>
     );
   }
@@ -97,6 +99,14 @@ class index extends React.Component {
     this.setState({
       selectedRows: rows,
     });
+  };
+
+  /**
+   * 点击菜单
+   * @param rest
+   */
+  onClickMenuItem = (...rest) => {
+    console.log(rest);
   };
 
 }
