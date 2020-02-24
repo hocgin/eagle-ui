@@ -3,10 +3,12 @@ import { Button, Col, Form, Icon, Row } from 'antd';
 import styles from './index.less';
 import PropTypes from 'prop-types';
 import Utils from '@/utils/utils';
+import classnames from 'classnames';
 
 @Form.create()
 class SearchBar extends React.PureComponent {
     static propTypes = {
+        className: PropTypes.string,
         children: PropTypes.func,
         onSubmit: PropTypes.func,
     };
@@ -23,12 +25,12 @@ class SearchBar extends React.PureComponent {
     };
 
     render() {
-        const { children } = this.props;
+        const { children, className } = this.props;
         const { form } = this.props;
         let { isExpand } = this.state;
         let ele = children(form);
         return (
-          <div className={styles.tableListForm}>
+          <div className={classnames(styles.tableListForm, className)}>
               <Form onSubmit={this.onSubmit} layout="inline">
                   {isExpand ? (
                     Utils.chunk(ele, 3)
@@ -54,10 +56,9 @@ class SearchBar extends React.PureComponent {
                                 >
                                     重置
                                 </Button>
-                                <a
-                                  style={{ marginLeft: 8 }}
-                                  onClick={this.onClickToggleExpand}
-                                >
+                                <a href={null}
+                                   style={{ marginLeft: 8 }}
+                                   onClick={this.onClickToggleExpand}>
                                     收起 <Icon type="up"/>
                                 </a>
                             </div>

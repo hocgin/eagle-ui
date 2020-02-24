@@ -1,9 +1,11 @@
 import React from 'react';
 import styles from './index.less';
-import { Button, Card, Menu, Tree } from 'antd';
+import { Button, Card, DatePicker, Form, Menu, Tree } from 'antd';
 import { connect } from 'dva';
 import Toolbar from '@/components/Toolbar';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import SearchBar from '@/components/SearchBar';
+import classnames from 'classnames';
 
 const { TreeNode } = Tree;
 
@@ -44,7 +46,7 @@ class index extends React.Component {
   render() {
     let { selectedRows } = this.state;
     let { result } = this.props;
-    const BatchMenus = (
+    const toolbarMenus = (
       <Menu onClick={null}>
         <Menu.Item>新增节点</Menu.Item>
         <Menu.Item>修改节点</Menu.Item>
@@ -57,15 +59,30 @@ class index extends React.Component {
     return (
       <PageHeaderWrapper className={styles.page}>
         <Card bordered={false}>
+          {/*搜索栏*/}
+          <SearchBar className={styles.searchBar} onSubmit={null}>
+            {form => [
+              <Form.Item label="创建日期">
+                {form.getFieldDecorator('createdAt')(
+                  <DatePicker
+                    style={{ width: '100%' }}
+                    placeholder="请输入更新日期"
+                  />,
+                )}
+              </Form.Item>,
+            ]}
+          </SearchBar>
           {/*工具条*/}
-          <Toolbar menu={BatchMenus}
-                   selectedRows={selectedRows}>
-            <Button htmlType="button"
-                    icon="plus"
-                    type="primary">
-              新建
-            </Button>
-          </Toolbar>
+          <div className={classnames(styles.toolbar, styles.toolbarExt)}>
+            <div className={styles.toolbarTitle}>权限树</div>
+            <Toolbar menu={toolbarMenus}
+                     selectedRows={selectedRows}>
+              <Button htmlType="button"
+                      icon="plus"
+                      type="primary">新建</Button>
+              {/*<Divider type="vertical"/>*/}
+            </Toolbar>
+          </div>
           <Tree
             onSelect={this.onSelectRows}>
             {this.renderTreeNodes(result)}
