@@ -10,8 +10,8 @@ export default {
     detail: null,
   },
   effects: {
-    * findAll({ payload }, { call, put }) {
-      let result = yield AuthorityApi.findAll(payload);
+    * getAllAuthority({ payload }, { call, put }) {
+      let result = yield AuthorityApi.getAllAuthority(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;
@@ -44,7 +44,27 @@ export default {
       });
     },
     * insertOne({ payload, callback }, { call, put }) {
-      let result = yield AuthorityApi.insertAuthority(payload);
+      let result = yield AuthorityApi.insertOneAuthority(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
+    * updateOne({ payload, callback }, { call, put }) {
+      let result = yield AuthorityApi.updateOneAuthority(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
+    * delete({ payload, callback }, { call, put }) {
+      let result = yield AuthorityApi.deleteAuthority(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;

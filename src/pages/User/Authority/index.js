@@ -1,12 +1,13 @@
 import React from 'react';
 import styles from './index.less';
-import { Button, Card, DatePicker, Form, Menu, Tree } from 'antd';
+import { Button, Card, DatePicker, Form, Menu, Modal, Tree } from 'antd';
 import { connect } from 'dva';
 import Toolbar from '@/components/Toolbar';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import SearchBar from '@/components/SearchBar';
 import classnames from 'classnames';
 import CreateModal from '@/pages/User/Authority/Modal/CreateModal';
+import UpdateModal from '@/pages/User/Authority/Modal/UpdateModal';
 
 const { TreeNode } = Tree;
 
@@ -16,10 +17,13 @@ const { TreeNode } = Tree;
   };
 }, dispatch => ({
   $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
+  $deleteAuthority: (args = {}) => dispatch({ type: 'authority/delete', ...args }),
 }))
 class index extends React.Component {
   state = {
     selectedRows: [],
+    visibleCreate: false,
+    visibleUpdate: false,
   };
 
   componentDidMount() {
@@ -45,15 +49,17 @@ class index extends React.Component {
   };
 
   render() {
-    let { selectedRows } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate } = this.state;
     let { data } = this.props;
     const toolbarMenus = (
       <Menu onClick={this.onClickMenuItem}>
         <Menu.Item key="add">新增节点</Menu.Item>
         <Menu.Item key="update">修改节点</Menu.Item>
         <Menu.Item key="grant">赋予角色</Menu.Item>
+        <Menu.Item key="detail">查看详情</Menu.Item>
         <Menu.Divider/>
         <Menu.Item key="delete">删除节点</Menu.Item>
+        <Menu.Item key="forceDelete">删除节点子树</Menu.Item>
       </Menu>
     );
 
@@ -61,18 +67,18 @@ class index extends React.Component {
       <PageHeaderWrapper className={styles.page}>
         <Card bordered={false}>
           {/*搜索栏*/}
-          <SearchBar className={styles.searchBar} onSubmit={null}>
-            {form => [
-              <Form.Item label="创建日期">
-                {form.getFieldDecorator('createdAt')(
-                  <DatePicker
-                    style={{ width: '100%' }}
-                    placeholder="请输入更新日期"
-                  />,
-                )}
-              </Form.Item>,
-            ]}
-          </SearchBar>
+          {/*<SearchBar className={styles.searchBar} onSubmit={null}>*/}
+          {/*  {form => [*/}
+          {/*    <Form.Item label="创建日期">*/}
+          {/*      {form.getFieldDecorator('createdAt')(*/}
+          {/*        <DatePicker*/}
+          {/*          style={{ width: '100%' }}*/}
+          {/*          placeholder="请输入更新日期"*/}
+          {/*        />,*/}
+          {/*      )}*/}
+          {/*    </Form.Item>,*/}
+          {/*  ]}*/}
+          {/*</SearchBar>*/}
           {/*工具条*/}
           <div className={classnames(styles.toolbar, styles.toolbarExt)}>
             <div className={styles.toolbarTitle}>权限树</div>
@@ -80,6 +86,7 @@ class index extends React.Component {
                      selectedRows={selectedRows}>
               <Button htmlType="button"
                       icon="plus"
+                      onClick={this.onClickShowCreateModal}
                       type="primary">新建</Button>
               {/*<Divider type="vertical"/>*/}
             </Toolbar>
@@ -89,15 +96,25 @@ class index extends React.Component {
             {this.renderTreeNodes(data)}
           </Tree>
         </Card>
-        <CreateModal visible={true} parentId={1}/>
+        <CreateModal visible={visibleCreate}
+                     onClose={this.onClickCloseCreateModal}
+                     parentId={selectedRows[0]}/>
+        {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                       onClose={this.onClickCloseUpdateModal}
+                                       id={selectedRows[0]}/>}
       </PageHeaderWrapper>
     );
   }
 
   // 选择树节点
-  onSelectRows = (rows) => {
+  onSelectRows = (rows, target) => {
+    let selectedRows = [];
+    if (target.selected) {
+      let selectNodeId = target.node.props.dataRef.id;
+      selectedRows = [selectNodeId];
+    }
     this.setState({
-      selectedRows: rows,
+      selectedRows: selectedRows,
     });
   };
 
@@ -105,8 +122,72 @@ class index extends React.Component {
    * 点击菜单
    * @param rest
    */
-  onClickMenuItem = (...rest) => {
-    console.log(rest);
+  onClickMenuItem = ({ key }) => {
+
+    switch (key) {
+      case 'update': {
+        this.onClickShowUpdateModal();
+        break;
+      }
+      case 'delete': {
+        this.onClickShowDeleteModal();
+        break;
+      }
+      case 'forceDelete': {
+        this.onClickShowDeleteModal();
+        break;
+      }
+      case 'add':
+      default: {
+        this.onClickShowCreateModal(true);
+      }
+    }
+  };
+
+  onClickShowDeleteModal = (isForce = false) => {
+    let { $deleteAuthority, $getAuthorityTree } = this.props;
+    let { selectedRows } = this.state;
+    const id = selectedRows[0];
+    Modal.confirm({
+      content: `确认${isForce ? '强制' : ''}删除选中权限?`,
+      onOk() {
+        $deleteAuthority({
+          payload: {
+            id,
+            force: isForce,
+          },
+          callback: $getAuthorityTree
+        });
+      },
+      onCancel() {
+        Modal.destroyAll();
+      },
+    });
+
+  };
+
+  onClickShowCreateModal = () => this.setState({
+    visibleCreate: true,
+  });
+
+  onClickShowUpdateModal = () => this.setState({
+    visibleUpdate: true,
+  });
+
+  onClickCloseCreateModal = () => {
+    let { $getAuthorityTree } = this.props;
+    $getAuthorityTree();
+    this.setState({
+      visibleCreate: false,
+    });
+  };
+
+  onClickCloseUpdateModal = () => {
+    let { $getAuthorityTree } = this.props;
+    $getAuthorityTree();
+    this.setState({
+      visibleUpdate: false,
+    });
   };
 
 }

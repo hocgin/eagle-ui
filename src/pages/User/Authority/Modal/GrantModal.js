@@ -12,29 +12,31 @@ const formLayout = {
     wrapperCol: { span: 13 },
 };
 
-@connect(({ global, authority: { authorityTree }, dataDict: { allPlatform, allAuthorityType }, loading, ...rest }) => {
+@connect(({ global, authority: { authorityTree, detail }, dataDict: { allPlatform, allAuthorityType }, loading, ...rest }) => {
     return {
         data: authorityTree,
+        authorityDetail: detail,
         allPlatform: allPlatform,
         allAuthorityType: allAuthorityType,
     };
 }, dispatch => ({
     $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
-    $insertOneAuthority: (args = {}) => dispatch({ type: 'authority/insertOne', ...args }),
+    $updateOneAuthority: (args = {}) => dispatch({ type: 'authority/updateOne', ...args }),
+    $getAuthority: (args = {}) => dispatch({ type: 'authority/getAuthority', ...args }),
     $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
     $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
 }))
 @Form.create()
-class CreateModal extends PureComponent {
+class GrantModal extends PureComponent {
     static propTypes = {
         onClose: PropTypes.func,
         visible: PropTypes.bool,
-        parentId: PropTypes.number,
+        id: PropTypes.number,
     };
 
     static defaultProps = {
         visible: false,
-        parentId: null,
+        id: null,
         onClose: () => {
         },
     };
@@ -46,20 +48,26 @@ class CreateModal extends PureComponent {
 
     constructor(props) {
         super(props);
+        console.log('Update', this.props);
     }
 
     componentDidMount() {
-        let { $getAuthorityTree, $getAllPlatform, $getAllAuthorityType } = this.props;
+        let { id, $getAuthority, $getAuthorityTree, $getAllPlatform, $getAllAuthorityType } = this.props;
+        $getAuthority({ payload: { id: id } });
         $getAuthorityTree();
         $getAllPlatform();
         $getAllAuthorityType();
     }
 
     render() {
-        const { form, visible, data, parentId, onClose, allPlatform, allAuthorityType, ...rest } = this.props;
+        const { form, visible, data, onClose, allPlatform, authorityDetail, allAuthorityType, ...rest } = this.props;
+        if (!authorityDetail) {
+            return null;
+        }
+        let { title, type, authorityCode, platform, parentId, enabled } = authorityDetail;
         return (<Modal width={640}
                        bodyStyle={{ padding: '32px 40px 48px' }}
-                       title="新增权限"
+                       title="权限详情"
                        visible={visible}
                        maskClosable
                        onCancel={onClose}
@@ -77,7 +85,7 @@ class CreateModal extends PureComponent {
                 </Form.Item>
                 <Form.Item {...formLayout} label="平台" hasFeedback>
                     {form.getFieldDecorator('platform', {
-                        initialValue: 0,
+                        initialValue: platform,
                         rules: [{ required: true, message: '请选择平台' }],
                     })(<Select>
                         {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
@@ -85,7 +93,7 @@ class CreateModal extends PureComponent {
                 </Form.Item>
                 <Form.Item {...formLayout} label="类型" hasFeedback>
                     {form.getFieldDecorator('type', {
-                        initialValue: 0,
+                        initialValue: type,
                         rules: [{ required: true, message: '请选择类型' }],
                     })(<Select>
                         {(allAuthorityType).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
@@ -93,19 +101,21 @@ class CreateModal extends PureComponent {
                 </Form.Item>
                 <Form.Item {...formLayout} label="权限名称" hasFeedback>
                     {form.getFieldDecorator('title', {
+                        initialValue: title,
                         rules: [{ required: true, message: '请输入权限名称' }],
                     })(<Input style={{ width: '100%' }}
                               placeholder="请输入权限名称"/>)}
                 </Form.Item>
                 <Form.Item {...formLayout} label="权限码" hasFeedback>
                     {form.getFieldDecorator('authorityCode', {
+                        initialValue: authorityCode,
                         rules: [{ required: true, message: '请输入权限码' }],
                     })(<Input style={{ width: '100%' }}
                               placeholder="请输入权限码"/>)}
                 </Form.Item>
                 <Form.Item {...formLayout} label="启用状态">
                     {form.getFieldDecorator('enabled', {
-                        initialValue: true,
+                        initialValue: enabled,
                         valuePropName: 'checked',
                     })(<Switch checkedChildren="开" unCheckedChildren="关"/>)}
                 </Form.Item>
@@ -147,9 +157,10 @@ class CreateModal extends PureComponent {
     onDone = (e) => {
         e.preventDefault();
         const {
+            id,
             form: { validateFieldsAndScroll },
             onClose,
-            $insertOneAuthority,
+            $updateOneAuthority,
         } = this.props;
         validateFieldsAndScroll((err, { enabled, ...values }) => {
             if (err) {
@@ -157,13 +168,14 @@ class CreateModal extends PureComponent {
                 message.error(text);
                 return;
             }
-            $insertOneAuthority({
+            $updateOneAuthority({
                 payload: {
                     ...values,
+                    id: id,
                     enabled: enabled ? 1 : 0,
                 },
                 callback: () => {
-                    message.success('新增成功');
+                    message.success('修改成功');
                     onClose();
                 },
             });
@@ -171,4 +183,4 @@ class CreateModal extends PureComponent {
     };
 }
 
-export default CreateModal;
+export default GrantModal;
