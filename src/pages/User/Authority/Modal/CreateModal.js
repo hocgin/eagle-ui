@@ -12,13 +12,17 @@ const formLayout = {
     wrapperCol: { span: 13 },
 };
 
-@connect(({ global, authority: { authorityTree }, loading, ...rest }) => {
+@connect(({ global, authority: { authorityTree }, dataDict: { allPlatform, allAuthorityType }, loading, ...rest }) => {
     return {
         data: authorityTree,
+        allPlatform: allPlatform,
+        allAuthorityType: allAuthorityType,
     };
 }, dispatch => ({
     $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
     $insertOneAuthority: (args = {}) => dispatch({ type: 'authority/insertOne', ...args }),
+    $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
+    $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
 }))
 @Form.create()
 class CreateModal extends PureComponent {
@@ -43,12 +47,14 @@ class CreateModal extends PureComponent {
     }
 
     componentDidMount() {
-        let { $getAuthorityTree } = this.props;
+        let { $getAuthorityTree, $getAllPlatform, $getAllAuthorityType } = this.props;
         $getAuthorityTree();
+        $getAllPlatform();
+        $getAllAuthorityType();
     }
 
     render() {
-        const { form, data, parentId, ...rest } = this.props;
+        const { form, data, parentId, allPlatform, allAuthorityType, ...rest } = this.props;
         const { visible } = this.state;
 
         return (<Modal width={640}
@@ -63,7 +69,7 @@ class CreateModal extends PureComponent {
                         initialValue: 0,
                         rules: [{ required: false, message: '请选择平台' }],
                     })(<Select>
-                        <Option value={0}>Eagle</Option>
+                        {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
                     </Select>)}
                 </Form.Item>
                 <Form.Item {...formLayout} label="类型" hasFeedback>
@@ -71,7 +77,7 @@ class CreateModal extends PureComponent {
                         initialValue: 0,
                         rules: [{ required: false, message: '请选择平台' }],
                     })(<Select>
-                        <Option value={0}>按钮</Option>
+                        {(allAuthorityType).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
                     </Select>)}
                 </Form.Item>
                 <Form.Item {...formLayout} label="父级" hasFeedback>
@@ -92,7 +98,7 @@ class CreateModal extends PureComponent {
                         rules: [{ required: true, message: '请输入权限码' }],
                     })(<Input style={{ width: '100%' }}/>)}
                 </Form.Item>
-                <Form.Item {...formLayout} label="启用状态" hasFeedback>
+                <Form.Item {...formLayout} label="启用状态">
                     {form.getFieldDecorator('enabled', {
                         initialValue: true,
                         valuePropName: 'checked',
