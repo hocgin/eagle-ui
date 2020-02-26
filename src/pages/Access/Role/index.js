@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.less';
 import { Button, DatePicker, Form, Menu } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
-import CreateModal from '@/pages/User/Role/Modal/CreateModal';
+import CreateModal from './Modal/CreateModal';
 
 class index extends React.Component {
 

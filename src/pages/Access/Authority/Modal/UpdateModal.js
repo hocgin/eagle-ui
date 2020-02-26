@@ -18,6 +18,8 @@ const formLayout = {
         authorityDetail: detail,
         allPlatform: allPlatform,
         allAuthorityType: allAuthorityType,
+        detailLoading: loading.effects['authority/getAuthority'],
+        confirmLoading: loading.effects['authority/updateOne'],
     };
 }, dispatch => ({
     $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
@@ -27,7 +29,7 @@ const formLayout = {
     $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
 }))
 @Form.create()
-class DetailModal extends PureComponent {
+class UpdateModal extends PureComponent {
     static propTypes = {
         onClose: PropTypes.func,
         visible: PropTypes.bool,
@@ -35,6 +37,7 @@ class DetailModal extends PureComponent {
     };
 
     static defaultProps = {
+        detailLoading: false,
         visible: false,
         id: null,
         onClose: () => {
@@ -60,14 +63,14 @@ class DetailModal extends PureComponent {
     }
 
     render() {
-        const { form, visible, data, onClose, allPlatform, authorityDetail, allAuthorityType, ...rest } = this.props;
-        if (!authorityDetail) {
+        const { form, visible, detailLoading, confirmLoading, data, onClose, allPlatform, authorityDetail, allAuthorityType, ...rest } = this.props;
+        if (detailLoading) {
             return null;
         }
         let { title, type, authorityCode, platform, parentId, enabled } = authorityDetail;
         return (<Modal width={640}
                        bodyStyle={{ padding: '32px 40px 48px' }}
-                       title="赋予角色权限"
+                       title="修改权限"
                        visible={visible}
                        maskClosable
                        onCancel={onClose}
@@ -135,8 +138,10 @@ class DetailModal extends PureComponent {
     };
 
     renderFooter = () => {
+        let { confirmLoading } = this.props;
         return ([<Button key="cancel" htmlType="button" onClick={this.onCancel}>取消 </Button>,
-            <Button key="submit" htmlType="button" type="primary" onClick={this.onDone}>完成</Button>]);
+            <Button loading={confirmLoading} key="submit" htmlType="button" type="primary"
+                    onClick={this.onDone}>完成</Button>]);
     };
 
     onSubmit = () => {
@@ -183,4 +188,4 @@ class DetailModal extends PureComponent {
     };
 }
 
-export default DetailModal;
+export default UpdateModal;

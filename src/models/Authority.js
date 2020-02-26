@@ -11,7 +11,7 @@ export default {
   },
   effects: {
     * getAllAuthority({ payload }, { call, put }) {
-      let result = yield AuthorityApi.getAllAuthority(payload);
+      let result = yield AuthorityApi.getAll(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;
@@ -33,7 +33,7 @@ export default {
       });
     },
     * getAuthority({ payload }, { call, put }) {
-      let result = yield AuthorityApi.getAuthority(payload);
+      let result = yield AuthorityApi.getOne(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;
@@ -44,7 +44,7 @@ export default {
       });
     },
     * insertOne({ payload, callback }, { call, put }) {
-      let result = yield AuthorityApi.insertOneAuthority(payload);
+      let result = yield AuthorityApi.insert(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;
@@ -54,7 +54,7 @@ export default {
       }
     },
     * updateOne({ payload, callback }, { call, put }) {
-      let result = yield AuthorityApi.updateOneAuthority(payload);
+      let result = yield AuthorityApi.update(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;
@@ -64,7 +64,17 @@ export default {
       }
     },
     * delete({ payload, callback }, { call, put }) {
-      let result = yield AuthorityApi.deleteAuthority(payload);
+      let result = yield AuthorityApi.delete(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
+    * grantRole({ payload, callback }, { call, put }) {
+      let result = yield AuthorityApi.grantRole(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;

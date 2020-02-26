@@ -3,7 +3,7 @@ import { stringify } from 'qs';
 
 export default class AuthorityApi {
 
-  static getAllAuthority(payload) {
+  static getAll(payload) {
     return request(`/api/authority/_search`, {
       method: 'POST',
       body: {
@@ -21,14 +21,14 @@ export default class AuthorityApi {
     });
   }
 
-  static getAuthority({ id, ...payload }) {
+  static getOne({ id, ...payload }) {
     let queryString = stringify(payload);
     return request(`/api/authority/${id}:complex?${queryString}`, {
       method: 'GET',
     });
   }
 
-  static updateOneAuthority({ id, ...payload }) {
+  static update({ id, ...payload }) {
     return request(`/api/authority/${id}`, {
       method: 'PUT',
       body: {
@@ -37,7 +37,7 @@ export default class AuthorityApi {
     });
   }
 
-  static insertOneAuthority(payload) {
+  static insert(payload) {
     return request(`/api/authority`, {
       method: 'POST',
       body: {
@@ -46,10 +46,19 @@ export default class AuthorityApi {
     });
   }
 
-  static deleteAuthority({ id, ...payload }) {
+  static delete({ id, ...payload }) {
     let queryString = stringify(payload);
     return request(`/api/authority/${id}?${queryString}`, {
       method: 'DELETE',
+    });
+  }
+
+  static grantRole({ id, ...payload }) {
+    return request(`/api/authority/${id}/grant/role`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
     });
   }
 

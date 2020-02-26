@@ -1,0 +1,19 @@
+@import "~@/mixin.less";
+
+.component {
+  :global {
+    .ant-collapse {
+      background-color: unset!important;
+      .ant-collapse-item {
+        border: unset;
+        .ant-collapse-header {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+      .ant-collapse-content > .ant-collapse-content-box {
+        padding: 0!important;
+      }
+    }
+  }
+}

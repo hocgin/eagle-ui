@@ -12,31 +12,30 @@ const formLayout = {
     wrapperCol: { span: 13 },
 };
 
-@connect(({ global, authority: { authorityTree, detail }, dataDict: { allPlatform, allAuthorityType }, loading, ...rest }) => {
+@connect(({ global, authority: { authorityTree }, dataDict: { allPlatform, allAuthorityType }, loading, ...rest }) => {
     return {
         data: authorityTree,
-        authorityDetail: detail,
         allPlatform: allPlatform,
         allAuthorityType: allAuthorityType,
+        confirmLoading: loading.effects['authority/insertOne'],
     };
 }, dispatch => ({
     $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
-    $updateOneAuthority: (args = {}) => dispatch({ type: 'authority/updateOne', ...args }),
-    $getAuthority: (args = {}) => dispatch({ type: 'authority/getAuthority', ...args }),
+    $insertOneAuthority: (args = {}) => dispatch({ type: 'authority/insertOne', ...args }),
     $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
     $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
 }))
 @Form.create()
-class GrantModal extends PureComponent {
+class CreateModal extends PureComponent {
     static propTypes = {
         onClose: PropTypes.func,
         visible: PropTypes.bool,
-        id: PropTypes.number,
+        parentId: PropTypes.number,
     };
 
     static defaultProps = {
         visible: false,
-        id: null,
+        parentId: null,
         onClose: () => {
         },
     };
@@ -48,26 +47,20 @@ class GrantModal extends PureComponent {
 
     constructor(props) {
         super(props);
-        console.log('Update', this.props);
     }
 
     componentDidMount() {
-        let { id, $getAuthority, $getAuthorityTree, $getAllPlatform, $getAllAuthorityType } = this.props;
-        $getAuthority({ payload: { id: id } });
+        let { $getAuthorityTree, $getAllPlatform, $getAllAuthorityType } = this.props;
         $getAuthorityTree();
         $getAllPlatform();
         $getAllAuthorityType();
     }
 
     render() {
-        const { form, visible, data, onClose, allPlatform, authorityDetail, allAuthorityType, ...rest } = this.props;
-        if (!authorityDetail) {
-            return null;
-        }
-        let { title, type, authorityCode, platform, parentId, enabled } = authorityDetail;
+        const { form, visible, data, parentId, onClose, allPlatform, allAuthorityType, ...rest } = this.props;
         return (<Modal width={640}
                        bodyStyle={{ padding: '32px 40px 48px' }}
-                       title="权限详情"
+                       title="新增权限"
                        visible={visible}
                        maskClosable
                        onCancel={onClose}
@@ -85,7 +78,7 @@ class GrantModal extends PureComponent {
                 </Form.Item>
                 <Form.Item {...formLayout} label="平台" hasFeedback>
                     {form.getFieldDecorator('platform', {
-                        initialValue: platform,
+                        initialValue: 0,
                         rules: [{ required: true, message: '请选择平台' }],
                     })(<Select>
                         {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
@@ -93,7 +86,7 @@ class GrantModal extends PureComponent {
                 </Form.Item>
                 <Form.Item {...formLayout} label="类型" hasFeedback>
                     {form.getFieldDecorator('type', {
-                        initialValue: type,
+                        initialValue: 0,
                         rules: [{ required: true, message: '请选择类型' }],
                     })(<Select>
                         {(allAuthorityType).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
@@ -101,21 +94,19 @@ class GrantModal extends PureComponent {
                 </Form.Item>
                 <Form.Item {...formLayout} label="权限名称" hasFeedback>
                     {form.getFieldDecorator('title', {
-                        initialValue: title,
                         rules: [{ required: true, message: '请输入权限名称' }],
                     })(<Input style={{ width: '100%' }}
                               placeholder="请输入权限名称"/>)}
                 </Form.Item>
                 <Form.Item {...formLayout} label="权限码" hasFeedback>
                     {form.getFieldDecorator('authorityCode', {
-                        initialValue: authorityCode,
                         rules: [{ required: true, message: '请输入权限码' }],
                     })(<Input style={{ width: '100%' }}
                               placeholder="请输入权限码"/>)}
                 </Form.Item>
                 <Form.Item {...formLayout} label="启用状态">
                     {form.getFieldDecorator('enabled', {
-                        initialValue: enabled,
+                        initialValue: true,
                         valuePropName: 'checked',
                     })(<Switch checkedChildren="开" unCheckedChildren="关"/>)}
                 </Form.Item>
@@ -135,8 +126,10 @@ class GrantModal extends PureComponent {
     };
 
     renderFooter = () => {
+        let { confirmLoading } = this.props;
         return ([<Button key="cancel" htmlType="button" onClick={this.onCancel}>取消 </Button>,
-            <Button key="submit" htmlType="button" type="primary" onClick={this.onDone}>完成</Button>]);
+            <Button loading={confirmLoading} key="submit" htmlType="button" type="primary"
+                    onClick={this.onDone}>完成</Button>]);
     };
 
     onSubmit = () => {
@@ -157,10 +150,9 @@ class GrantModal extends PureComponent {
     onDone = (e) => {
         e.preventDefault();
         const {
-            id,
             form: { validateFieldsAndScroll },
             onClose,
-            $updateOneAuthority,
+            $insertOneAuthority,
         } = this.props;
         validateFieldsAndScroll((err, { enabled, ...values }) => {
             if (err) {
@@ -168,14 +160,13 @@ class GrantModal extends PureComponent {
                 message.error(text);
                 return;
             }
-            $updateOneAuthority({
+            $insertOneAuthority({
                 payload: {
                     ...values,
-                    id: id,
                     enabled: enabled ? 1 : 0,
                 },
                 callback: () => {
-                    message.success('修改成功');
+                    message.success('新增成功');
                     onClose();
                 },
             });
@@ -183,4 +174,4 @@ class GrantModal extends PureComponent {
     };
 }
 
-export default GrantModal;
+export default CreateModal;

@@ -1,13 +1,14 @@
 import React from 'react';
 import styles from './index.less';
-import { Button, Card, DatePicker, Form, Menu, Modal, Tree } from 'antd';
+import { Button, Card, Menu, Modal, Tree } from 'antd';
 import { connect } from 'dva';
 import Toolbar from '@/components/Toolbar';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import SearchBar from '@/components/SearchBar';
 import classnames from 'classnames';
-import CreateModal from '@/pages/User/Authority/Modal/CreateModal';
-import UpdateModal from '@/pages/User/Authority/Modal/UpdateModal';
+import CreateModal from './Modal/CreateModal';
+import UpdateModal from './Modal/UpdateModal';
+import DetailModal from './Modal/DetailModal';
+import GrantModal from './Modal/GrantModal';
 
 const { TreeNode } = Tree;
 
@@ -24,6 +25,8 @@ class index extends React.Component {
     selectedRows: [],
     visibleCreate: false,
     visibleUpdate: false,
+    visibleDetail: false,
+    visibleGrant: false,
   };
 
   componentDidMount() {
@@ -49,7 +52,7 @@ class index extends React.Component {
   };
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant } = this.state;
     let { data } = this.props;
     const toolbarMenus = (
       <Menu onClick={this.onClickMenuItem}>
@@ -102,6 +105,12 @@ class index extends React.Component {
         {visibleUpdate && <UpdateModal visible={visibleUpdate}
                                        onClose={this.onClickCloseUpdateModal}
                                        id={selectedRows[0]}/>}
+        {visibleDetail && <DetailModal visible={visibleDetail}
+                                       onClose={this.onClickCloseDetailModal}
+                                       id={selectedRows[0]}/>}
+        {visibleGrant && <GrantModal visible={visibleGrant}
+                                     onClose={this.onClickCloseGrantModal}
+                                     id={selectedRows[0]}/>}
       </PageHeaderWrapper>
     );
   }
@@ -137,6 +146,14 @@ class index extends React.Component {
         this.onClickShowDeleteModal();
         break;
       }
+      case 'detail': {
+        this.onClickShowDetailModal();
+        break;
+      }
+      case 'grant': {
+        this.onClickShowGrantModal();
+        break;
+      }
       case 'add':
       default: {
         this.onClickShowCreateModal(true);
@@ -156,7 +173,7 @@ class index extends React.Component {
             id,
             force: isForce,
           },
-          callback: $getAuthorityTree
+          callback: $getAuthorityTree,
         });
       },
       onCancel() {
@@ -187,6 +204,30 @@ class index extends React.Component {
     $getAuthorityTree();
     this.setState({
       visibleUpdate: false,
+    });
+  };
+
+  onClickShowDetailModal = () => {
+    this.setState({
+      visibleDetail: true,
+    });
+  };
+
+  onClickCloseDetailModal = () => {
+    this.setState({
+      visibleDetail: false,
+    });
+  };
+
+  onClickShowGrantModal = () => {
+    this.setState({
+      visibleGrant: true,
+    });
+  };
+
+  onClickCloseGrantModal = () => {
+    this.setState({
+      visibleGrant: false,
     });
   };
 
