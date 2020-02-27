@@ -11,7 +11,7 @@ const formLayout = {
 class CreateModal extends PureComponent {
     static propTypes = {
         visible: PropTypes.bool,
-        onChangeVisible: PropTypes.func,
+        onClose: PropTypes.func,
     };
 
     static defaultProps = {
@@ -19,7 +19,6 @@ class CreateModal extends PureComponent {
     };
 
     state = {
-        visible: this.props.visible,
         // 当前步骤
         step: 0,
         // 待提交的值
@@ -31,8 +30,8 @@ class CreateModal extends PureComponent {
     }
 
     render() {
-        const { ...rest } = this.props;
-        const { visible, step } = this.state;
+        const { visible, onClose, ...rest } = this.props;
+        const { step } = this.state;
         return (
           <Modal width={640}
                  bodyStyle={{ padding: '32px 40px 48px' }}
@@ -52,13 +51,11 @@ class CreateModal extends PureComponent {
 
     Step1 = () => {
         const { form } = this.props;
-        return (<Form.Item key="target" {...formLayout} label="监控对象">
-            <Form.Item key="1" {...formLayout} label="名称" hasFeedback>
-                {form.getFieldDecorator('name', {
-                    rules: [{ required: true, message: '请输入资源名称' }],
-                })(<Input style={{ width: '100%' }}/>)}
-            </Form.Item>
-        </Form.Item>);
+        return ([<Form.Item key="1" {...formLayout} label="名称" hasFeedback>
+            {form.getFieldDecorator('name', {
+                rules: [{ required: true, message: '请输入资源名称' }],
+            })(<Input style={{ width: '100%' }}/>)}
+        </Form.Item>]);
     };
 
     Step2 = () => {
@@ -122,16 +119,15 @@ class CreateModal extends PureComponent {
      * 取消
      */
     onCancel = () => {
-        this.setState({
-            visible: false,
-        });
+        let { onClose } = this.props;
+        onClose();
     };
 
     /**
      * 完成
      */
     onDone = () => {
-        let {form} = this.props;
+        let { form } = this.props;
         const value = form.getFieldsValue();
         console.log(value);
     };

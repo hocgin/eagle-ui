@@ -22,14 +22,14 @@ class index extends React.Component {
   state = {
     searchValue: {},
     selectedRows: [],
+    operateRow: null,
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
   };
 
   componentDidMount() {
-    let { $pagingRole } = this.props;
-    $pagingRole();
+    this.paging();
   }
 
   componentWillUnmount() {
@@ -68,16 +68,30 @@ class index extends React.Component {
     {
       title: '操作',
       key: 'operation',
+      fixed: 'right',
+      width: 200,
       render: (text, record) => {
-        const MoreMenus = (<Menu>
-          <Menu.Item key="edit">修改</Menu.Item>
-          <Menu.Item key="setRoles">赋予权限</Menu.Item>
+        const onClickOperateRow = (record, e) => {
+          this.setState(
+            {
+              operateRow: record.id,
+            },
+            () => {
+              this.onClickMenuRowItem(e, record);
+            },
+          );
+        };
+
+        const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
+          <Menu.Item key="rowEdit">修改</Menu.Item>
+          <Menu.Item key="rowSetAuthority">赋予权限</Menu.Item>
           <Menu.Item>查询关联账号</Menu.Item>
           <Menu.Divider/>
-          <Menu.Item key="delete">删除</Menu.Item>
+          <Menu.Item key="rowDelete">删除</Menu.Item>
         </Menu>);
+
         return (<>
-          <a onClick={this.onClickShowDetailModal.bind(this, record.id)}>查看详情</a>
+          <a onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
           <Divider type="vertical"/>
           <Dropdown overlay={MoreMenus}>
             <a className="ant-dropdown-link">
@@ -89,10 +103,10 @@ class index extends React.Component {
     }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleDetail } = this.state;
+    let { selectedRows, visibleCreate, visibleDetail, operateRow } = this.state;
     let { pagingRole, pagingLoading } = this.props;
     const BatchMenus = (
-      <Menu onClick={this.onClickMenuItem}>
+      <Menu onClick={this.onClickMenuBatchItem}>
         <Menu.Item key="delete">删除角色</Menu.Item>
       </Menu>
     );
@@ -119,42 +133,83 @@ class index extends React.Component {
                       selectedRows={selectedRows}
                       onSelectRow={this.onChangeSelectRow}
                       onClickSearch={this.onClickSearch}
+                      onChangeStandardTable={this.onChangeStandardTable}
                       tableColumns={this.tableColumns}
         />
         <CreateModal visible={visibleCreate}
                      onClose={this.onClickCloseCreateModal}/>
         {visibleDetail && <DetailModal visible={visibleDetail}
-                                       id={selectedRows[0]}
+                                       id={operateRow}
                                        onClose={this.onClickCloseDetailModal}/>}
       </div>
     );
   }
 
   /**
-   * 点击菜单
+   * 条件变更
+   * @param pageSize
+   * @param current
+   * @param filtersArg
+   * @param sorter
+   */
+  onChangeStandardTable = ({ pageSize, current }, filtersArg, sorter) => {
+    let { searchValue } = this.state;
+    this.setState({
+      searchValue: {
+        ...searchValue,
+        size: pageSize,
+        page: current,
+      },
+    }, this.paging);
+  };
+
+
+  /**
+   * 【批量操作】点击菜单
    * @param rest
    */
-  onClickMenuItem = ({ key }) => {
+  onClickMenuBatchItem = ({ key }) => {
     switch (key) {
-      case 'update': {
-        this.onClickShowUpdateModal();
-        break;
-      }
       case 'delete': {
-        this.onClickShowDeleteModal();
+        this.onClickShowDeleteModal(this.state.selectedRows || []);
         break;
       }
-      case 'detail': {
-        this.onClickShowDetailModal();
-        break;
-      }
-      case 'add':
       default: {
-        this.onClickShowCreateModal(true);
+        Modal.error({
+          content: '无效操作',
+        });
       }
     }
   };
 
+  /**
+   * 每行的【更多操作】
+   * @param key
+   */
+  onClickMenuRowItem = ({ key }) => {
+    switch (key) {
+      case 'rowDelete': {
+        this.onClickShowDeleteModal([this.state.operateRow]);
+        break;
+      }
+      case 'rowDetail': {
+        this.setState({
+          visibleDetail: true,
+        });
+        break;
+      }
+      default: {
+        Modal.error({
+          content: '无效操作',
+        });
+      }
+    }
+  };
+
+  /**
+   * 点击查询按钮
+   * @param values
+   */
   onClickSearch = (values) => {
     this.setState({
       searchValue: {
@@ -184,33 +239,32 @@ class index extends React.Component {
   };
 
 
-  onClickShowDeleteModal = () => {
+  onClickShowDeleteModal = (ids = []) => {
     let { $deleteRole } = this.props;
-    let { selectedRows } = this.state;
-    if (selectedRows.length > 1) {
-      Modal.warning({
-        content: '暂不支持删除多个角色',
-      });
-      return;
-    }
-
-    const id = selectedRows[0];
     let paging = this.paging;
-    Modal.confirm({
+    let props = {
       content: `确认删除选中角色?`,
-      onOk() {
-        $deleteRole({
-          payload: {
-            id,
-          },
-          callback: paging,
-        });
-      },
       onCancel() {
         Modal.destroyAll();
       },
-    });
+    };
 
+    if (ids.length > 1) {
+      // TODO
+    } else {
+      props = {
+        content: `确认删除该角色?`,
+        onOk() {
+          $deleteRole({
+            payload: {
+              id: ids[0],
+            },
+            callback: paging,
+          });
+        },
+      };
+    }
+    Modal.confirm(props);
   };
 
   onClickShowCreateModal = () => this.setState({
@@ -236,22 +290,13 @@ class index extends React.Component {
   };
 
   onClickShowDetailModal = (id) => {
-    let state = {
+    this.setState({
       visibleDetail: true,
-    };
-    if (id) {
-      state = {
-        ...state,
-        selectedRows: [id],
-      };
-    }
-
-    this.setState(state);
+    });
   };
 
   onClickCloseDetailModal = () => {
     this.setState({
-      selectedRows: [],
       visibleDetail: false,
     });
   };

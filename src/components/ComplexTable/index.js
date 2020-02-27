@@ -27,7 +27,7 @@ class ComplexTable extends React.PureComponent {
       // SearchBar
       searchBarEnabled = true, searchBarChildren = (form) => form, onClickSearch,
       // Table
-      tableColumns = [], tableData = [], tableLoading, selectedRows, onSelectRow,
+      tableColumns = [], tableData = [], tableLoading, selectedRows, onSelectRow, onChangeStandardTable
     } = this.props;
 
     return (<Card className={styles.component} bordered={false} bodyStyle={{ padding: 0 }}>
@@ -48,14 +48,10 @@ class ComplexTable extends React.PureComponent {
                        data={tableData}
                        columns={tableColumns}
                        onSelectRow={onSelectRow}
-                       onChange={this.onChangeStandardTable}/>
+                       onChange={onChangeStandardTable}/>
       </Card>
     );
   }
-
-  onChangeStandardTable = (pagination, filtersArg, sorter) => {
-
-  };
 }
 
 export default ComplexTable;

@@ -8,6 +8,7 @@ export default {
   state: {
     allPlatform: [],
     allAuthorityType: [],
+    allEnabled: [],
   },
   effects: {
     * getAllPlatform({ payload }, { call, put }) {
@@ -32,6 +33,17 @@ export default {
         payload: result.data,
       });
     },
+    * getAllEnabled({ payload }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'enabled' });
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      yield put({
+        type: 'fillAllEnabled',
+        payload: result.data,
+      });
+    },
   },
   reducers: {
     fillAllPlatform(state, { payload }) {
@@ -44,6 +56,12 @@ export default {
       return {
         ...state,
         allAuthorityType: payload,
+      };
+    },
+    fillAllEnabled(state, { payload }) {
+      return {
+        ...state,
+        allEnabled: payload,
       };
     },
   },

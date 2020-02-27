@@ -1,4 +1,6 @@
 import memoizeOne from 'memoize-one';
+import React from 'react';
+import { TreeSelect } from 'antd';
 
 export default class UiUtils {
 
@@ -34,4 +36,15 @@ export default class UiUtils {
 
   static fastPagingPagination = memoizeOne(this.getPagingPagination);
 
+
+  static renderTreeSelectNodes(data) {
+    return (data || []).map(item => {
+      if (item.children && item.children.length > 0) {
+        return (<TreeSelect.TreeNode value={item.id} title={item.title} dataRef={item}>
+          {this.renderTreeSelectNodes(item.children)}
+        </TreeSelect.TreeNode>);
+      }
+      return <TreeSelect.TreeNode value={item.id} key={item.authorityCode} title={item.title} dataRef={item}/>;
+    });
+  };
 };
