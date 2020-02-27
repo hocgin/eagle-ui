@@ -69,19 +69,6 @@ class index extends React.Component {
     return (
       <PageHeaderWrapper className={styles.page}>
         <Card bordered={false}>
-          {/*搜索栏*/}
-          {/*<SearchBar className={styles.searchBar} onSubmit={null}>*/}
-          {/*  {form => [*/}
-          {/*    <Form.Item label="创建日期">*/}
-          {/*      {form.getFieldDecorator('createdAt')(*/}
-          {/*        <DatePicker*/}
-          {/*          style={{ width: '100%' }}*/}
-          {/*          placeholder="请输入更新日期"*/}
-          {/*        />,*/}
-          {/*      )}*/}
-          {/*    </Form.Item>,*/}
-          {/*  ]}*/}
-          {/*</SearchBar>*/}
           {/*工具条*/}
           <div className={classnames(styles.toolbar, styles.toolbarExt)}>
             <div className={styles.toolbarTitle}>权限树</div>
@@ -91,7 +78,6 @@ class index extends React.Component {
                       icon="plus"
                       onClick={this.onClickShowCreateModal}
                       type="primary">新建</Button>
-              {/*<Divider type="vertical"/>*/}
             </Toolbar>
           </div>
           <Tree
@@ -132,7 +118,6 @@ class index extends React.Component {
    * @param rest
    */
   onClickMenuItem = ({ key }) => {
-
     switch (key) {
       case 'update': {
         this.onClickShowUpdateModal();

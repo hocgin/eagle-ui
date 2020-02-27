@@ -11,14 +11,16 @@ const formLayout = {
 class CreateModal extends PureComponent {
     static propTypes = {
         visible: PropTypes.bool,
+        onClose: PropTypes.func,
     };
 
     static defaultProps = {
         visible: false,
+        onClose: () => {
+        },
     };
 
     state = {
-        visible: this.props.visible,
         // 待提交的值
         formValue: {},
     };
@@ -28,11 +30,12 @@ class CreateModal extends PureComponent {
     }
 
     render() {
-        const { ...rest } = this.props;
-        const { visible } = this.state;
+        const { visible, onClose, ...rest } = this.props;
+        const {} = this.state;
 
         return (
           <Modal width={640}
+                 onCancel={onClose}
                  bodyStyle={{ padding: '32px 40px 48px' }}
                  title="规则配置"
                  visible={visible}

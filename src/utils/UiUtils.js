@@ -1,3 +1,5 @@
+import memoizeOne from 'memoize-one';
+
 export default class UiUtils {
 
   /**
@@ -11,5 +13,25 @@ export default class UiUtils {
     }
     return paging.records || [];
   }
+
+  static fastGetPagingList = memoizeOne(this.getPagingList);
+
+  /**
+   * 获取分页的设置对象
+   * @param paging
+   * @return {{}}
+   */
+  static getPagingPagination(paging) {
+    if (!paging) {
+      return {};
+    }
+    return {
+      total: paging.total,
+      pageSize: paging.size,
+      current: paging.current,
+    };
+  }
+
+  static fastPagingPagination = memoizeOne(this.getPagingPagination);
 
 };

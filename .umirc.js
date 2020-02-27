@@ -15,8 +15,12 @@ export default {
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
       // 用户
       // 【用户】-【权限】
-      { path: '/access/authority', component: '../pages/Access/Authority' },
-      { path: '/access/role', component: '../pages/Access/Role' },
+      {
+        code: 'access', icon: 'test', path: '/access',
+        routes: [
+          { code: 'authority', path: '/access/authority', component: '../pages/Access/Authority' },
+          { code: 'role', path: '/access/role', component: '../pages/Access/Role' }],
+      },
       // 测试
       {
         code: 'devtools', icon: 'test', path: '/devtools',

@@ -13,6 +13,11 @@ class ComplexTable extends React.PureComponent {
 
   static defaultProps = {
     tableLoading: false,
+    onClickSearch: () => {
+    },
+  };
+
+  state = {
   };
 
   render() {
@@ -20,10 +25,11 @@ class ComplexTable extends React.PureComponent {
       // Toolbar
       toolbarEnabled = true, toolbarTitle = null, toolbarMenu = null, toolbarChildren = null,
       // SearchBar
-      searchBarEnabled = true, searchBarChildren = (form) => form, onClickSearch = null,
+      searchBarEnabled = true, searchBarChildren = (form) => form, onClickSearch,
       // Table
-      tableColumns = [], tableData = [], tableLoading, selectedRows = [],
+      tableColumns = [], tableData = [], tableLoading, selectedRows, onSelectRow,
     } = this.props;
+
     return (<Card className={styles.component} bordered={false} bodyStyle={{ padding: 0 }}>
         {/*搜索栏*/}
         {searchBarEnabled && <SearchBar className={styles.searchBar} onSubmit={onClickSearch}>
@@ -37,7 +43,11 @@ class ComplexTable extends React.PureComponent {
           </Toolbar>
         </div>}
         {/*数据展示*/}
-        <StandardTable key="id" selectedRows={selectedRows} loading={tableLoading} data={tableData} columns={tableColumns}
+        <StandardTable key="id" selectedRows={selectedRows}
+                       loading={tableLoading}
+                       data={tableData}
+                       columns={tableColumns}
+                       onSelectRow={onSelectRow}
                        onChange={this.onChangeStandardTable}/>
       </Card>
     );

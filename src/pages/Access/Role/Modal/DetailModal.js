@@ -11,24 +11,17 @@ const { Panel } = Collapse;
 
 @connect(({
               global,
-              authority: { authorityTree, detail },
+              role: { detail },
               dataDict: { allPlatform, allAuthorityType },
               loading, ...rest
           }) => {
 
     return {
-        data: authorityTree,
-        authorityDetail: detail,
-        allPlatform: allPlatform,
-        allAuthorityType: allAuthorityType,
-        detailLoading: loading.effects['authority/getAuthority'],
+        roleDetail: detail,
+        detailLoading: loading.effects['role/getOne'],
     };
 }, dispatch => ({
-    $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
-    $updateOneAuthority: (args = {}) => dispatch({ type: 'authority/updateOne', ...args }),
-    $getAuthority: (args = {}) => dispatch({ type: 'authority/getAuthority', ...args }),
-    $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
-    $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
+    $getRole: (args = {}) => dispatch({ type: 'role/getOne', ...args }),
 }))
 @Form.create()
 class DetailModal extends PureComponent {
@@ -46,54 +39,44 @@ class DetailModal extends PureComponent {
         },
     };
 
-    state = {
-        // 待提交的值
-        formValue: {},
-    };
-
     constructor(props) {
         super(props);
-        console.log('Update', this.props);
     }
 
     componentDidMount() {
-        let { id, $getAuthority, $getAuthorityTree, $getAllPlatform, $getAllAuthorityType } = this.props;
-        $getAuthority({ payload: { id: id } });
-        $getAuthorityTree();
-        $getAllPlatform();
-        $getAllAuthorityType();
+        let { id, $getRole } = this.props;
+        $getRole({ payload: { id: id } });
     }
 
     render() {
-        const { form, visible, detailLoading, data, onClose, allPlatform, authorityDetail, allAuthorityType, ...rest } = this.props;
+        const { roleDetail, detailLoading, visible, onClose, ...rest } = this.props;
         if (detailLoading) {
             return null;
         }
-        let { title, createdAt, creatorName, lastUpdatedAt, lastUpdaterName, typeName, authorityCode, platformName, parentName, enabledName, roles } = authorityDetail;
+        let { title, createdAt, creatorName, lastUpdatedAt, remark, lastUpdaterName, roleCode, platformName, enabledName, authorities } = roleDetail;
         return (<Modal width={640}
                        bodyStyle={{ padding: '10px 20px 48px' }}
-                       title="权限详情"
+                       title="角色详情"
                        visible={visible}
                        maskClosable
                        onCancel={onClose}
                        footer={this.renderFooter()}>
             <ComplexCollapse defaultActiveKey={['1']}>
                 <Panel header="基础信息" key="1">
-                    <TextRow first={true} title={'父级名称'}>{parentName || '顶级'}</TextRow>
-                    <TextRow title={'权限名称'}>{title}</TextRow>
-                    <TextRow title={'权限类型'}>{typeName}</TextRow>
-                    <TextRow title={'权限码'}>{authorityCode}</TextRow>
+                    <TextRow first={true} title={'角色名称'}>{title}</TextRow>
+                    <TextRow title={'角色码'}>{roleCode}</TextRow>
                     <TextRow title={'平台'}>{platformName}</TextRow>
+                    <TextRow title={'角色描述'}>{remark || '暂无'}</TextRow>
                     <TextRow title={'开启状态'}>{enabledName}</TextRow>
                     <TextRow title={'创建时间'}>{DateFormatter.timestampAs(createdAt)}</TextRow>
                     <TextRow title={'创建人'}>{creatorName}</TextRow>
                     <TextRow title={'最后更新时间'}>{DateFormatter.timestampAs(lastUpdatedAt)}</TextRow>
                     <TextRow title={'最后更新人'}>{lastUpdaterName || '暂无'}</TextRow>
                 </Panel>
-                <Panel header="关联角色" key="2">
-                    {(roles || []).map(({ title, roleCode }, index) =>
+                <Panel header="拥有的权限" key="2">
+                    {(authorities || []).map(({ title, authorityCode }, index) =>
                       <TextRow first={index === 0}
-                               title={'角色名称'}>{title}({roleCode})</TextRow>)}
+                               title={'权限名称'}>{title}({authorityCode})</TextRow>)}
                 </Panel>
             </ComplexCollapse>
         </Modal>);

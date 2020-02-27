@@ -19,7 +19,8 @@
     "lodash": "latest",
     "path-to-regexp": "latest",
     "prop-types": "latest",
-    "query-string": "latest"
+    "query-string": "latest",
+    "moment": "latest"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
