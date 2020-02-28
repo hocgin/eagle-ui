@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Button, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import Avatar from './Avatar';
 import styles from './index.less';
 import { connect } from 'dva';
@@ -10,51 +10,46 @@ import { connect } from 'dva';
     nickname: nickname,
     email: email,
     avatar: avatar,
-    menus: currentAccountAuthority,
   };
-}, dispatch => ({}))
-@Form.create()
+}, dispatch => ({
+  $getCurrentAccountInfo: (args = {}) => dispatch({ type: 'account/getCurrentAccountInfo', ...args }),
+}))
 class index extends React.Component {
+  basicForm = React.createRef();
 
   componentDidMount() {
+    let { $getCurrentAccountInfo } = this.props;
+    $getCurrentAccountInfo();
     // window.addEventListener('resize', this.handleResize);
   }
 
-  componentWillUnmount() {
+  componentDidUpdate() {
     // window.removeEventListener('resize', this.handleResize);
   }
 
 
   render() {
-    let { nickname, email, avatar, form: { getFieldDecorator } } = this.props;
-    console.log('nickname', nickname);
+    let { nickname, email, avatar } = this.props;
     return (
       <div className={styles.page}>
         <div>
           <Avatar size={70} icon="user" src={avatar}/>
         </div>
-        <Form className={styles.form} layout="vertical" hideRequiredMark>
-          <Form.Item label="E-mail">
-            {getFieldDecorator('email', {
-              initialValue: email,
-              rules: [
-                {
-                  type: 'email',
-                  message: '请输入邮箱号码',
-                },
-              ],
-            })(<Input/>)}
+        <Form ref={this.basicForm} className={styles.form} layout="vertical"
+              initialValues={{
+                email: email,
+                nickname: nickname,
+              }}
+              hideRequiredMark>
+          <Form.Item label="E-mail"
+                     rules={[{ type: 'email', message: '请输入邮箱号码' }]}
+                     name="email">
+            <Input/>
           </Form.Item>
-          <Form.Item label="昵称">
-            {getFieldDecorator('nickname', {
-              initialValue: nickname,
-              rules: [
-                {
-                  type: 'nickname',
-                  message: '请输入昵称',
-                },
-              ],
-            })(<Input/>)}
+          <Form.Item label="昵称"
+                     rules={[{ type: 'nickname', message: '请输入昵称' }]}
+                     name="nickname">
+            <Input/>
           </Form.Item>
           <Button type="primary" onClick={this.onSubmit}>
             更新个人信息
