@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './index.less';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Menu, Modal, Tree } from 'antd';
 import { connect } from 'dva';
 import Toolbar from '@/components/Toolbar';
@@ -34,7 +35,7 @@ class index extends React.Component {
     $getAuthorityTree();
   }
 
-  componentWillUnmount() {
+  componentDidUpdate() {
     // window.removeEventListener('resize', this.handleResize);
   }
 
@@ -75,7 +76,7 @@ class index extends React.Component {
             <Toolbar menu={toolbarMenus}
                      selectedRows={selectedRows}>
               <Button htmlType="button"
-                      icon="plus"
+                      icon={<PlusOutlined />}
                       onClick={this.onClickShowCreateModal}
                       type="primary">新建</Button>
             </Toolbar>
@@ -105,7 +106,7 @@ class index extends React.Component {
   onSelectRows = (rows, target) => {
     let selectedRows = [];
     if (target.selected) {
-      let selectNodeId = target.node.props.dataRef.id;
+      let selectNodeId = target.node.dataRef.id;
       selectedRows = [selectNodeId];
     }
     this.setState({
