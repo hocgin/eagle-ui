@@ -2,7 +2,8 @@ import React from 'react';
 import styles from './index.less';
 import Link from 'umi/link';
 import classnames from 'classnames';
-import { Icon, Menu } from 'antd';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { Menu } from 'antd';
 import pathToRegexp from 'path-to-regexp';
 import Utils from '@/utils/utils';
 
@@ -18,7 +19,7 @@ const getIcon = icon => {
     return <img src={icon} alt="icon" className={styles.icon}/>;
   }
   if (typeof icon === 'string') {
-    return <Icon type={icon}/>;
+    return <LegacyIcon type={icon}/>;
   }
   return icon;
 };

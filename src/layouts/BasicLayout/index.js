@@ -1,4 +1,6 @@
-import { Avatar, Badge, Breadcrumb, Dropdown, Icon, Input, Layout, Menu } from 'antd';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Badge, Breadcrumb, Dropdown, Input, Layout, Menu } from 'antd';
 import React from 'react';
 import styles from './index.less';
 import memoizeOne from 'memoize-one';
@@ -73,7 +75,7 @@ class BasicLayout extends React.Component {
     let defaultOpenKeys = menu ? [menu.code] : null;
     let openMenus = this.fastGetDefaultCollapsedSubMenus(pathname, menuData);
 
-    return (<>
+    return <>
       <Layout className={styles.component}>
         {/*左侧*/}
         <Sider className={styles.sider}
@@ -88,7 +90,7 @@ class BasicLayout extends React.Component {
         {/*右侧*/}
         <Layout>
           <Header className={styles.header}>
-            <Icon className={styles.trigger}
+            <LegacyIcon className={styles.trigger}
                   type={collapsed ? 'menu-unfold' : 'menu-fold'}
                   onClick={this.onToggle}
             />
@@ -103,18 +105,18 @@ class BasicLayout extends React.Component {
               </div>
               <div className={styles.btn}>
                 <Badge count={1}>
-                  <Icon type="message" style={{ fontSize: 18 }}/>
+                  <MessageOutlined style={{ fontSize: 18 }} />
                 </Badge>
               </div>
               <div className={classnames(styles.btn, styles.username)}>
                 <Dropdown overlay={userDropdownMenus}>
                   <a onClick={e => e.preventDefault()}>
-                    <Avatar shape="circle" icon="user" src={avatar}/> {nickname}
+                    <Avatar shape="circle" icon={<UserOutlined />} src={avatar}/> {nickname}
                   </a>
                 </Dropdown>
               </div>
               <div className={styles.btn}>
-                <Icon type="setting" style={{ fontSize: 18 }}/>
+                <SettingOutlined style={{ fontSize: 18 }} />
               </div>
             </div>
           </Header>
@@ -123,7 +125,7 @@ class BasicLayout extends React.Component {
             <Breadcrumb className={styles.breadcrumb}>
               {(openMenus || []).map(({ url, title, icon }) => (
                 <Breadcrumb.Item href={url}>
-                  {icon && <Icon type={`${icon}`}/>}
+                  {icon && <LegacyIcon type={`${icon}`}/>}
                   <span>{title}</span>
                 </Breadcrumb.Item>
               ))}
@@ -134,7 +136,7 @@ class BasicLayout extends React.Component {
           <Footer>Hi.</Footer>
         </Layout>
       </Layout>
-    </>);
+    </>;
   }
 
   /**
