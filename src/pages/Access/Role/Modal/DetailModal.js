@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Collapse, Form, message, Modal } from 'antd';
+import { Button, Collapse, message, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import Utils from '@/utils/utils';
@@ -23,26 +23,7 @@ const { Panel } = Collapse;
 }, dispatch => ({
     $getRole: (args = {}) => dispatch({ type: 'role/getOne', ...args }),
 }))
-@Form.create()
 class DetailModal extends PureComponent {
-    static propTypes = {
-        onClose: PropTypes.func,
-        visible: PropTypes.bool,
-        id: PropTypes.number,
-    };
-
-    static defaultProps = {
-        visible: false,
-        detailLoading: true,
-        id: null,
-        onClose: () => {
-        },
-    };
-
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         let { id, $getRole } = this.props;
         $getRole({ payload: { id: id } });
@@ -94,35 +75,18 @@ class DetailModal extends PureComponent {
         onClose();
     };
 
-    /**
-     * 完成
-     */
-    onDone = (e) => {
-        e.preventDefault();
-        const {
-            id,
-            form: { validateFieldsAndScroll },
-            onClose,
-            $updateOneAuthority,
-        } = this.props;
-        validateFieldsAndScroll((err, { enabled, ...values }) => {
-            if (err) {
-                let text = Utils.getErrorMessage(err);
-                message.error(text);
-                return;
-            }
-            $updateOneAuthority({
-                payload: {
-                    ...values,
-                    id: id,
-                    enabled: enabled ? 1 : 0,
-                },
-                callback: () => {
-                    message.success('修改成功');
-                    onClose();
-                },
-            });
-        });
+    static propTypes = {
+        onClose: PropTypes.func,
+        visible: PropTypes.bool,
+        id: PropTypes.number.isRequired,
+    };
+
+    static defaultProps = {
+        visible: false,
+        detailLoading: true,
+        id: null,
+        onClose: () => {
+        },
     };
 }
 

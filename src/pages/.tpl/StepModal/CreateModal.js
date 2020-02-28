@@ -7,16 +7,8 @@ const formLayout = {
     wrapperCol: { span: 13 },
 };
 
-@Form.create()
 class CreateModal extends PureComponent {
-    static propTypes = {
-        visible: PropTypes.bool,
-        onClose: PropTypes.func,
-    };
-
-    static defaultProps = {
-        visible: false,
-    };
+    createForm = React.createRef();
 
     state = {
         // 当前步骤
@@ -44,7 +36,9 @@ class CreateModal extends PureComponent {
                   <Steps.Step title="分配权限"/>
                   <Steps.Step title="基本信息"/>
               </Steps>
-              {this.Step(step)}
+              <Form ref={this.createForm}>
+                  {this.Step(step)}
+              </Form>
           </Modal>
         );
     }
@@ -127,9 +121,20 @@ class CreateModal extends PureComponent {
      * 完成
      */
     onDone = () => {
-        let { form } = this.props;
-        const value = form.getFieldsValue();
-        console.log(value);
+        let form = this.createForm.current;
+        form.validateFields()
+          .then(values => {
+              console.log(values);
+          });
+    };
+
+    static propTypes = {
+        visible: PropTypes.bool,
+        onClose: PropTypes.func,
+    };
+
+    static defaultProps = {
+        visible: false,
     };
 }
 
