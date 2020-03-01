@@ -8,6 +8,8 @@ import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import CreateModal from '@/pages/Access/Role/Modal/CreateModal';
 import DetailModal from '@/pages/Access/Role/Modal/DetailModal';
+import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
+import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
 
 @connect(({ global, role: { paging }, loading, ...rest }) => {
   return {
@@ -27,6 +29,7 @@ class index extends React.Component {
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
+    visibleGrant: false,
   };
 
   componentDidMount() {
@@ -73,29 +76,30 @@ class index extends React.Component {
       width: 200,
       render: (text, record) => {
         const onClickOperateRow = (record, e) => {
-          this.setState(
-            {
+          this.setState({
               operateRow: record.id,
             },
             () => {
               this.onClickMenuRowItem(e, record);
-            },
-          );
+            });
         };
 
         const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-          <Menu.Item key="rowEdit">修改</Menu.Item>
-          <Menu.Item key="rowSetAuthority">赋予权限</Menu.Item>
-          <Menu.Item>查询关联账号</Menu.Item>
+          <Menu.Item key="rowUpdate">修改</Menu.Item>
+          <Menu.Item key="rowGrant">赋予权限</Menu.Item>
+          <Menu.Item><del>查询关联账号</del></Menu.Item>
           <Menu.Divider/>
           <Menu.Item key="rowDelete">删除</Menu.Item>
         </Menu>);
 
         return <>
-          <a onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
+          <a href={null}
+             rel="noopener noreferrer"
+             onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
           <Divider type="vertical"/>
           <Dropdown overlay={MoreMenus}>
-            <a className="ant-dropdown-link">
+            <a href={null}
+               rel="noopener noreferrer">
               更多操作 <DownOutlined/>
             </a>
           </Dropdown>
@@ -104,7 +108,7 @@ class index extends React.Component {
     }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleDetail, operateRow } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
     let { pagingRole, pagingLoading } = this.props;
     const BatchMenus = (
       <Menu onClick={this.onClickMenuBatchItem}>
@@ -139,6 +143,12 @@ class index extends React.Component {
         {visibleDetail && <DetailModal visible={visibleDetail}
                                        id={operateRow}
                                        onClose={this.onClickCloseDetailModal}/>}
+        {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                       id={operateRow}
+                                       onClose={this.onClickCloseUpdateModal}/>}
+        {visibleGrant && <GrantModal visible={visibleGrant}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseGrantModal}/>}
       </div>
     );
   }
@@ -193,6 +203,18 @@ class index extends React.Component {
       case 'rowDetail': {
         this.setState({
           visibleDetail: true,
+        });
+        break;
+      }
+      case 'rowUpdate': {
+        this.setState({
+          visibleUpdate: true,
+        });
+        break;
+      }
+      case 'rowGrant': {
+        this.setState({
+          visibleGrant: true,
         });
         break;
       }
@@ -269,22 +291,20 @@ class index extends React.Component {
     visibleCreate: true,
   });
 
-  onClickShowUpdateModal = () => this.setState({
-    visibleUpdate: true,
-  });
-
   onClickCloseCreateModal = () => {
     this.setState({
       visibleCreate: false,
     }, this.paging);
   };
 
+  onClickCloseGrantModal = () => this.setState({
+    visibleGrant: false,
+  }, this.paging);
+
   onClickCloseUpdateModal = () => {
-    let { $getAuthorityTree } = this.props;
-    $getAuthorityTree();
     this.setState({
       visibleUpdate: false,
-    });
+    }, this.paging);
   };
 
   onClickShowDetailModal = (id) => {

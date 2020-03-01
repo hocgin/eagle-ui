@@ -15,7 +15,6 @@ export default {
             break;
           }
           case '/dashboard': {
-            router.push('/home/dashboard');
             break;
           }
           default: {

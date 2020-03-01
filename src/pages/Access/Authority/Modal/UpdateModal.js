@@ -170,9 +170,8 @@ class UpdateModal extends PureComponent {
     };
 
     static defaultProps = {
-        detailLoading: false,
+        detailLoading: true,
         visible: false,
-        id: null,
         onClose: () => {
         },
     };

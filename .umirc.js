@@ -12,6 +12,7 @@ export default {
     component: '../layouts/BasicLayout',
     routes: [
       { code: 'index', icon: 'home', path: '/home' },
+      { path: '/dashboard', redirect: '/home/dashboard' },
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
       // 用户
       // 【用户】-【权限】

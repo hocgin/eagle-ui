@@ -34,6 +34,15 @@ export default class RoleApi {
     });
   }
 
+  static grantAuthority({ id, ...payload }) {
+    return request(`/api/role/${id}/grant/authority`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
   static delete({ id, ...payload }) {
     let queryString = stringify(payload);
     return request(`/api/role/${id}?${queryString}`, {

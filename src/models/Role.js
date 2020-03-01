@@ -41,6 +41,16 @@ export default {
         callback();
       }
     },
+    * grantAuthority({ payload, callback }, { call, put }) {
+      let result = yield RoleApi.grantAuthority(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
     * update({ payload, callback }, { call, put }) {
       let result = yield RoleApi.update(payload);
       if (!Utils.isSuccess(result)) {

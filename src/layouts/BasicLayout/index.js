@@ -49,8 +49,9 @@ class BasicLayout extends React.Component {
 
   componentDidMount() {
     let { $getCurrentAccountInfo, $getCurrentAccountAuthority } = this.props;
-    $getCurrentAccountInfo();
-    $getCurrentAccountAuthority();
+    $getCurrentAccountInfo({
+      callback: $getCurrentAccountAuthority,
+    });
   }
 
   render() {
@@ -91,8 +92,8 @@ class BasicLayout extends React.Component {
         <Layout>
           <Header className={styles.header}>
             <LegacyIcon className={styles.trigger}
-                  type={collapsed ? 'menu-unfold' : 'menu-fold'}
-                  onClick={this.onToggle}
+                        type={collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={this.onToggle}
             />
             <div style={{ flex: 1 }}>
             </div>
@@ -105,18 +106,18 @@ class BasicLayout extends React.Component {
               </div>
               <div className={styles.btn}>
                 <Badge count={1}>
-                  <MessageOutlined style={{ fontSize: 18 }} />
+                  <MessageOutlined style={{ fontSize: 18 }}/>
                 </Badge>
               </div>
               <div className={classnames(styles.btn, styles.username)}>
                 <Dropdown overlay={userDropdownMenus}>
                   <a onClick={e => e.preventDefault()}>
-                    <Avatar shape="circle" icon={<UserOutlined />} src={avatar}/> {nickname}
+                    <Avatar shape="circle" icon={<UserOutlined/>} src={avatar}/> {nickname}
                   </a>
                 </Dropdown>
               </div>
               <div className={styles.btn}>
-                <SettingOutlined style={{ fontSize: 18 }} />
+                <SettingOutlined style={{ fontSize: 18 }}/>
               </div>
             </div>
           </Header>

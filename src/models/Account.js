@@ -21,7 +21,7 @@ export default {
       LocalStorage.setToken(result.data);
       router.push(Global.INDEX_PAGE);
     },
-    * getCurrentAccountInfo({ payload = {} }, { call, put }) {
+    * getCurrentAccountInfo({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.getCurrentAccount(payload);
       if (!Utils.isSuccess(result)) {
         router.push(Global.LOGIN_PAGE);
@@ -34,6 +34,9 @@ export default {
           ...result.data,
         },
       });
+      if (callback) {
+        callback();
+      }
     },
     * getCurrentAccountAuthority({ payload = {} }, { call, put }) {
       let result = yield AccountApi.getCurrentAccountAuthority(payload);
