@@ -26,6 +26,7 @@ export default {
       {
         code: 'devtools', icon: 'test', path: '/devtools',
         routes: [
+          { code: 'data-dict', icon: 'home', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
           { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
           { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
         ],

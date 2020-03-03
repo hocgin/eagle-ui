@@ -42,7 +42,7 @@ class ComplexTable extends React.PureComponent {
           </Toolbar>
         </div>}
         {/*数据展示*/}
-        <StandardTable key="id" selectedRows={selectedRows}
+        <StandardTable rowKey="id" selectedRows={selectedRows}
                        loading={tableLoading}
                        data={tableData}
                        columns={tableColumns}

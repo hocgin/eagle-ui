@@ -141,10 +141,7 @@ class CreateModal extends PureComponent {
                   },
               });
           })
-          .catch(err => {
-              let text = Utils.getErrorMessage(err);
-              message.error(text);
-          });
+          .catch(err => message.error(Utils.getErrorMessage(err)));
     };
 
     static propTypes = {
