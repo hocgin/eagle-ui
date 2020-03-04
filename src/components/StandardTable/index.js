@@ -67,6 +67,7 @@ class StandardTable extends PureComponent {
             data: { list, pagination },
             loading,
             columns,
+            expandable,
             rowKey,
             expandedRowRender,
         } = this.props;
@@ -74,7 +75,7 @@ class StandardTable extends PureComponent {
         const paginationProps = {
             // showSizeChanger: true,
             showQuickJumper: true,
-            size: "small",
+            size: 'small',
             ...pagination,
         };
 
@@ -108,9 +109,9 @@ class StandardTable extends PureComponent {
                     showIcon
                   />
               </div>
-              <Table
+              <Table rowKey={rowKey || 'key'}
                 loading={loading}
-                rowKey={rowKey || 'key'}
+                expandable={expandable}
                 rowSelection={rowSelection}
                 dataSource={list}
                 columns={columns}

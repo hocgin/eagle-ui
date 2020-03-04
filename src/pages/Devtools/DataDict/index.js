@@ -9,6 +9,8 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import CreateModal from '@/pages/Devtools/DataDict/Modal/CreateModal';
 import DetailModal from '@/pages/Devtools/DataDict/Modal/DetailModal';
 import UpdateModal from '@/pages/Devtools/DataDict/Modal/UpdateModal';
+import DataDictItem from './DataDictItem/index';
+import CreateSubItemModal from '@/pages/Devtools/DataDict/Modal/CreateSubItemModal';
 
 @connect(({ global, dataDict: { paging }, loading, ...rest }) => {
   return {
@@ -28,7 +30,7 @@ class index extends React.Component {
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
-    visibleGrant: false,
+    visibleCreateSubItem: false,
   };
 
   componentDidMount() {
@@ -80,8 +82,8 @@ class index extends React.Component {
         };
 
         const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-          <Menu.Item key="rowUpdate"><del>修改</del></Menu.Item>
-          <Menu.Item key="rowUpdate"><del>编辑字典项</del></Menu.Item>
+          <Menu.Item key="rowUpdate">修改</Menu.Item>
+          <Menu.Item key="rowCreateSubItem">新增字典项</Menu.Item>
           <Menu.Divider/>
           <Menu.Item key="rowDelete">删除</Menu.Item>
         </Menu>);
@@ -101,8 +103,17 @@ class index extends React.Component {
       },
     }];
 
+  expandedRowRender = () => {
+    return {
+      rowExpandable: ({ items }) => items.length > 0,
+      expandedRowRender: (record) => {
+        return (<DataDictItem record={record} paging={this.paging}/>);
+      },
+    };
+  };
+
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleCreateSubItem, operateRow } = this.state;
     let { pagingDataDict, pagingLoading } = this.props;
     const BatchMenus = (
       <Menu onClick={this.onClickMenuBatchItem}>
@@ -112,6 +123,7 @@ class index extends React.Component {
     return (
       <div className={styles.page}>
         <ComplexTable toolbarTitle={'数据字典列表'}
+                      expandable={this.expandedRowRender()}
                       toolbarMenu={BatchMenus}
                       toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
                                                onClick={this.onClickShowCreateModal}>新建</Button>}
@@ -140,6 +152,9 @@ class index extends React.Component {
         {visibleUpdate && <UpdateModal visible={visibleUpdate}
                                        id={operateRow}
                                        onClose={this.onClickCloseUpdateModal}/>}
+        {visibleCreateSubItem && <CreateSubItemModal visible={visibleCreateSubItem}
+                                                     id={operateRow}
+                                                     onClose={this.onClickCloseCreateSubItemModal}/>}
       </div>
     );
   }
@@ -203,9 +218,9 @@ class index extends React.Component {
         });
         break;
       }
-      case 'rowGrant': {
+      case 'rowCreateSubItem': {
         this.setState({
-          visibleGrant: true,
+          visibleCreateSubItem: true,
         });
         break;
       }
@@ -301,8 +316,8 @@ class index extends React.Component {
     }, this.paging);
   };
 
-  onClickCloseGrantModal = () => this.setState({
-    visibleGrant: false,
+  onClickCloseCreateSubItemModal = () => this.setState({
+    visibleCreateSubItem: false,
   }, this.paging);
 
   onClickCloseUpdateModal = () => {

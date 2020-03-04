@@ -54,11 +54,11 @@ class CreateModal extends PureComponent {
                              hasFeedback>
                       <Input style={{ width: '100%' }} placeholder="请输入字典名称"/>
                   </Form.Item>
-                  <Form.Item {...formLayout} label="字典码"
-                             rules={[{ required: true, message: '请输入字典码' }]}
+                  <Form.Item {...formLayout} label="标识"
+                             rules={[{ required: true, message: '请输入标识' }]}
                              name="code"
                              hasFeedback>
-                      <Input style={{ width: '100%' }} placeholder="请输入字典码"/>
+                      <Input style={{ width: '100%' }} placeholder="请输入标识"/>
                   </Form.Item>
                   <Form.Item {...formLayout} label="字典描述"
                              rules={[{ required: false, message: '请输入字典描述' }]}
