@@ -8,21 +8,21 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "classnames": "^2.2.6",
-    "dva": "^2.6.0-beta.6",
-    "antd": "^4.0.0",
     "@ant-design/compatible": "^0.0.1-rc.1",
     "@ant-design/icons": "^4.0.0",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "antd": "^4.0.0",
+    "classnames": "^2.2.6",
+    "dva": "^2.6.0-beta.6",
     "hash.js": "latest",
-    "qs": "latest",
-    "memoize-one": "latest",
     "lodash": "latest",
+    "memoize-one": "latest",
+    "moment": "latest",
     "path-to-regexp": "latest",
     "prop-types": "latest",
-    "query-string": "latest",
-    "moment": "latest"
+    "qs": "latest",
+    "query-string": "^6.11.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
@@ -39,7 +39,10 @@
     "umi-plugin-react": "^1.8.4"
   },
   "lint-staged": {
-    "*.{js,jsx}": ["eslint --fix", "git add"]
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "engines": {
     "node": ">=8.0.0"

@@ -6,7 +6,7 @@ export default {
     },
   },
   reducers: {
-    fillAll(state, { payload = {} }) {
+    fillAll(state, { payload }) {
       return {
         ...state,
         all: payload,
