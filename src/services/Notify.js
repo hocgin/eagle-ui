@@ -1,10 +1,19 @@
 import request from '@/utils/request';
 
-export default class NotifyAPI {
+export default class NotifyApi {
 
-  static getSummary({ payload }) {
+  static getSummary({ payload = {} }) {
     return request(`/api/notification/summary`, {
       method: 'GET',
+    });
+  }
+
+  static getNotifications({ ...payload }) {
+    return request(`/api/notification`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
     });
   }
 

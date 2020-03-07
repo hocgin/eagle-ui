@@ -43,6 +43,14 @@ export default {
               { path: '/account/settings/base', component: '../pages/Account/Settings/BaseView' },
             ],
           },
+          {
+            path: '/account/notifications',
+            component: '../pages/Account/Notifications',
+            // routes: [
+            //   { path: '/account/notifications', redirect: '/account/notifications/all' },
+            //   { path: '/account/notifications/all', component: '../pages/Account/Notifications/All' },
+            // ],
+          },
         ],
       },
     ],

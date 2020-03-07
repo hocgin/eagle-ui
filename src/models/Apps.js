@@ -1,4 +1,4 @@
-import NotifyAPI from '@/services/Notify';
+import NotifyApi from '@/services/Notify';
 import Utils from '@/utils/utils';
 import { message } from 'antd';
 
@@ -9,7 +9,7 @@ export default {
   },
   effects: {
     * getNotifySummary({ payload = {} }, { call, put }) {
-      let result = yield NotifyAPI.getSummary(payload);
+      let result = yield NotifyApi.getSummary(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;

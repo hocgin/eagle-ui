@@ -1,17 +1,22 @@
+import Utils from '@/utils/utils';
+import { message } from 'antd';
+import NotifyApi from '@/services/Notify';
+
 export default {
-  namespace: 'tpl',
+  namespace: 'notify',
   state: {},
   effects: {
-    * findAll({ payload = {} }, { call, put }) {
+    * getNotifications({ payload = {}, callback }, { call, put }) {
+      let result = yield NotifyApi.getNotifications(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback(result);
+      }
     },
   },
-  reducers: {
-    fillAll(state, { payload }) {
-      return {
-        ...state,
-        all: payload,
-      };
-    },
-  },
+  reducers: {},
   subscriptions: {},
 };

@@ -130,10 +130,10 @@ class BasicLayout extends React.Component {
                                 name="privateLetter"
                                 emptyText="暂无私信"
                                 emptyImage={EmptyNotify}/>
-                <NoticeIcon.Tab title="订阅"
+                <NoticeIcon.Tab title="通知"
                                 list={(notifySummary.subscription || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
                                 name="subscription"
-                                emptyText="暂无订阅"
+                                emptyText="暂无通知"
                                 emptyImage={EmptyNotify}/>
                 <NoticeIcon.Tab title="公告"
                                 list={(notifySummary.announcement || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
