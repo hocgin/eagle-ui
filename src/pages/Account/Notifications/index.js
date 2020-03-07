@@ -4,11 +4,16 @@ import { Tabs } from 'antd';
 import { connect } from 'dva';
 import NotifyList from './components/NotifyList';
 import UiUtils from '@/utils/UiUtils';
+import router from 'umi/router';
 
 let { TabPane } = Tabs;
 
-@connect(({ notify: { privateLetter }, loading, ...rest }) => {
+@connect(({
+            notify: { privateLetter },
+            notifications: { query }, loading, ...rest
+          }) => {
   return {
+    notifyType: query.type || 'privateLetter',
     getNotificationsLoading: loading.effects['notify/getNotifications'],
   };
 }, dispatch => ({
@@ -39,25 +44,29 @@ class index extends React.Component {
       subscription, hasMoreSubscriptionLoading, subscriptionLoading,
       announcement, hasMoreAnnouncementLoading, announcementLoading,
     } = this.state;
-    console.log('Not', announcement, privateLetter, subscription);
+    let { notifyType } = this.props;
+
+    console.log('this.props', this.props);
+
     return (<div className={styles.page}>
-      <Tabs size={'large'}
+      <Tabs size="large"
+            onChange={this.onChange}
             tabBarStyle={{ paddingLeft: 20 }}
             className={styles.tabsBody}
-            defaultActiveKey="1">
-        <TabPane tab="私信" key="1">
+            defaultActiveKey={notifyType}>
+        <TabPane tab="私信" key="privateLetter">
           <NotifyList dataSource={privateLetter}
                       loading={privateLetterLoading}
                       hasMore={hasMorePrivateLetterLoading}
                       onLoadMore={this.onLoadMorePrivateLetter}/>
         </TabPane>
-        <TabPane tab="通知" key="2">
+        <TabPane tab="通知" key="subscription">
           <NotifyList dataSource={subscription}
                       loading={subscriptionLoading}
                       hasMore={hasMoreSubscriptionLoading}
                       onLoadMore={this.onLoadMoreSubscription}/>
         </TabPane>
-        <TabPane tab="公告" key="3">
+        <TabPane tab="公告" key="announcement">
           <NotifyList dataSource={announcement}
                       loading={announcementLoading}
                       hasMore={hasMoreAnnouncementLoading}
@@ -66,6 +75,16 @@ class index extends React.Component {
       </Tabs>
     </div>);
   }
+
+  onChange = (key) => {
+    let { location: { pathname } } = this.props;
+    router.push({
+      pathname: pathname,
+      query: {
+        type: key,
+      },
+    });
+  };
 
   onLoadMorePrivateLetter = (page) => {
     let { $getNotifications } = this.props;
@@ -122,7 +141,6 @@ class index extends React.Component {
       callback: (paging) => {
         let data = UiUtils.getPagingList(paging.data);
         this.setState(({ announcement }) => {
-          console.log('announcement', announcement);
           return {
             hasMoreAnnouncementLoading: data.length !== 0,
             announcement: [...announcement, ...data],

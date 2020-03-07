@@ -1,10 +1,12 @@
 import React from 'react';
 import { Avatar, List } from 'antd';
+import Link from 'umi/link';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
 
 export default function NoticeList({
                                      data = [],
+                                     name,
                                      onClick,
                                      onClear,
                                      title,
@@ -51,9 +53,15 @@ export default function NoticeList({
           </List.Item>);
         })}
       </List>
-      {showClear ? (<div className={styles.clear} onClick={onClear}>
-        {locale.clear} {title}
-      </div>) : null}
+      <div className={styles.clear} onClick={onClear}>
+        <Link to={{
+          pathname: `/account/notifications`,
+          query: { type: name },
+        }}>查看更多</Link>
+      </div>
+      {/*{showClear ? (<div className={styles.clear} onClick={onClear}>*/}
+      {/*  {locale.clear} {title}*/}
+      {/*</div>) : null}*/}
     </div>
   );
 }
