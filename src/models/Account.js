@@ -1,68 +1,68 @@
 import AccountApi from '@/services/account';
 import Utils from '@/utils/utils';
 import { message } from 'antd';
-import LocalStorage from '@/utils/localstorage';
-import { Global } from '@/utils/constant/global';
-import { router } from 'umi';
 
 export default {
   namespace: 'account',
   state: {
-    currentAccount: {},
-    currentAccountAuthority: [],
+    detail: null,
+    paging: null,
   },
   effects: {
-    * login({ payload }, { call, put }) {
-      let result = yield AccountApi.login(payload);
+    * paging({ payload = {} }, { call, put }) {
+      let result = yield AccountApi.paging(payload);
       if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      LocalStorage.setToken(result.data);
-      router.push(Global.INDEX_PAGE);
-    },
-    * getCurrentAccountInfo({ payload = {}, callback }, { call, put }) {
-      let result = yield AccountApi.getCurrentAccount(payload);
-      if (!Utils.isSuccess(result)) {
-        router.push(Global.LOGIN_PAGE);
         message.error(result.message);
         return;
       }
       yield put({
-        type: 'fillCurrentAccount',
-        payload: {
-          ...result.data,
-        },
+        type: 'fillPaging',
+        payload: result.data,
       });
+    },
+    * grantRole({ payload = {}, callback }, { call, put }) {
+      let result = yield AccountApi.grantRole(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
       if (callback) {
         callback();
       }
     },
-    * getCurrentAccountAuthority({ payload = {} }, { call, put }) {
-      let result = yield AccountApi.getCurrentAccountAuthority(payload);
+    * updateStatus({ payload = {}, callback }, { call, put }) {
+      let result = yield AccountApi.updateStatus(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
+    * getOne({ payload = {} }, { call, put }) {
+      let result = yield AccountApi.getOne(payload);
       if (!Utils.isSuccess(result)) {
         message.error(result.message);
         return;
       }
       yield put({
-        type: 'fillCurrentAccountAuthority',
-        payload: [
-          ...result.data,
-        ],
+        type: 'fillDetail',
+        payload: result.data,
       });
     },
   },
   reducers: {
-    fillCurrentAccount(state, { payload }) {
+    fillPaging(state, { payload }) {
       return {
         ...state,
-        currentAccount: payload,
+        paging: payload,
       };
     },
-    fillCurrentAccountAuthority(state, { payload }) {
+    fillDetail(state, { payload }) {
       return {
         ...state,
-        currentAccountAuthority: payload,
+        detail: payload,
       };
     },
   },

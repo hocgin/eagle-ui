@@ -14,15 +14,21 @@ export default {
       { code: 'index', icon: 'home', path: '/home' },
       { path: '/dashboard', redirect: '/home/dashboard' },
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
-      // 用户
-      // 【用户】-【权限】
+      // 【用户中心】
+      {
+        code: 'user', icon: 'user', path: '/user',
+        routes: [
+          { code: 'account', path: '/user/account', component: '../pages/User/Account' },
+        ],
+      },
+      // 【访问控制】
       {
         code: 'access', icon: 'test', path: '/access',
         routes: [
           { code: 'authority', path: '/access/authority', component: '../pages/Access/Authority' },
           { code: 'role', path: '/access/role', component: '../pages/Access/Role' }],
       },
-      // 测试
+      // 【开发工具】
       {
         code: 'devtools', icon: 'test', path: '/devtools',
         routes: [
@@ -31,21 +37,21 @@ export default {
           { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
         ],
       },
-      //【账号】
+      //【个人设置】
       {
-        path: '/account',
+        path: '/profile',
         routes: [
           {
-            path: '/account/settings',
-            component: '../pages/Account/Settings/_layout',
+            path: '/profile/settings',
+            component: '../pages/Profile/Settings/_layout',
             routes: [
-              { path: '/account/settings', redirect: '/account/settings/base' },
-              { path: '/account/settings/base', component: '../pages/Account/Settings/BaseView' },
+              { path: '/profile/settings', redirect: '/profile/settings/base' },
+              { path: '/profile/settings/base', component: '../pages/Profile/Settings/BaseView' },
             ],
           },
           {
-            path: '/account/notifications',
-            component: '../pages/Account/Notifications',
+            path: '/profile/notifications',
+            component: '../pages/Profile/Notifications',
             // routes: [
             //   { path: '/account/notifications', redirect: '/account/notifications/all' },
             //   { path: '/account/notifications/all', component: '../pages/Account/Notifications/All' },

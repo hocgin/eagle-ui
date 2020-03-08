@@ -36,7 +36,7 @@ const formatMessage = ({ notifyId, actor: { avatar }, content, title, createdAt 
   };
 };
 
-@connect(({ apps: { notifySummary }, account: { currentAccount, currentAccountAuthority = [] }, loading, ...rest }) => {
+@connect(({ apps: { notifySummary, currentAccount, currentAccountAuthority = [] }, loading, ...rest }) => {
   let { nickname, avatar } = currentAccount;
   return {
     nickname: nickname,
@@ -45,8 +45,8 @@ const formatMessage = ({ notifyId, actor: { avatar }, content, title, createdAt 
     menus: currentAccountAuthority,
   };
 }, dispatch => ({
-  $getCurrentAccountInfo: (args = {}) => dispatch({ type: 'account/getCurrentAccountInfo', ...args }),
-  $getCurrentAccountAuthority: (args = {}) => dispatch({ type: 'account/getCurrentAccountAuthority', ...args }),
+  $getCurrentAccountInfo: (args = {}) => dispatch({ type: 'apps/getCurrentAccountInfo', ...args }),
+  $getCurrentAccountAuthority: (args = {}) => dispatch({ type: 'apps/getCurrentAccountAuthority', ...args }),
   $getNotifySummary: (args = {}) => dispatch({ type: 'apps/getNotifySummary', ...args }),
 }))
 class BasicLayout extends React.Component {

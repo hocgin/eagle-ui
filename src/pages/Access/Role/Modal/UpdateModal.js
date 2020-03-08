@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Form, Input, message, Modal, Select, Switch } from 'antd';
+import { Button, Form, message, Modal, Select, Switch } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import Utils from '@/utils/utils';
@@ -10,26 +10,26 @@ const formLayout = {
   wrapperCol: { span: 13 },
 };
 
-@connect(({ global, authority: { authorityTree }, role: { detail }, dataDict: { allPlatform, allEnabled }, loading, ...rest }) => {
-  let detailLoading = loading.effects['role/getOne'];
-  let roleDetail = detail;
-  if (detail) {
-    roleDetail = {
+@connect(({ global, account: { detail }, loading, ...rest }) => {
+  let detailLoading = loading.effects['account/getOne'];
+  let nowDetail = detail;
+  if (nowDetail) {
+    nowDetail = {
       ...detail,
       enabled: detail.enabled === 1,
+      locked: detail.locked === 1,
+      expired: detail.expired === 1,
     };
   }
 
   return {
-    roleDetail: roleDetail,
-    allPlatform: allPlatform,
+    detail: nowDetail,
     detailLoading,
-    confirmLoading: loading.effects['role/insert'],
+    confirmLoading: loading.effects['account/updateStatus'],
   };
 }, dispatch => ({
-  $getRole: (args = {}) => dispatch({ type: 'role/getOne', ...args }),
-  $updateRole: (args = {}) => dispatch({ type: 'role/update', ...args }),
-  $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
+  $getDetail: (args = {}) => dispatch({ type: 'account/getOne', ...args }),
+  $updateStatus: (args = {}) => dispatch({ type: 'account/updateStatus', ...args }),
 }))
 class UpdateModal extends PureComponent {
   updateForm = React.createRef();
@@ -42,60 +42,42 @@ class UpdateModal extends PureComponent {
   };
 
   componentDidMount() {
-    let { id, $getRole, $getAllPlatform } = this.props;
-    $getRole({ payload: { id } });
-    $getAllPlatform();
+    let { id, $getDetail } = this.props;
+    $getDetail({ payload: { id } });
   }
 
   render() {
-    const { visible, onClose, roleDetail, detailLoading, allPlatform } = this.props;
+    const { visible, onClose, detail, detailLoading } = this.props;
     if (detailLoading) {
       return <></>;
     }
 
-    return (
-      <Modal width={640}
-             bodyStyle={{ padding: '32px 40px 48px' }}
-             title="修改角色"
-             visible={visible}
-             onCancel={onClose}
-             footer={this.renderFooter()}
-             maskClosable>
-        <Form ref={this.updateForm}
-              initialValues={{ ...roleDetail }}>
-          <Form.Item {...formLayout} label="平台"
-                     rules={[{ required: true, message: '请选择平台' }]}
-                     name="platform">
-            <Select style={{ width: '100%' }}>
-              {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
-            </Select>
-          </Form.Item>
-          <Form.Item {...formLayout} label="角色名称"
-                     rules={[{ required: true, message: '请输入角色名称' }]}
-                     name="title">
-            <Input style={{ width: '100%' }} placeholder="请输入角色名称"/>
-          </Form.Item>
-          <Form.Item {...formLayout} label="角色码"
-                     rules={[{ required: true, message: '请输入角色码' }]}
-                     name="roleCode"
-                     hasFeedback>
-            <Input style={{ width: '100%' }}/>
-          </Form.Item>
-          <Form.Item {...formLayout} label="角色描述"
-                     rules={[{ required: false, message: '请输入角色描述' }]}
-                     name="remark"
-                     hasFeedback>
-            <Input style={{ width: '100%' }}/>
-          </Form.Item>
-          <Form.Item {...formLayout} label="启用状态"
-                     name="enabled"
-                     valuePropName={'checked'}
-                     hasFeedback>
-            <Switch checkedChildren="开" unCheckedChildren="关"/>
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
+    return (<Modal width={640}
+                   bodyStyle={{ padding: '32px 40px 48px' }}
+                   title="修改账户"
+                   visible={visible}
+                   onCancel={onClose}
+                   footer={this.renderFooter()}
+                   maskClosable>
+      <Form ref={this.updateForm}
+            initialValues={{ ...detail }}>
+        <Form.Item {...formLayout} label="过期状态"
+                   name="expired"
+                   valuePropName={'checked'}>
+          <Switch checkedChildren="开" unCheckedChildren="关"/>
+        </Form.Item>
+        <Form.Item {...formLayout} label="锁定状态"
+                   name="locked"
+                   valuePropName={'checked'}>
+          <Switch checkedChildren="开" unCheckedChildren="关"/>
+        </Form.Item>
+        <Form.Item {...formLayout} label="启用状态"
+                   name="enabled"
+                   valuePropName={'checked'}>
+          <Switch checkedChildren="开" unCheckedChildren="关"/>
+        </Form.Item>
+      </Form>
+    </Modal>);
   }
 
   renderFooter = () => {
@@ -113,16 +95,18 @@ class UpdateModal extends PureComponent {
     const {
       id,
       onClose,
-      $updateRole,
+      $updateStatus,
     } = this.props;
     let form = this.updateForm.current;
     form.validateFields()
-      .then(({ enabled, ...values }) => {
-        $updateRole({
+      .then(({ enabled, locked, expired, ...values }) => {
+        $updateStatus({
           payload: {
             ...values,
             id: id,
             enabled: enabled ? 1 : 0,
+            locked: locked ? 1 : 0,
+            expired: expired ? 1 : 0,
           },
           callback: () => {
             message.success('修改成功');

@@ -2,6 +2,14 @@ import request from '@/utils/request';
 import { stringify } from 'qs';
 
 export default class RoleApi {
+  static getAll(payload) {
+    return request(`/api/role/all`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
 
   static paging(payload) {
     return request(`/api/role/_search`, {

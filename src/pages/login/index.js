@@ -7,7 +7,7 @@ import { connect } from 'dva';
 @connect(({ global, loading }) => {
   return {};
 }, dispatch => ({
-  $login: (args = {}) => dispatch({ type: 'account/login', ...args }),
+  $login: (args = {}) => dispatch({ type: 'apps/login', ...args }),
 }))
 class index extends React.Component {
   loginForm = React.createRef();
