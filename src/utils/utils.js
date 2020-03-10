@@ -6,7 +6,7 @@ export default class Utils {
    * @returns {boolean}
    */
   static isSuccess(result) {
-    return result && result.code === 200;
+    return result && result.success;
   }
 
   /**

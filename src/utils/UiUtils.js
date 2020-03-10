@@ -1,6 +1,6 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
-import { TreeSelect } from 'antd';
+import { Badge, TreeSelect } from 'antd';
 
 export default class UiUtils {
 
@@ -47,4 +47,8 @@ export default class UiUtils {
       return <TreeSelect.TreeNode value={item.id} key={item.authorityCode} title={item.title} dataRef={item}/>;
     });
   };
+
+  static renderEnabled(enabled, enabledName) {
+    return <Badge status={['error', 'success'][enabled]} text={enabledName}/>;
+  }
 };

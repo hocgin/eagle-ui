@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './index.less';
+import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Upload } from 'antd';
 
 class index extends React.Component {
@@ -8,7 +9,7 @@ class index extends React.Component {
     // window.addEventListener('resize', this.handleResize);
   }
 
-  componentWillUnmount() {
+  componentDidUpdate() {
     // window.removeEventListener('resize', this.handleResize);
   }
 
@@ -24,7 +25,7 @@ class index extends React.Component {
         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
         onChange={this.handleChange}
       >
-        <Avatar size={100} icon="user" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"/>
+        <Avatar size={100} icon={<UserOutlined />} src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"/>
       </Upload>
     );
   }

@@ -28,21 +28,8 @@ const formLayout = {
     $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
     $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
 }))
-@Form.create()
 class UpdateModal extends PureComponent {
-    static propTypes = {
-        onClose: PropTypes.func,
-        visible: PropTypes.bool,
-        id: PropTypes.number,
-    };
-
-    static defaultProps = {
-        detailLoading: false,
-        visible: false,
-        id: null,
-        onClose: () => {
-        },
-    };
+    updateForm = React.createRef();
 
     state = {
         // 待提交的值
@@ -67,7 +54,6 @@ class UpdateModal extends PureComponent {
         if (detailLoading) {
             return null;
         }
-        let { title, type, authorityCode, platform, parentId, enabled } = authorityDetail;
         return (<Modal width={640}
                        bodyStyle={{ padding: '32px 40px 48px' }}
                        title="修改权限"
@@ -75,52 +61,45 @@ class UpdateModal extends PureComponent {
                        maskClosable
                        onCancel={onClose}
                        footer={this.renderFooter()}>
-            <Form onSubmit={this.onSubmit}>
-                <Form.Item {...formLayout} label="父级" hasFeedback>
-                    {form.getFieldDecorator('parentId', {
-                        initialValue: parentId,
-                        rules: [{ required: false, message: '请选择父级' }],
-                    })(<TreeSelect onSelect={this.onSelectRows}
-                                   allowClear
-                                   placeholder="默认为顶级">
+            <Form ref={this.updateForm}
+                  initialValues={{ ...authorityDetail }}>
+                <Form.Item {...formLayout} label="父级" hasFeedback
+                      rules={[{ required: false, message: '请选择父级' }]}
+                      name="parentId">
+                    <TreeSelect onSelect={this.onSelectRows}
+                                allowClear
+                                placeholder="默认为顶级">
                         {this.renderTreeNodes(data)}
-                    </TreeSelect>)}
+                    </TreeSelect>
                 </Form.Item>
-                <Form.Item {...formLayout} label="平台" hasFeedback>
-                    {form.getFieldDecorator('platform', {
-                        initialValue: platform,
-                        rules: [{ required: true, message: '请选择平台' }],
-                    })(<Select>
+                <Form.Item {...formLayout} label="平台" hasFeedback
+                      rules={[{ required: true, message: '请选择平台' }]}
+                      name="platform">
+                    <Select placeholder="请选择平台">
                         {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
-                    </Select>)}
+                    </Select>
                 </Form.Item>
-                <Form.Item {...formLayout} label="类型" hasFeedback>
-                    {form.getFieldDecorator('type', {
-                        initialValue: type,
-                        rules: [{ required: true, message: '请选择类型' }],
-                    })(<Select>
-                        {(allAuthorityType).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
-                    </Select>)}
+                <Form.Item {...formLayout} label="类型" hasFeedback
+                      rules={[{ required: true, message: '请选择类型' }]}
+                      name="type">
+                    <Select>
+                        {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
+                    </Select>
                 </Form.Item>
-                <Form.Item {...formLayout} label="权限名称" hasFeedback>
-                    {form.getFieldDecorator('title', {
-                        initialValue: title,
-                        rules: [{ required: true, message: '请输入权限名称' }],
-                    })(<Input style={{ width: '100%' }}
-                              placeholder="请输入权限名称"/>)}
+                <Form.Item {...formLayout} label="权限名称" hasFeedback
+                      rules={[{ required: true, message: '请输入权限名称' }]}
+                      name="title">
+                    <Input style={{ width: '100%' }} placeholder="请输入权限名称"/>
                 </Form.Item>
-                <Form.Item {...formLayout} label="权限码" hasFeedback>
-                    {form.getFieldDecorator('authorityCode', {
-                        initialValue: authorityCode,
-                        rules: [{ required: true, message: '请输入权限码' }],
-                    })(<Input style={{ width: '100%' }}
-                              placeholder="请输入权限码"/>)}
+                <Form.Item {...formLayout} label="权限码" hasFeedback
+                      rules={[{ required: true, message: '请输入权限码' }]}
+                      name="authorityCode">
+                    <Input style={{ width: '100%' }} placeholder="请输入权限码"/>
                 </Form.Item>
-                <Form.Item {...formLayout} label="启用状态">
-                    {form.getFieldDecorator('enabled', {
-                        initialValue: enabled,
-                        valuePropName: 'checked',
-                    })(<Switch checkedChildren="开" unCheckedChildren="关"/>)}
+                <Form.Item {...formLayout} label="启用状态" hasFeedback
+                      valuePropName="checked"
+                      name="enabled">
+                    <Switch checkedChildren="开" unCheckedChildren="关"/>
                 </Form.Item>
             </Form>
         </Modal>);
@@ -144,10 +123,6 @@ class UpdateModal extends PureComponent {
                     onClick={this.onDone}>完成</Button>]);
     };
 
-    onSubmit = () => {
-
-    };
-
     /**
      * 取消
      */
@@ -163,28 +138,42 @@ class UpdateModal extends PureComponent {
         e.preventDefault();
         const {
             id,
-            form: { validateFieldsAndScroll },
             onClose,
             $updateOneAuthority,
         } = this.props;
-        validateFieldsAndScroll((err, { enabled, ...values }) => {
-            if (err) {
-                let text = Utils.getErrorMessage(err);
-                message.error(text);
-                return;
-            }
-            $updateOneAuthority({
-                payload: {
-                    ...values,
-                    id: id,
-                    enabled: enabled ? 1 : 0,
-                },
-                callback: () => {
-                    message.success('修改成功');
-                    onClose();
-                },
-            });
-        });
+        let form = this.updateForm.current;
+        form.validateFields()
+          .then(({ enabled, ...values }) => {
+              $updateOneAuthority({
+                  payload: {
+                      ...values,
+                      id: id,
+                      enabled: enabled ? 1 : 0,
+                  },
+                  callback: () => {
+                      message.success('修改成功');
+                      form.resetFields();
+                      onClose();
+                  },
+              });
+          })
+          .catch(err => {
+              let text = Utils.getErrorMessage(err);
+              message.error(text);
+          });
+    };
+
+    static propTypes = {
+        onClose: PropTypes.func,
+        visible: PropTypes.bool,
+        id: PropTypes.number.isRequired,
+    };
+
+    static defaultProps = {
+        detailLoading: true,
+        visible: false,
+        onClose: () => {
+        },
     };
 }
 

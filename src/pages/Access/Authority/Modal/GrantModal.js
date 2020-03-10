@@ -19,38 +19,16 @@ const formLayout = {
     $pagingRole: (args = {}) => dispatch({ type: 'role/paging', ...args }),
     $grantRole: (args = {}) => dispatch({ type: 'authority/grantRole', ...args }),
 }))
-@Form.create()
 class GrantModal extends PureComponent {
-    static propTypes = {
-        onClose: PropTypes.func,
-        visible: PropTypes.bool,
-        id: PropTypes.number,
-    };
-
-    static defaultProps = {
-        visible: false,
-        id: null,
-        onClose: () => {
-        },
-    };
-
-    state = {
-        // 待提交的值
-        formValue: {},
-    };
-
-    constructor(props) {
-        super(props);
-        console.log('Update', this.props);
-    }
+    grantForm = React.createRef();
 
     componentDidMount() {
-        let { id, $pagingRole } = this.props;
+        let { $pagingRole } = this.props;
         $pagingRole({});
     }
 
     render() {
-        const { form, visible, onClose, pagingRole, ...rest } = this.props;
+        const { visible, onClose, pagingRole } = this.props;
         let roles = UiUtils.getPagingList(pagingRole);
         return (<Modal width={640}
                        bodyStyle={{ padding: '32px 40px 48px' }}
@@ -59,19 +37,19 @@ class GrantModal extends PureComponent {
                        maskClosable
                        onCancel={onClose}
                        footer={this.renderFooter()}>
-            <Form>
-                <Form.Item {...formLayout} label="选择角色" hasFeedback>
-                    {form.getFieldDecorator('roles', {
-                        rules: [{ required: false, message: '请选择角色' }],
-                    })(<Select showSearch
-                               mode="multiple"
-                               onSelect={this.onSelectRows}
-                               onSearch={this.onSearchKeyword}
-                               allowClear
-                               placeholder="请选择角色">
+            <Form ref={this.grantForm}>
+                <Form.Item {...formLayout} label="选择角色" hasFeedback
+                           rules={[{ required: false, message: '请选择角色' }]}
+                           name="roles">
+                    <Select showSearch
+                            mode="multiple"
+                            onSelect={this.onSelectRows}
+                            onSearch={this.onSearchKeyword}
+                            allowClear
+                            placeholder="请选择角色">
                         {(roles || []).map(({ id, title }) =>
                           <Select.Option key={id} value={id}>{title}</Select.Option>)}
-                    </Select>)}
+                    </Select>
                 </Form.Item>
             </Form>
         </Modal>);
@@ -106,28 +84,43 @@ class GrantModal extends PureComponent {
         e.preventDefault();
         const {
             id,
-            form: { validateFieldsAndScroll },
             onClose,
             $grantRole,
         } = this.props;
-        validateFieldsAndScroll((err, { enabled, ...values }) => {
-            if (err) {
-                let text = Utils.getErrorMessage(err);
-                message.error(text);
-                return;
-            }
-            $grantRole({
-                payload: {
-                    id,
-                    ...values,
-                },
-                callback: () => {
-                    message.success('授权完成');
-                    onClose();
-                },
-            });
-        });
+        let form = this.grantForm.current;
+        form.validateFields()
+          .then(({ ...values }) => {
+              $grantRole({
+                  payload: {
+                      id,
+                      ...values,
+                  },
+                  callback: () => {
+                      message.success('授权完成');
+                      form.resetFields();
+                      onClose();
+                  },
+              });
+          })
+          .catch(err => {
+              let text = Utils.getErrorMessage(err);
+              message.error(text);
+          });
     };
+
+    static propTypes = {
+        onClose: PropTypes.func,
+        visible: PropTypes.bool,
+        id: PropTypes.number.isRequired,
+    };
+
+    static defaultProps = {
+        visible: false,
+        id: null,
+        onClose: () => {
+        },
+    };
+
 }
 
 export default GrantModal;

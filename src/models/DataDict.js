@@ -6,11 +6,65 @@ import DataDictApi from '@/services/DataDict';
 export default {
   namespace: 'dataDict',
   state: {
+    paging: null,
+    detail: null,
     allPlatform: [],
     allAuthorityType: [],
     allEnabled: [],
   },
   effects: {
+    * paging({ payload }, { call, put }) {
+      let result = yield DataDictApi.paging(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      yield put({
+        type: 'fillPaging',
+        payload: result.data,
+      });
+    },
+    * insert({ payload, callback }, { call, put }) {
+      let result = yield DataDictApi.insert(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
+    * getOne({ payload }, { call, put }) {
+      let result = yield DataDictApi.getOne(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      yield put({
+        type: 'fillDetail',
+        payload: result.data,
+      });
+    },
+    * update({ payload, callback }, { call, put }) {
+      let result = yield DataDictApi.update(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
+    * deletes({ payload, callback }, { call, put }) {
+      let result = yield DataDictApi.deletes(payload);
+      if (!Utils.isSuccess(result)) {
+        message.error(result.message);
+        return;
+      }
+      if (callback) {
+        callback();
+      }
+    },
     * getAllPlatform({ payload }, { call, put }) {
       let result = yield DataDictApi.getAllDataDict({ code: 'platform' });
       if (!Utils.isSuccess(result)) {
@@ -46,6 +100,12 @@ export default {
     },
   },
   reducers: {
+    fillPaging(state, { payload }) {
+      return {
+        ...state,
+        paging: payload,
+      };
+    },
     fillAllPlatform(state, { payload }) {
       return {
         ...state,
@@ -62,6 +122,12 @@ export default {
       return {
         ...state,
         allEnabled: payload,
+      };
+    },
+    fillDetail(state, { payload }) {
+      return {
+        ...state,
+        detail: payload,
       };
     },
   },

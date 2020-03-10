@@ -1,8 +1,8 @@
 import request from '@/utils/request';
 
-export default class API {
+export default class NotifyApi {
 
-  static worked(payload) {
+  static getSummary(payload) {
     return request(`/worked`, {
       method: 'GET',
       body: {

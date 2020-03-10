@@ -8,7 +8,7 @@ class index extends React.Component {
     // window.addEventListener('resize', this.handleResize);
   }
 
-  componentWillUnmount() {
+  componentDidUpdate() {
     // window.removeEventListener('resize', this.handleResize);
   }
 

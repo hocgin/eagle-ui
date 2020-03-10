@@ -1,4 +1,6 @@
-import { Avatar, Badge, Breadcrumb, Dropdown, Icon, Input, Layout, Menu } from 'antd';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Breadcrumb, Dropdown, Input, Layout, Menu } from 'antd';
 import React from 'react';
 import styles from './index.less';
 import memoizeOne from 'memoize-one';
@@ -10,6 +12,9 @@ import MenuUtils from './menus';
 import SiderMenus from './components/SiderMenus';
 import { getDefaultCollapsedSubMenus } from '@/layouts/BasicLayout/components/SiderMenus';
 import Link from 'umi/link';
+import NoticeIcon from '@/components/NoticeIcon';
+import { DateFormatter } from '@/utils/formatter/DateFormatter';
+import EmptyNotify from '@/assets/EmptyNotify.svg';
 
 const { Search } = Input;
 const { Header, Sider, Content, Footer } = Layout;
@@ -21,16 +26,28 @@ function formatter(tree, data) {
 
 const memoizeOneFormatter = memoizeOne(formatter, isEqual);
 
-@connect(({ global, account: { currentAccount, currentAccountAuthority = [] }, loading, ...rest }) => {
+const formatMessage = ({ notifyId, actor: { avatar }, content, title, createdAt }) => {
+  return {
+    id: notifyId,
+    avatar: avatar,
+    description: content,
+    title: title,
+    datetime: DateFormatter.timestampAs(createdAt),
+  };
+};
+
+@connect(({ apps: { notifySummary, currentAccount, currentAccountAuthority = [] }, loading, ...rest }) => {
   let { nickname, avatar } = currentAccount;
   return {
     nickname: nickname,
     avatar: avatar,
+    notifySummary: notifySummary,
     menus: currentAccountAuthority,
   };
 }, dispatch => ({
-  $getCurrentAccountInfo: (args = {}) => dispatch({ type: 'account/getCurrentAccountInfo', ...args }),
-  $getCurrentAccountAuthority: (args = {}) => dispatch({ type: 'account/getCurrentAccountAuthority', ...args }),
+  $getCurrentAccountInfo: (args = {}) => dispatch({ type: 'apps/getCurrentAccountInfo', ...args }),
+  $getCurrentAccountAuthority: (args = {}) => dispatch({ type: 'apps/getCurrentAccountAuthority', ...args }),
+  $getNotifySummary: (args = {}) => dispatch({ type: 'apps/getNotifySummary', ...args }),
 }))
 class BasicLayout extends React.Component {
 
@@ -46,15 +63,20 @@ class BasicLayout extends React.Component {
   }
 
   componentDidMount() {
-    let { $getCurrentAccountInfo, $getCurrentAccountAuthority } = this.props;
-    $getCurrentAccountInfo();
-    $getCurrentAccountAuthority();
+    let { $getCurrentAccountInfo, $getCurrentAccountAuthority, $getNotifySummary } = this.props;
+    $getCurrentAccountInfo({
+      callback: () => {
+        $getCurrentAccountAuthority();
+        $getNotifySummary();
+      },
+    });
   }
 
   render() {
     let { collapsed } = this.state;
     let {
       children, nickname, avatar,
+      notifySummary,
       menus, location: { pathname },
     } = this.props;
     if (menus.length <= 0) {
@@ -73,7 +95,7 @@ class BasicLayout extends React.Component {
     let defaultOpenKeys = menu ? [menu.code] : null;
     let openMenus = this.fastGetDefaultCollapsedSubMenus(pathname, menuData);
 
-    return (<>
+    return <>
       <Layout className={styles.component}>
         {/*左侧*/}
         <Sider className={styles.sider}
@@ -88,10 +110,9 @@ class BasicLayout extends React.Component {
         {/*右侧*/}
         <Layout>
           <Header className={styles.header}>
-            <Icon className={styles.trigger}
-                  type={collapsed ? 'menu-unfold' : 'menu-fold'}
-                  onClick={this.onToggle}
-            />
+            <LegacyIcon className={styles.trigger}
+                        type={collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={this.onToggle}/>
             <div style={{ flex: 1 }}>
             </div>
             <div className={styles.toolbar}>
@@ -101,20 +122,34 @@ class BasicLayout extends React.Component {
                   onSearch={value => console.log(value)}
                   style={{ width: 230, marginRight: 40 }}/>
               </div>
-              <div className={styles.btn}>
-                <Badge count={1}>
-                  <Icon type="message" style={{ fontSize: 18 }}/>
-                </Badge>
-              </div>
+              <NoticeIcon className={classnames(styles.btn, styles.notice)}
+                          popupAlign={{ offset: [-160, -16] }}
+                          count={notifySummary.unready}>
+                <NoticeIcon.Tab title="私信"
+                                list={(notifySummary.privateLetter || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
+                                name="privateLetter"
+                                emptyText="暂无私信"
+                                emptyImage={EmptyNotify}/>
+                <NoticeIcon.Tab title="通知"
+                                list={(notifySummary.subscription || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
+                                name="subscription"
+                                emptyText="暂无通知"
+                                emptyImage={EmptyNotify}/>
+                <NoticeIcon.Tab title="公告"
+                                list={(notifySummary.announcement || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
+                                name="announcement"
+                                emptyText="暂无公告"
+                                emptyImage={EmptyNotify}/>
+              </NoticeIcon>
               <div className={classnames(styles.btn, styles.username)}>
                 <Dropdown overlay={userDropdownMenus}>
                   <a onClick={e => e.preventDefault()}>
-                    <Avatar shape="circle" icon="user" src={avatar}/> {nickname}
+                    <Avatar shape="circle" icon={<UserOutlined/>} src={avatar}/> {nickname}
                   </a>
                 </Dropdown>
               </div>
               <div className={styles.btn}>
-                <Icon type="setting" style={{ fontSize: 18 }}/>
+                <SettingOutlined style={{ fontSize: 18 }}/>
               </div>
             </div>
           </Header>
@@ -123,7 +158,7 @@ class BasicLayout extends React.Component {
             <Breadcrumb className={styles.breadcrumb}>
               {(openMenus || []).map(({ url, title, icon }) => (
                 <Breadcrumb.Item href={url}>
-                  {icon && <Icon type={`${icon}`}/>}
+                  {icon && <LegacyIcon type={`${icon}`}/>}
                   <span>{title}</span>
                 </Breadcrumb.Item>
               ))}
@@ -134,7 +169,7 @@ class BasicLayout extends React.Component {
           <Footer>Hi.</Footer>
         </Layout>
       </Layout>
-    </>);
+    </>;
   }
 
   /**

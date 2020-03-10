@@ -11,6 +11,7 @@
       background: rgba(255, 255, 255, 0.2);
       margin: 16px 20px;
     }
+
     .menus {
     }
   }
@@ -47,6 +48,18 @@
         }
       }
 
+      .notice {
+        cursor: pointer;
+        padding: 0 12px;
+        display: inline-block;
+        transition: all 0.3s;
+        height: 100%;
+
+        > i {
+          vertical-align: middle;
+        }
+      }
+
       .username {
         a {
           color: unset;
@@ -57,6 +70,7 @@
 
   .content {
     padding: 12px @paddingWidth 16px;
+
     .breadcrumb {
       margin-bottom: 8px;
     }
