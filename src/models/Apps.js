@@ -1,10 +1,9 @@
 import NotifyApi from '@/services/Notify';
-import Utils from '@/utils/utils';
-import { message } from 'antd';
-import AccountApi from '@/services/account';
-import LocalStorage from '@/utils/localstorage';
+import AccountApi from '@/services/Account';
+import LocalStorage from '@/utils/LocalStorage';
 import { router } from 'umi';
 import { Global } from '@/utils/constant/global';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'apps',
@@ -14,55 +13,36 @@ export default {
     notifySummary: {},
   },
   effects: {
-    * getNotifySummary({ payload = {} }, { call, put }) {
+    * getNotifySummary({ payload = {}, callback }, { call, put }) {
       let result = yield NotifyApi.getSummary(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillNotifySummary', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillNotifySummary',
-        payload: result.data,
-      });
     },
-    * login({ payload }, { call, put }) {
+    * login({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.login(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+        LocalStorage.setToken(result.data);
+        router.push(Global.INDEX_PAGE);
       }
-      LocalStorage.setToken(result.data);
-      router.push(Global.INDEX_PAGE);
     },
     * getCurrentAccountInfo({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.getCurrentAccount(payload);
-      if (!Utils.isSuccess(result)) {
-        router.push(Global.LOGIN_PAGE);
-        message.error(result.message);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillCurrentAccount', payload: result.data });
+        if (callback) callback(result);
         return;
       }
-      yield put({
-        type: 'fillCurrentAccount',
-        payload: {
-          ...result.data,
-        },
-      });
-      if (callback) {
-        callback();
-      }
+      router.push(Global.LOGIN_PAGE);
     },
-    * getCurrentAccountAuthority({ payload = {} }, { call, put }) {
+    * getCurrentAccountAuthority({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.getCurrentAccountAuthority(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillCurrentAccountAuthority', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillCurrentAccountAuthority',
-        payload: [
-          ...result.data,
-        ],
-      });
     },
   },
   reducers: {

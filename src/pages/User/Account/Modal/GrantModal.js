@@ -3,6 +3,7 @@ import { Button, Form, message, Modal, Select } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import Utils from '@/utils/utils';
+import UiUtils from '@/utils/UiUtils';
 
 const formLayout = {
   labelCol: { span: 7 },
@@ -97,7 +98,7 @@ class GrantModal extends PureComponent {
           },
         });
       })
-      .catch(err => message.error(Utils.getErrorMessage(err)));
+      .catch(err => message.error(UiUtils.getErrorMessage(err)));
   };
 
   static propTypes = {

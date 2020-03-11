@@ -110,7 +110,7 @@ class GrantModal extends PureComponent {
                   },
               });
           })
-          .catch(err => message.error(Utils.getErrorMessage(err)));
+          .catch(err => message.error(UiUtils.getErrorMessage(err)));
     };
 
     static propTypes = {

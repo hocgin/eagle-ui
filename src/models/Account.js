@@ -1,6 +1,5 @@
-import AccountApi from '@/services/account';
-import Utils from '@/utils/utils';
-import { message } from 'antd';
+import AccountApi from '@/services/Account';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'account',
@@ -9,47 +8,31 @@ export default {
     paging: null,
   },
   effects: {
-    * paging({ payload = {} }, { call, put }) {
+    * paging({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.paging(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillPaging', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillPaging',
-        payload: result.data,
-      });
     },
     * grantRole({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.grantRole(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
     * updateStatus({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.updateStatus(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
-    * getOne({ payload = {} }, { call, put }) {
+    * getOne({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.getOne(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillDetail', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillDetail',
-        payload: result.data,
-      });
     },
   },
   reducers: {

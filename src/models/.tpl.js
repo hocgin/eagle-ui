@@ -1,4 +1,5 @@
 import Utils from '@/utils/utils';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'tpl',
@@ -11,7 +12,7 @@ export default {
     // 获取所有
     * getAll({ payload = {}, callback }, { call, put }) {
       let result = {}; // API
-      if (Utils.showErrorMessageIfExits(result)) {
+      if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillAll', payload: result.data });
         if (callback) callback(result);
       }
@@ -19,7 +20,7 @@ export default {
     // 分页查询
     * paging({ payload = {}, callback }, { call, put }) {
       let result = {}; // API
-      if (Utils.showErrorMessageIfExits(result)) {
+      if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillPaging', payload: result.data });
         if (callback) callback(result);
       }
@@ -27,7 +28,7 @@ export default {
     // 详情
     * getOne({ payload = {}, callback }, { call, put }) {
       let result = {}; // API
-      if (Utils.showErrorMessageIfExits(result)) {
+      if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillDetail', payload: result.data });
         if (callback) callback(result);
       }

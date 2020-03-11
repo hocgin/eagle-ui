@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { Button, Form, message, Modal, Select } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import Utils from '@/utils/utils';
 import UiUtils from '@/utils/UiUtils';
 
 const formLayout = {
@@ -103,7 +102,7 @@ class GrantModal extends PureComponent {
               });
           })
           .catch(err => {
-              let text = Utils.getErrorMessage(err);
+              let text = UiUtils.getErrorMessage(err);
               message.error(text);
           });
     };

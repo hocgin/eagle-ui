@@ -1,6 +1,7 @@
 import Utils from '@/utils/utils';
 import { message } from 'antd';
 import NotifyApi from '@/services/Notify';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'notify',
@@ -8,12 +9,8 @@ export default {
   effects: {
     * getNotifications({ payload = {}, callback }, { call, put }) {
       let result = yield NotifyApi.getNotifications(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback(result);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
   },

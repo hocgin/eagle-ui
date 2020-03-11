@@ -1,6 +1,5 @@
-import Utils from '@/utils/utils';
-import { message } from 'antd';
 import RoleApi from '@/services/Role';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'role',
@@ -10,77 +9,49 @@ export default {
     all: [],
   },
   effects: {
-    * getAll({ payload = {} }, { call, put }) {
+    * getAll({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.getAll(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillAll', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillAll',
-        payload: result.data,
-      });
     },
-    * paging({ payload = {} }, { call, put }) {
+    * paging({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.paging(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillPaging', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillPaging',
-        payload: result.data,
-      });
     },
-    * getOne({ payload = {} }, { call, put }) {
+    * getOne({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.getOne(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillDetail', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillDetail',
-        payload: result.data,
-      });
     },
     * insert({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.insert(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
     * grantAuthority({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.grantAuthority(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
     * update({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.update(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
     * delete({ payload = {}, callback }, { call, put }) {
       let result = yield RoleApi.delete(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
   },

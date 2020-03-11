@@ -1,7 +1,7 @@
 import Config from '@/config';
 import hash from 'hash.js';
 import { Global } from '@/utils/constant/global';
-import LocalStorage from '@/utils/localstorage';
+import LocalStorage from '@/utils/LocalStorage';
 
 export default function request(
     url,

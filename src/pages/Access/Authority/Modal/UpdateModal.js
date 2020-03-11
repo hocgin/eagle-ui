@@ -3,6 +3,7 @@ import { Button, Form, Input, message, Modal, Select, Switch, TreeSelect } from 
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import Utils from '@/utils/utils';
+import UiUtils from '@/utils/UiUtils';
 
 const { TreeNode } = TreeSelect;
 const { Option } = Select;
@@ -158,7 +159,7 @@ class UpdateModal extends PureComponent {
               });
           })
           .catch(err => {
-              let text = Utils.getErrorMessage(err);
+              let text = UiUtils.getErrorMessage(err);
               message.error(text);
           });
     };

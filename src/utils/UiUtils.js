@@ -1,8 +1,43 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
-import { Badge, TreeSelect } from 'antd';
+import { Badge, message, TreeSelect } from 'antd';
 
 export default class UiUtils {
+
+  /**
+   * 请求是否成功
+   * @param result
+   * @returns {boolean}
+   */
+  static isSuccess(result) {
+    return result && result.success;
+  }
+
+  static showErrorMessageIfExits(result) {
+    if (this.isSuccess(result)) {
+      return true;
+    }
+    message.error(result.message);
+    return false;
+  }
+
+  /**
+   * 加载中
+   */
+  static isLoading(isLoading) {
+    return isLoading === undefined || isLoading === true;
+  }
+
+  /**
+   * 自动输出第一条错误信息
+   * @param errors
+   */
+  static getErrorMessage(errors) {
+    let keys = Object.keys(errors || {});
+    if (keys.length > 0) {
+      return errors[keys[0]].message;
+    }
+  }
 
   /**
    * 获取 paging 对象的列表数据

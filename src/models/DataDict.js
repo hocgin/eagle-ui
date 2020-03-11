@@ -1,7 +1,6 @@
 import qs from 'query-string';
-import Utils from '@/utils/utils';
-import { message } from 'antd';
 import DataDictApi from '@/services/DataDict';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'dataDict',
@@ -13,90 +12,58 @@ export default {
     allEnabled: [],
   },
   effects: {
-    * paging({ payload }, { call, put }) {
+    * paging({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.paging(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillPaging', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillPaging',
-        payload: result.data,
-      });
     },
-    * insert({ payload, callback }, { call, put }) {
+    * insert({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.insert(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
-    * getOne({ payload }, { call, put }) {
+    * getOne({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.getOne(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillDetail', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillDetail',
-        payload: result.data,
-      });
     },
-    * update({ payload, callback }, { call, put }) {
+    * update({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.update(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
-    * deletes({ payload, callback }, { call, put }) {
+    * deletes({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.deletes(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
-    * getAllPlatform({ payload }, { call, put }) {
+    * getAllPlatform({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.getAllDataDict({ code: 'platform' });
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillAllPlatform', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillAllPlatform',
-        payload: result.data,
-      });
     },
-    * getAllAuthorityType({ payload }, { call, put }) {
+    * getAllAuthorityType({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.getAllDataDict({ code: 'authorityType' });
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillAllAuthorityType', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillAllAuthorityType',
-        payload: result.data,
-      });
     },
-    * getAllEnabled({ payload }, { call, put }) {
+    * getAllEnabled({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.getAllDataDict({ code: 'enabled' });
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillAllEnabled', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillAllEnabled',
-        payload: result.data,
-      });
     },
   },
   reducers: {

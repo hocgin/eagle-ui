@@ -1,6 +1,7 @@
 import Utils from '@/utils/utils';
 import { message } from 'antd';
 import DataDictItemApi from '@/services/DataDictItem';
+import UiUtils from '@/utils/UiUtils';
 
 export default {
   namespace: 'dataDictItem',
@@ -9,45 +10,29 @@ export default {
     detail: null,
   },
   effects: {
-    * insert({ payload, callback }, { call, put }) {
+    * insert({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictItemApi.insert(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
-    * getOne({ payload }, { call, put }) {
+    * getOne({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictItemApi.getOne(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillDetail', payload: result.data });
+        if (callback) callback(result);
       }
-      yield put({
-        type: 'fillDetail',
-        payload: result.data,
-      });
     },
-    * update({ payload, callback }, { call, put }) {
+    * update({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictItemApi.update(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
-    * deletes({ payload, callback }, { call, put }) {
+    * deletes({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictItemApi.deletes(payload);
-      if (!Utils.isSuccess(result)) {
-        message.error(result.message);
-        return;
-      }
-      if (callback) {
-        callback();
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
       }
     },
   },
