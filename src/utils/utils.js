@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 export default class Utils {
 
   /**
@@ -7,6 +9,14 @@ export default class Utils {
    */
   static isSuccess(result) {
     return result && result.success;
+  }
+
+  static showErrorMessageIfExits(result) {
+    if (this.isSuccess(result)) {
+      return true;
+    }
+    message.error(result.message);
+    return false;
   }
 
   /**
@@ -54,7 +64,6 @@ export default class Utils {
     }
     return newArray;
   }
-
 
 
   /**
