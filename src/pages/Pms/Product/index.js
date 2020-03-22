@@ -79,9 +79,7 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowUpdate">
-          <del>修改</del>
-        </Menu.Item>
+        <Menu.Item key="rowUpdate">修改</Menu.Item>
         <Menu.Item key="rowDetail">查看详情</Menu.Item>
       </Menu>);
 
