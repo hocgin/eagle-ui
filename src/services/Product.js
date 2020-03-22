@@ -48,10 +48,7 @@ export default class ProductApi {
 
   static getOne({ id, ...payload }) {
     return request(`/api/product/${id}`, {
-      method: 'POST',
-      body: {
-        ...payload,
-      },
+      method: 'GET',
     });
   }
 

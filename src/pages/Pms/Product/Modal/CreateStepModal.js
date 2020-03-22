@@ -23,6 +23,19 @@ function getTreePath(parentPath = [], childrenList = []) {
 
 const memoizeOneGetTreePath = memoizeOne(getTreePath, isEqual);
 
+
+let labelStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  color: 'rgba(0, 0, 0, 0.85)',
+  fontSize: '14px',
+  margin: '0 8px 0 2px',
+};
+let rowStyle = {
+  marginBottom: 10,
+};
+
 const formLayout = {
   labelCol: { span: 7 },
   wrapperCol: { span: 13 },
@@ -44,14 +57,13 @@ class index extends React.PureComponent {
 
   state = {
     // 当前步骤
-    step: 1,
+    step: 0,
     // 待提交的值
     formValue: defaultValue,
     // 规格树
     specTree: [],
     spec: [],
     specValue: {},
-    //
     datasource: [],
   };
 
@@ -127,7 +139,27 @@ class index extends React.PureComponent {
    * @constructor
    */
   Step2 = () => {
-    return [<PicturesWall/>];
+    let { formValue } = this.state;
+    console.log('formValue', (formValue.photos || []).map(({ url, filename }) => ({
+      url,
+      name: filename,
+    })));
+    return [
+      <Row style={rowStyle}>
+        <Col {...formLayout.labelCol} style={labelStyle}>商品展示图:</Col>
+      </Row>,
+      <Row style={rowStyle}>
+        <Col span={21} offset={3}>
+          <PicturesWall maxLength={4}
+                        defaultFileList={(formValue.photos || []).map(({ url, filename }, index) => ({
+                          uid: index,
+                          url,
+                          status: 'done',
+                          name: filename,
+                        }))}
+                        onChange={this.onChangePhotos}/>
+        </Col>
+      </Row>];
   };
 
   /**
@@ -166,18 +198,6 @@ class index extends React.PureComponent {
       title: '图片',
       dataIndex: 'imageUrl',
     }];
-
-    let labelStyle = {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      color: 'rgba(0, 0, 0, 0.85)',
-      fontSize: '14px',
-      margin: '0 8px 0 2px',
-    };
-    let rowStyle = {
-      marginBottom: 10,
-    };
     return ([
       <div>
         <Row style={rowStyle}>
@@ -202,15 +222,15 @@ class index extends React.PureComponent {
           </Col>
         </Row>))}
       </div>,
-      <Row style={rowStyle}>
-        <Col {...formLayout.labelCol} style={labelStyle}>商品规格详情:</Col>
-      </Row>,
       <Row>
-        <Col>
-          <Table dataSource={datasource} columns={columns} pagination={false} scroll={{
-            x: 500,
-            y: 300,
-          }}/>
+        <Col span={24}>
+          <Table key="specTable" bordered
+                 style={{ width: '100%' }}
+                 dataSource={datasource} columns={columns} pagination={false}
+                 scroll={{
+                   x: 500,
+                   y: 300,
+                 }}/>
         </Col>
       </Row>]);
   };
@@ -318,6 +338,20 @@ class index extends React.PureComponent {
         },
       };
     }, this.updateSpecTree);
+  };
+
+  onChangePhotos = (values) => {
+    let photos = (values || []).map(({ url, name }, index) => ({
+      filename: name,
+      url,
+      sort: values.length - index,
+    }));
+    this.setState(({ formValue }) => {
+      formValue.photos = photos;
+      return {
+        formValue: formValue,
+      };
+    });
   };
 
   updateSpecTree = () => {

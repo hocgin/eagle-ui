@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import Config from '@/config';
 import LocalStorage from '@/utils/LocalStorage';
 import UiUtils from '@/utils/UiUtils';
+import PropTypes from 'prop-types';
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -14,7 +15,7 @@ function getBase64(file) {
   });
 }
 
-class Index extends React.PureComponent {
+class Index extends React.Component {
   state = {
     previewVisible: false,
     previewImage: [],
@@ -22,27 +23,26 @@ class Index extends React.PureComponent {
   };
 
   render() {
-    let {} = this.props;
+    let { maxLength, defaultFileList } = this.props;
     let { previewVisible, fileList, previewImage } = this.state;
     const uploadButton = (
       <div>
         <PlusOutlined/>
-        <div>Upload</div>
+        <div>上传</div>
       </div>
     );
     return (
       <div>
-        <Upload
-          action={`${Config.host()}/api/file/upload`}
-          headers={{
-            Token: `Bearer ${LocalStorage.getToken()}`,
-          }}
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={this.handleChange}
+        <Upload action={`${Config.host()}/api/file/upload`}
+                headers={{
+                  Token: `Bearer ${LocalStorage.getToken()}`,
+                }}
+                defaultFileList={defaultFileList}
+                listType="picture-card"
+                onPreview={this.handlePreview}
+                onChange={this.handleChange}
         >
-          {fileList.length >= 8 ? null : uploadButton}
+          {fileList.length >= maxLength ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img style={{ width: '100%' }} src={previewImage}/>
@@ -63,11 +63,11 @@ class Index extends React.PureComponent {
   };
 
   handleChange = ({ file, fileList }) => {
+    let { onChange } = this.props;
     fileList = fileList.map(file => {
       let result = file.response;
       if (result) {
         // Component will show file.url as link
-        console.log('file.response', file);
         if (UiUtils.showErrorMessageIfExits(result)) {
           file.url = result.data;
         } else {
@@ -76,10 +76,26 @@ class Index extends React.PureComponent {
       }
       return file;
     });
+    console.log('fileList', fileList);
     this.setState({ fileList });
+    onChange(fileList.filter(({ url }) => url).map(({ url, name }) => ({ url, name })));
   };
 
   handleCancel = () => this.setState({ previewVisible: false });
+
+
+  static propTypes = {
+    maxLength: PropTypes.number,
+    onChange: PropTypes.func,
+    defaultFileList: PropTypes.array,
+  };
+
+  static defaultProps = {
+    maxLength: 1000,
+    defaultFileList: [],
+    onChange: (values = []) => {
+    },
+  };
 }
 
 export default Index;

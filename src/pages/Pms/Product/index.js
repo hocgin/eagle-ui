@@ -1,12 +1,15 @@
 import React from 'react';
 import styles from './index.less';
 import ComplexTable from '@/components/ComplexTable';
-import { Button, Divider, Dropdown, Form, Input, Menu } from 'antd';
+import { Badge, Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import UiUtils from '@/utils/UiUtils';
 import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import CreateStepModal from '@/pages/Pms/Product/Modal/CreateStepModal';
+import Img from 'react-image';
+import DetailModal from '@/pages/Pms/Product/Modal/DetailModal';
+import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 
 
 @connect(({ global, product: { paging }, loading, ...rest }) => {
@@ -23,12 +26,34 @@ class index extends React.Component {
     searchValue: {},
     selectedRows: [],
     operateRow: null,
-    visibleCreate: true,
+    visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
   };
 
   tableColumns = [{
+    title: '商品图片',
+    dataIndex: 'photos',
+    key: 'photos',
+    render: val => <Img src={val.length > 0 && val[0].url}/>,
+  }, {
+    title: '商品标题',
+    dataIndex: 'title',
+    key: 'title',
+  }, {
+    title: '商品品类',
+    dataIndex: 'productCategoryName',
+    key: 'productCategoryName',
+  }, {
+    title: '单位',
+    dataIndex: 'unit',
+    key: 'unit',
+  }, {
+    title: '上架状态',
+    dataIndex: 'publishStatusName',
+    key: 'publishStatusName',
+    render: (val, { publishStatus }) => <Badge status={['error', 'success'][publishStatus]} text={val}/>,
+  }, {
     title: '创建时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
@@ -54,15 +79,10 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowGrant">赋予角色</Menu.Item>
         <Menu.Item key="rowUpdate">
           <del>修改</del>
         </Menu.Item>
-        <Menu.Divider/>
-        <Menu.Item key="rowReset">
-          <del>重制密码</del>
-        </Menu.Item>
-        <Menu.Divider/>
+        <Menu.Item key="rowDetail">查看详情</Menu.Item>
       </Menu>);
 
       return <>
@@ -85,7 +105,7 @@ class index extends React.Component {
   }
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<div className={styles.page}>
@@ -111,6 +131,12 @@ class index extends React.Component {
                     tableColumns={this.tableColumns}/>
       <CreateStepModal visible={visibleCreate}
                        onClose={this.onClickCloseCreateModal}/>
+      {visibleDetail && <DetailModal visible={visibleDetail}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseDetailModal}/>}
+      {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseUpdateModal}/>}
     </div>);
   }
 
@@ -135,6 +161,32 @@ class index extends React.Component {
   };
 
   /**
+   * 每行的【更多操作】
+   * @param key
+   */
+  onClickMenuRowItem = ({ key }) => {
+    switch (key) {
+      case 'rowDetail': {
+        this.setState({
+          visibleDetail: true,
+        });
+        break;
+      }
+      case 'rowUpdate': {
+        this.setState({
+          visibleUpdate: true,
+        });
+        break;
+      }
+      default: {
+        Modal.error({
+          content: '无效操作',
+        });
+      }
+    }
+  };
+
+  /**
    * 点击查询按钮
    * @param values
    */
@@ -156,12 +208,6 @@ class index extends React.Component {
     this.setState({
       visibleUpdate: false,
     }, this.paging);
-  };
-
-  onClickShowDetailModal = (id) => {
-    this.setState({
-      visibleDetail: true,
-    });
   };
 
   onClickCloseDetailModal = () => {

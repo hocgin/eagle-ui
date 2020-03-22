@@ -28,7 +28,7 @@ export default {
     },
     // 详情
     * getOne({ payload = {}, callback }, { call, put }) {
-      let result = yield ProductApi.getAll(payload); // API
+      let result = yield ProductApi.getOne(payload); // API
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillDetail', payload: result.data });
         if (callback) callback(result);
