@@ -1,0 +1,174 @@
+import React from 'react';
+import styles from './index.less';
+import ComplexTable from '@/components/ComplexTable';
+import { Button, Divider, Dropdown, Form, Input, Menu } from 'antd';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import UiUtils from '@/utils/UiUtils';
+import { connect } from 'dva';
+import { DateFormatter } from '@/utils/formatter/DateFormatter';
+import CreateStepModal from '@/pages/Pms/Product/Modal/CreateStepModal';
+
+
+@connect(({ global, product: { paging }, loading, ...rest }) => {
+  return {
+    paging: paging,
+    pagingLoading: loading.effects['product/paging'],
+  };
+}, dispatch => ({
+  $paging: (args = {}) => dispatch({ type: 'product/paging', ...args }),
+}))
+class index extends React.Component {
+
+  state = {
+    searchValue: {},
+    selectedRows: [],
+    operateRow: null,
+    visibleCreate: true,
+    visibleUpdate: false,
+    visibleDetail: false,
+  };
+
+  tableColumns = [{
+    title: '创建时间',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
+    render: val => <span>{DateFormatter.timestampAs(val)}</span>,
+  }, {
+    title: '最后更新时间',
+    dataIndex: 'lastUpdatedAt',
+    key: 'lastUpdatedAt',
+    render: val => <span>{DateFormatter.timestampAs(val)}</span>,
+  }, {
+    title: '操作',
+    key: 'operation',
+    fixed: 'right',
+    width: 200,
+    render: (text, record) => {
+      const onClickOperateRow = (record, e) => {
+        this.setState({
+            operateRow: record.id,
+          },
+          () => {
+            this.onClickMenuRowItem(e, record);
+          });
+      };
+
+      const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
+        <Menu.Item key="rowGrant">赋予角色</Menu.Item>
+        <Menu.Item key="rowUpdate">
+          <del>修改</del>
+        </Menu.Item>
+        <Menu.Divider/>
+        <Menu.Item key="rowReset">
+          <del>重制密码</del>
+        </Menu.Item>
+        <Menu.Divider/>
+      </Menu>);
+
+      return <>
+        <a href={null}
+           rel="noopener noreferrer"
+           onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
+        <Divider type="vertical"/>
+        <Dropdown overlay={MoreMenus}>
+          <a href={null}
+             rel="noopener noreferrer">
+            更多操作 <DownOutlined/>
+          </a>
+        </Dropdown>
+      </>;
+    },
+  }];
+
+  componentDidMount() {
+    this.paging();
+  }
+
+  render() {
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { paging, pagingLoading } = this.props;
+    const BatchMenus = null;
+    return (<div className={styles.page}>
+      <ComplexTable toolbarTitle={'商品列表'}
+                    toolbarMenu={BatchMenus}
+                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
+                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                    searchBarChildren={[
+                      <Form.Item label="关键词搜索"
+                                 name="keyword">
+                        <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
+                      </Form.Item>,
+                    ]}
+                    tableLoading={pagingLoading}
+                    tableData={{
+                      list: UiUtils.fastGetPagingList(paging),
+                      pagination: UiUtils.fastPagingPagination(paging),
+                    }}
+                    selectedRows={selectedRows}
+                    onSelectRow={this.onChangeSelectRow}
+                    onClickSearch={this.onClickSearch}
+                    onChangeStandardTable={this.onChangeStandardTable}
+                    tableColumns={this.tableColumns}/>
+      <CreateStepModal visible={visibleCreate}
+                       onClose={this.onClickCloseCreateModal}/>
+    </div>);
+  }
+
+  /**
+   * 分页搜索
+   */
+  paging = () => {
+    let { searchValue } = this.state;
+    let { $paging } = this.props;
+    $paging({
+      payload: {
+        ...searchValue,
+      },
+    });
+  };
+
+  onChangeSelectRow = (rows) => {
+    let rowsId = rows.map(({ id }) => id);
+    this.setState({
+      selectedRows: rowsId,
+    });
+  };
+
+  /**
+   * 点击查询按钮
+   * @param values
+   */
+  onClickSearch = (values) => this.setState({
+    searchValue: {
+      ...values,
+    },
+  }, this.paging);
+
+  onClickShowCreateModal = () => this.setState({
+    visibleCreate: true,
+  });
+
+  onClickCloseCreateModal = () => this.setState({
+    visibleCreate: false,
+  }, this.paging);
+
+  onClickCloseUpdateModal = () => {
+    this.setState({
+      visibleUpdate: false,
+    }, this.paging);
+  };
+
+  onClickShowDetailModal = (id) => {
+    this.setState({
+      visibleDetail: true,
+    });
+  };
+
+  onClickCloseDetailModal = () => {
+    this.setState({
+      visibleDetail: false,
+    });
+  };
+}
+
+export default index;

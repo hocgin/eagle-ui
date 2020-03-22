@@ -4,7 +4,7 @@ import Avatar from './Avatar';
 import styles from './index.less';
 import { connect } from 'dva';
 
-@connect(({ global, account: { currentAccount, currentAccountAuthority = [] }, loading, ...rest }) => {
+@connect(({ global, apps: { currentAccount, currentAccountAuthority = [] }, loading, ...rest }) => {
   let { nickname, avatar, email } = currentAccount;
   return {
     nickname: nickname,

@@ -7,17 +7,10 @@ class index extends React.Component {
     // window.addEventListener('resize', this.handleResize);
   }
 
-  componentDidUpdate() {
-    // window.removeEventListener('resize', this.handleResize);
-  }
-
-
   render() {
     let {} = this.props;
-    return (
-      <div className={styles.page}>
-      </div>
-    );
+    return (<div className={styles.page}>
+    </div>);
   }
 }
 

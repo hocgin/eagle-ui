@@ -17,6 +17,7 @@ export default class UiUtils {
     if (this.isSuccess(result)) {
       return true;
     }
+    console.error('业务失败，响应内容::', result);
     message.error(result.message);
     return false;
   }

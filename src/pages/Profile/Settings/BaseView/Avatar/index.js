@@ -1,7 +1,6 @@
 import React from 'react';
-import styles from './index.less';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Menu, Upload } from 'antd';
+import { Avatar, Upload } from 'antd';
 
 class index extends React.Component {
 
@@ -15,7 +14,7 @@ class index extends React.Component {
 
 
   render() {
-    let { children } = this.props;
+    let { children, src } = this.props;
     return (
       <Upload
         name="avatar"
@@ -23,9 +22,8 @@ class index extends React.Component {
         className="avatar-uploader"
         showUploadList={false}
         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        onChange={this.handleChange}
-      >
-        <Avatar size={100} icon={<UserOutlined />} src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"/>
+        onChange={this.handleChange}>
+        <Avatar size={100} icon={<UserOutlined/>} src={src}/>
       </Upload>
     );
   }

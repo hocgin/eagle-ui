@@ -120,8 +120,7 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    return (
-      <div className={styles.page}>
+    return (<div className={styles.page}>
         <ComplexTable toolbarTitle={'账号列表'}
                       toolbarMenu={BatchMenus}
                       toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
@@ -152,8 +151,7 @@ class index extends React.Component {
         {visibleGrant && <GrantModal visible={visibleGrant}
                                      id={operateRow}
                                      onClose={this.onClickCloseGrantModal}/>}
-      </div>
-    );
+      </div>);
   }
 
   /**

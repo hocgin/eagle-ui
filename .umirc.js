@@ -59,6 +59,13 @@ export default {
           },
         ],
       },
+      // 【商品系统】
+      {
+        code: 'pms', icon: 'test', path: '/pms',
+        routes: [
+          { code: 'product', path: '/pms/product', component: '../pages/Pms/Product' },
+        ],
+      },
     ],
   },
   ],

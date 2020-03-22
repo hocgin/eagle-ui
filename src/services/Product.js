@@ -1,10 +1,10 @@
 import request from '@/utils/request';
 import { stringify } from 'qs';
 
-export default class TplApi {
+export default class ProductApi {
 
   static insert(payload) {
-    return request(`/api/worked`, {
+    return request(`/api/product`, {
       method: 'POST',
       body: {
         ...payload,
@@ -14,13 +14,13 @@ export default class TplApi {
 
   static delete({ id, ...payload }) {
     let queryString = stringify(payload);
-    return request(`/api/worked/${id}?${queryString}`, {
+    return request(`/api/product/${id}?${queryString}`, {
       method: 'DELETE',
     });
   }
 
   static update({ id, ...payload }) {
-    return request(`/api/worked/${id}`, {
+    return request(`/api/product/${id}`, {
       method: 'PUT',
       body: {
         ...payload,
@@ -29,7 +29,7 @@ export default class TplApi {
   }
 
   static paging(payload) {
-    return request(`/api/worked/_paging`, {
+    return request(`/api/product/_paging`, {
       method: 'POST',
       body: {
         ...payload,
@@ -38,7 +38,7 @@ export default class TplApi {
   }
 
   static getAll(payload) {
-    return request(`/api/worked/all`, {
+    return request(`/api/product/all`, {
       method: 'POST',
       body: {
         ...payload,
@@ -47,18 +47,11 @@ export default class TplApi {
   }
 
   static getOne({ id, ...payload }) {
-    return request(`/api/worked/${id}`, {
+    return request(`/api/product/${id}`, {
       method: 'POST',
       body: {
         ...payload,
       },
-    });
-  }
-
-  static worked(payload) {
-    let queryString = stringify(payload);
-    return request(`/api/worked?${queryString}`, {
-      method: 'GET',
     });
   }
 

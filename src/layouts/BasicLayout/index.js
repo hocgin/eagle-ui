@@ -85,7 +85,7 @@ class BasicLayout extends React.Component {
 
     const userDropdownMenus = (<Menu>
       <Menu.Item>
-        <Link to={'/account/settings'}>个人资料</Link>
+        <Link to={'/profile/settings'}>个人资料</Link>
       </Menu.Item>
       <Menu.Item>修改密码</Menu.Item>
       <Menu.Item>退出登录</Menu.Item>
