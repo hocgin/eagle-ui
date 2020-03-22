@@ -1,4 +1,4 @@
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 import UiUtils from '@/utils/UiUtils';
 import ProductApi from '@/services/Product';
 
@@ -43,7 +43,10 @@ export default {
     },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {
-
+      let result = yield ProductApi.update(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {

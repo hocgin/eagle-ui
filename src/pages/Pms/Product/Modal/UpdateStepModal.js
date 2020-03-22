@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import memoizeOne from 'memoize-one';
 import PicturesWall from '@/components/PicturesWall';
 import isEqual from 'lodash/isEqual';
+import Utils from '@/utils/Utils';
 
 
 function getTreePath(parentPath = [], childrenList = []) {
@@ -45,12 +46,23 @@ let defaultValue = {
   publishStatus: true,
 };
 
-@connect(({ global, loading, ...rest }) => {
+@connect(({ global, loading, product: { detail }, ...rest }) => {
+  let detailLoading = loading.effects['role/getOne'];
+  let itemDetail = detail;
+  if (detail) {
+    itemDetail = {
+      ...detail,
+      publishStatus: detail.publishStatus === 1,
+    };
+  }
   return {
-    confirmLoading: loading.effects['product/insert'],
+    itemDetail,
+    detailLoading,
+    confirmLoading: loading.effects['product/update'],
   };
 }, dispatch => ({
-  $insertOne: (args = {}) => dispatch({ type: 'product/insert', ...args }),
+  $updateOne: (args = {}) => dispatch({ type: 'product/update', ...args }),
+  $getOne: (args = {}) => dispatch({ type: 'product/getOne', ...args }),
 }))
 class index extends React.PureComponent {
   createForm = React.createRef();
@@ -64,15 +76,51 @@ class index extends React.PureComponent {
     specTree: [],
     spec: [],
     specValue: {},
+    datasource: [],
   };
 
+  constructor(props) {
+    super(props);
+  }
+
+  componentWillReceiveProps({ itemDetail }) {
+    let sku = itemDetail.sku || [];
+    if (sku.length > 0) {
+      let spec = (sku[0].spec || []).map(({ key }) => key);
+      let specValue = {};
+      for (let i = 0; i < sku.length; i++) {
+        let spec = sku[i].spec || [];
+        for (let j = 0; j < spec.length; j++) {
+          let s = spec[j];
+          let values = specValue[s.key] || [];
+          values.push(s.value);
+          specValue[s.key] = Utils.distinct(values);
+        }
+      }
+
+      console.log(spec, specValue);
+      this.setState({
+        formValue: itemDetail,
+        spec: Utils.distinct(spec || []),
+        specValue: specValue,
+      }, () => {
+        this.updateSpecTree();
+      });
+    }
+
+  }
+
   componentDidMount() {
-    let {} = this.props;
+    let { id, $getOne } = this.props;
+    $getOne({ payload: { id } });
   }
 
   render() {
-    const { visible, onClose } = this.props;
-    const { step, formValue } = this.state;
+    const { visible, onClose, detailLoading, itemDetail } = this.props;
+    const { step } = this.state;
+    if (detailLoading) {
+      return <></>;
+    }
     return (<Modal width={640}
                    bodyStyle={{ padding: '32px 40px 48px' }}
                    title="新增商品"
@@ -86,7 +134,7 @@ class index extends React.PureComponent {
         <Steps.Step title="商品规格"/>
       </Steps>
       <Form ref={this.createForm}
-            initialValues={{ ...formValue }}>
+            initialValues={{ ...itemDetail }}>
         {this.Step(step)}
       </Form>
     </Modal>);
@@ -186,6 +234,7 @@ class index extends React.PureComponent {
       title: 'SKU 编码',
       dataIndex: 'skuCode',
       render: (val, record, index) => {
+        console.log(index, val, record);
         return (<Input placeholder="SKU编码" defaultValue={val}
                        onChange={({ target: { value } }) => this.onChangeTableValue('skuCode', index, value)}/>);
       },
@@ -266,7 +315,7 @@ class index extends React.PureComponent {
    * 下一页
    */
   onNextOrDone = () => {
-    const { $insertOne, onClose } = this.props;
+    const { $updateOne, onClose } = this.props;
     let { step } = this.state;
     let form = this.createForm.current;
     form.validateFields()
@@ -287,7 +336,7 @@ class index extends React.PureComponent {
             return;
           }
 
-          $insertOne({
+          $updateOne({
             payload: {
               ...formValue,
               publishStatus: formValue.publishStatus ? 1 : 0,

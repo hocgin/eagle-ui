@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Button, Form, message, Modal, Select } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 import UiUtils from '@/utils/UiUtils';
 
 const formLayout = {

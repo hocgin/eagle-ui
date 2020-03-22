@@ -3,7 +3,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row } from 'antd';
 import styles from './index.less';
 import PropTypes from 'prop-types';
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 import classnames from 'classnames';
 
 class SearchBar extends React.PureComponent {

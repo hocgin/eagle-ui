@@ -1,5 +1,3 @@
-import { message } from 'antd';
-
 export default class Utils {
 
   /**
@@ -51,4 +49,12 @@ export default class Utils {
   }
 
 
+  /**
+   * 去重
+   * @param array
+   * @return {*[]}
+   */
+  static distinct(array = []) {
+    return Array.from(new Set(array));
+  }
 }

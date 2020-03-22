@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Button, Collapse, message, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 import TextRow from '@/components/TextRow';
 import ComplexCollapse from '@/components/ComplexCollapse';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';

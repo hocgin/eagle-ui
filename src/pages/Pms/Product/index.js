@@ -9,7 +9,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import CreateStepModal from '@/pages/Pms/Product/Modal/CreateStepModal';
 import Img from 'react-image';
 import DetailModal from '@/pages/Pms/Product/Modal/DetailModal';
-import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
+import UpdateStepModal from '@/pages/Pms/Product/Modal/UpdateStepModal';
 
 
 @connect(({ global, product: { paging }, loading, ...rest }) => {
@@ -134,9 +134,9 @@ class index extends React.Component {
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
-      {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseUpdateModal}/>}
+      {visibleUpdate && <UpdateStepModal visible={visibleUpdate}
+                                         id={operateRow}
+                                         onClose={this.onClickCloseUpdateModal}/>}
     </div>);
   }
 

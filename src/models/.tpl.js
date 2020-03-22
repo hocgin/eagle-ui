@@ -1,4 +1,4 @@
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 import UiUtils from '@/utils/UiUtils';
 
 export default {

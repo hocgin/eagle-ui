@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { Menu } from 'antd';
 import pathToRegexp from 'path-to-regexp';
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 
 const { SubMenu } = Menu;
 

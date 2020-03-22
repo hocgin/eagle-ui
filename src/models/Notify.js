@@ -1,4 +1,4 @@
-import Utils from '@/utils/utils';
+import Utils from '@/utils/Utils';
 import { message } from 'antd';
 import NotifyApi from '@/services/Notify';
 import UiUtils from '@/utils/UiUtils';
