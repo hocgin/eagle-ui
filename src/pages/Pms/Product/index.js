@@ -19,6 +19,7 @@ import UpdateStepModal from '@/pages/Pms/Product/Modal/UpdateStepModal';
   };
 }, dispatch => ({
   $paging: (args = {}) => dispatch({ type: 'product/paging', ...args }),
+  $deleteOne: (args = {}) => dispatch({ type: 'product/delete', ...args }),
 }))
 class index extends React.Component {
 
@@ -81,6 +82,7 @@ class index extends React.Component {
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
         <Menu.Item key="rowUpdate">修改</Menu.Item>
         <Menu.Item key="rowDetail">查看详情</Menu.Item>
+        <Menu.Item key="rowDelete">删除</Menu.Item>
       </Menu>);
 
       return <>
@@ -176,6 +178,10 @@ class index extends React.Component {
         });
         break;
       }
+      case 'rowDelete': {
+        this.onClickShowDeleteModal([this.state.operateRow]);
+        break;
+      }
       default: {
         Modal.error({
           content: '无效操作',
@@ -193,6 +199,34 @@ class index extends React.Component {
       ...values,
     },
   }, this.paging);
+
+  onClickShowDeleteModal = (ids = []) => {
+    let { $deleteOne } = this.props;
+    let paging = this.paging;
+    let props = {
+      content: `确认删除选中商品?`,
+      onCancel() {
+        Modal.destroyAll();
+      },
+    };
+
+    if (ids.length > 1) {
+      // TODO
+    } else {
+      props = {
+        content: `确认删除该商品?`,
+        onOk() {
+          $deleteOne({
+            payload: {
+              id: ids[0],
+            },
+            callback: paging,
+          });
+        },
+      };
+    }
+    Modal.confirm(props);
+  };
 
   onClickShowCreateModal = () => this.setState({
     visibleCreate: true,

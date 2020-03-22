@@ -50,7 +50,10 @@ export default {
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
-
+      let result = yield ProductApi.delete(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
   },
   reducers: {
