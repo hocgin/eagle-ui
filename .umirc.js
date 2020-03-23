@@ -23,16 +23,16 @@ export default {
       },
       // 【访问控制】
       {
-        code: 'access', icon: 'test', path: '/access',
+        code: 'access', icon: 'control', path: '/access',
         routes: [
           { code: 'authority', path: '/access/authority', component: '../pages/Access/Authority' },
           { code: 'role', path: '/access/role', component: '../pages/Access/Role' }],
       },
       // 【开发工具】
       {
-        code: 'devtools', icon: 'test', path: '/devtools',
+        code: 'devtools', icon: 'tool', path: '/devtools',
         routes: [
-          { code: 'data-dict', icon: 'home', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
+          { code: 'data-dict', icon: 'database', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
           { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
           { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
         ],
@@ -61,9 +61,16 @@ export default {
       },
       // 【商品系统】
       {
-        code: 'pms', icon: 'test', path: '/pms',
+        code: 'pms', icon: 'shopping', path: '/pms',
         routes: [
-          { code: 'product', path: '/pms/product', component: '../pages/Pms/Product' },
+          { code: 'pms:product', path: '/pms/product', component: '../pages/Pms/Product' },
+        ],
+      },
+      // 【商品系统】
+      {
+        code: 'oms', icon: 'shop', path: '/oms',
+        routes: [
+          { code: 'oms:order', path: '/oms/order', component: '../pages/Oms/Order' },
         ],
       },
     ],
