@@ -66,11 +66,12 @@ export default {
           { code: 'pms:product', path: '/pms/product', component: '../pages/Pms/Product' },
         ],
       },
-      // 【商品系统】
+      // 【订单系统】
       {
         code: 'oms', icon: 'shop', path: '/oms',
         routes: [
           { code: 'oms:order', path: '/oms/order', component: '../pages/Oms/Order' },
+          { code: 'oms:order:detail', path: '/oms/order/:id', component: '../pages/Oms/Order/Detail' },
         ],
       },
     ],

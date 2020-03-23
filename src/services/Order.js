@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { stringify } from 'qs';
 
 export default class OrderApi {
 
@@ -13,10 +14,14 @@ export default class OrderApi {
 
   static getOne({ id, ...payload }) {
     return request(`/api/order/${id}`, {
-      method: 'POST',
-      body: {
-        ...payload,
-      },
+      method: 'GET',
+    });
+  }
+
+  static delete({ id, ...payload }) {
+    let queryString = stringify(payload);
+    return request(`/api/order/${id}?${queryString}`, {
+      method: 'DELETE',
     });
   }
 

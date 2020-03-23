@@ -1,5 +1,6 @@
 import UiUtils from '@/utils/UiUtils';
 import OrderApi from '@/services/Order';
+import qs from 'query-string';
 
 export default {
   namespace: 'order',
@@ -43,7 +44,10 @@ export default {
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
-
+      let result = yield OrderApi.delete(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
   },
   reducers: {
@@ -66,5 +70,23 @@ export default {
       };
     },
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }, done) {
+      return history.listen(({ pathname, search }) => {
+        const query = qs.parse(search);
+        // 订单详情
+        if (new RegExp('^/oms/order/\\d?\\d$').test(`${pathname}`)) {
+          let index = pathname.lastIndexOf('/');
+          let id = pathname.substr(index + 1);
+          console.log('id', id);
+          dispatch({
+            type: 'getOne',
+            payload: {
+              id,
+            },
+          });
+        }
+      });
+    },
+  },
 };

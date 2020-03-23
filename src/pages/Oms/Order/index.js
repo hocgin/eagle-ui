@@ -1,15 +1,15 @@
 import React from 'react';
 import styles from './index.less';
 import ComplexTable from '@/components/ComplexTable';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Tooltip } from 'antd';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { Divider, Dropdown, Form, Input, Menu, Modal, Tooltip } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import UiUtils from '@/utils/UiUtils';
 import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
-import CreateStepModal from '@/pages/Pms/Product/Modal/CreateStepModal';
-import DetailModal from '@/pages/Pms/Product/Modal/DetailModal';
 import UpdateStepModal from '@/pages/Pms/Product/Modal/UpdateStepModal';
+import router from 'umi/router';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 
 @connect(({ global, order: { paging }, loading, ...rest }) => {
@@ -63,14 +63,16 @@ class index extends React.Component {
     width: 100,
   }, {
     title: '订单状态',
-    dataIndex: 'orderStatusName',
-    key: 'orderStatusName',
+    dataIndex: 'orderStatus',
+    key: 'orderStatus',
     width: 100,
+    render: (val, { orderStatusName }) => EnumFormatter.orderStatus(val, orderStatusName),
   }, {
     title: '确认状态',
-    dataIndex: 'confirmStatusName',
-    key: 'confirmStatusName',
+    dataIndex: 'confirmStatus',
+    key: 'confirmStatus',
     width: 100,
+    render: (val, { confirmStatusName }) => EnumFormatter.confirmStatus(val, confirmStatusName),
   }, {
     title: '支付方式',
     dataIndex: 'payTypeName',
@@ -123,7 +125,10 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowUpdate">修改</Menu.Item>
+        <Menu.Item key="rowUpdate">修改价格</Menu.Item>
+        <Menu.Item key="rowUpdate">关闭订单</Menu.Item>
+        <Menu.Item key="rowUpdate">确认发货</Menu.Item>
+        <Menu.Item key="rowUpdate">订单追踪</Menu.Item>
         <Menu.Item key="rowDetail">查看详情</Menu.Item>
         <Menu.Item key="rowDelete">删除</Menu.Item>
       </Menu>);
@@ -154,8 +159,6 @@ class index extends React.Component {
     return (<div className={styles.page}>
       <ComplexTable toolbarTitle={'订单列表'}
                     toolbarMenu={BatchMenus}
-                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                             onClick={this.onClickShowCreateModal}>新建</Button>}
                     searchBarChildren={[
                       <Form.Item label="关键词搜索"
                                  name="keyword">
@@ -172,11 +175,6 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
-      <CreateStepModal visible={visibleCreate}
-                       onClose={this.onClickCloseCreateModal}/>
-      {visibleDetail && <DetailModal visible={visibleDetail}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseDetailModal}/>}
       {visibleUpdate && <UpdateStepModal visible={visibleUpdate}
                                          id={operateRow}
                                          onClose={this.onClickCloseUpdateModal}/>}
@@ -208,10 +206,13 @@ class index extends React.Component {
    * @param key
    */
   onClickMenuRowItem = ({ key }) => {
+    let { operateRow } = this.state;
+    console.log('operateRow', operateRow);
+
     switch (key) {
       case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
+        router.push({
+          pathname: `/oms/order/${operateRow}`,
         });
         break;
       }
@@ -247,7 +248,7 @@ class index extends React.Component {
     let { $deleteOne } = this.props;
     let paging = this.paging;
     let props = {
-      content: `确认删除选中商品?`,
+      content: `确认删除选中订单?`,
       onCancel() {
         Modal.destroyAll();
       },
@@ -257,7 +258,7 @@ class index extends React.Component {
       // TODO
     } else {
       props = {
-        content: `确认删除该商品?`,
+        content: `确认删除该订单?`,
         onOk() {
           $deleteOne({
             payload: {
@@ -271,25 +272,12 @@ class index extends React.Component {
     Modal.confirm(props);
   };
 
-  onClickShowCreateModal = () => this.setState({
-    visibleCreate: true,
-  });
-
-  onClickCloseCreateModal = () => this.setState({
-    visibleCreate: false,
-  }, this.paging);
-
   onClickCloseUpdateModal = () => {
     this.setState({
       visibleUpdate: false,
     }, this.paging);
   };
 
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
-    });
-  };
 }
 
 export default index;
