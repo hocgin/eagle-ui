@@ -203,29 +203,11 @@ class index extends React.Component {
   onClickShowDeleteModal = (ids = []) => {
     let { $deleteOne } = this.props;
     let paging = this.paging;
-    let props = {
-      content: `确认删除选中商品?`,
-      onCancel() {
-        Modal.destroyAll();
-      },
-    };
-
-    if (ids.length > 1) {
-      // TODO
-    } else {
-      props = {
-        content: `确认删除该商品?`,
-        onOk() {
-          $deleteOne({
-            payload: {
-              id: ids[0],
-            },
-            callback: paging,
-          });
-        },
-      };
-    }
-    Modal.confirm(props);
+    UiUtils.showConfirmModal({
+      ids: ids,
+      dispatch: $deleteOne,
+      callback: paging,
+    });
   };
 
   onClickShowCreateModal = () => this.setState({
