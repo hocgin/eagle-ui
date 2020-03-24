@@ -221,9 +221,7 @@ class index extends React.Component {
         break;
       }
       case 'rowUpdate': {
-        this.setState({
-          visibleUpdate: true,
-        });
+        this.setState({ visibleUpdate: true, });
         break;
       }
       case 'rowDelete': {

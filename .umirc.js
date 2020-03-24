@@ -64,6 +64,7 @@ export default {
         code: 'pms', icon: 'shopping', path: '/pms',
         routes: [
           { code: 'pms:product', path: '/pms/product', component: '../pages/Pms/Product' },
+          { code: 'pms:product-category', path: '/pms/product-category', component: '../pages/Pms/ProductCategory' },
         ],
       },
       // 【订单系统】
@@ -72,6 +73,7 @@ export default {
         routes: [
           { code: 'oms:order', path: '/oms/order', component: '../pages/Oms/Order' },
           { code: 'oms:order:detail', path: '/oms/order/:id', component: '../pages/Oms/Order/Detail' },
+          { code: 'oms:order-refund-apply', path: '/oms/order-refund-apply', component: '../pages/Oms/OrderRefundApply' },
         ],
       },
     ],
