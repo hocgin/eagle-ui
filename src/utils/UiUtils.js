@@ -1,6 +1,6 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
-import { Badge, message, TreeSelect } from 'antd';
+import { Badge, message, Modal, TreeSelect } from 'antd';
 
 export default class UiUtils {
 
@@ -20,6 +20,49 @@ export default class UiUtils {
     console.error('业务失败，响应内容::', result);
     message.error(result.message);
     return false;
+  }
+
+  /**
+   * 弹窗确认
+   * @param ids
+   * @param dispatch
+   * @param callback
+   * @param title
+   */
+  static showConfirmModal({
+                            ids = [],
+                            dispatch = () => {
+                            },
+                            callback = () => {
+                            },
+                            title = '请确认正在进行的操作?',
+                          }) {
+    let props = {
+      content: title,
+      okText: '确定',
+      cancelText: '取消',
+      onCancel() {
+        Modal.destroyAll();
+      },
+    };
+
+    if (ids.length > 1) {
+      props = {
+        ...props,
+        onOk() {
+          dispatch({ payload: { id: ids }, callback: callback });
+        },
+      };
+    } else {
+      props = {
+        ...props,
+        content: title,
+        onOk() {
+          dispatch({ payload: { id: ids[0] }, callback: callback });
+        },
+      };
+    }
+    Modal.confirm(props);
   }
 
   /**

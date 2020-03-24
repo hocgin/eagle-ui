@@ -25,4 +25,33 @@ export default class OrderApi {
     });
   }
 
+  static close({ id, ...payload }) {
+    return request(`/api/order/close`, {
+      method: 'PUT',
+      body: {
+        id,
+        ...payload,
+      },
+    });
+  }
+
+  static shipped({ id, ...payload }) {
+    return request(`/api/order/shipped`, {
+      method: 'PUT',
+      body: {
+        id,
+        ...payload,
+      },
+    });
+  }
+
+  static update({ id, ...payload }) {
+    return request(`/api/order/${id}`, {
+      method: 'PUT',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
 }

@@ -33,7 +33,7 @@ class index extends React.Component {
     let {
       orderSn, orderStatus, orderStatusName, accountName, confirmStatusName, confirmStatus,
       receiverName, receiverPhone, receiverPostCode, receiverProvince, receiverCity, receiverRegion, receiverDetailAddress,
-      orderItems, remark, freightAmount, totalAmount, payAmount, discountAmount, createdAt,
+      orderItems, remark, freightAmount, totalAmount, payAmount, discountAmount, createdAt, couponAmount,
     } = detail;
 
     let goodsData = orderItems;
@@ -155,7 +155,8 @@ class index extends React.Component {
           <Description term="订单总价">{LangFormatter.formatRMB(totalAmount)}</Description>
           <Description term="应付金额">{LangFormatter.formatRMB(payAmount)}</Description>
           <Description term="运费">{LangFormatter.formatRMB(freightAmount)}</Description>
-          <Description term="优惠金额">{LangFormatter.formatRMB(discountAmount)}</Description>
+          <Description term="优惠券抵扣金额">{LangFormatter.formatRMB(couponAmount)}</Description>
+          <Description term="后台调整优惠金额">{LangFormatter.formatRMB(discountAmount)}</Description>
         </DescriptionList>
         <Divider style={{ marginBottom: 32 }}/>
         <div className={styles.title}>订单日志</div>

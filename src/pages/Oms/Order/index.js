@@ -7,7 +7,7 @@ import UiUtils from '@/utils/UiUtils';
 import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
-import UpdateStepModal from '@/pages/Pms/Product/Modal/UpdateStepModal';
+import UpdateModal from '@/pages/Oms/Order/Modal/UpdateModal';
 import router from 'umi/router';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
@@ -20,6 +20,8 @@ import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 }, dispatch => ({
   $paging: (args = {}) => dispatch({ type: 'order/paging', ...args }),
   $deleteOne: (args = {}) => dispatch({ type: 'order/delete', ...args }),
+  $closeOne: (args = {}) => dispatch({ type: 'order/close', ...args }),
+  $shippedOne: (args = {}) => dispatch({ type: 'order/shipped', ...args }),
 }))
 class index extends React.Component {
 
@@ -125,10 +127,12 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowUpdate">修改价格</Menu.Item>
-        <Menu.Item key="rowUpdate">关闭订单</Menu.Item>
-        <Menu.Item key="rowUpdate">确认发货</Menu.Item>
-        <Menu.Item key="rowUpdate">订单追踪</Menu.Item>
+        <Menu.Item key="rowUpdate">修改订单</Menu.Item>
+        <Menu.Item key="rowClose">关闭订单</Menu.Item>
+        <Menu.Item key="rowShipped">确认发货</Menu.Item>
+        <Menu.Item key="rowUk">
+          <del>物流追踪</del>
+        </Menu.Item>
         <Menu.Item key="rowDetail">查看详情</Menu.Item>
         <Menu.Item key="rowDelete">删除</Menu.Item>
       </Menu>);
@@ -175,9 +179,9 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
-      {visibleUpdate && <UpdateStepModal visible={visibleUpdate}
-                                         id={operateRow}
-                                         onClose={this.onClickCloseUpdateModal}/>}
+      {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseUpdateModal}/>}
     </div>);
   }
 
@@ -226,6 +230,14 @@ class index extends React.Component {
         this.onClickShowDeleteModal([this.state.operateRow]);
         break;
       }
+      case 'rowClose': {
+        this.onClickShowCloseModal([this.state.operateRow]);
+        break;
+      }
+      case 'rowShipped': {
+        this.onClickShowShippedModal([this.state.operateRow]);
+        break;
+      }
       default: {
         Modal.error({
           content: '无效操作',
@@ -247,29 +259,31 @@ class index extends React.Component {
   onClickShowDeleteModal = (ids = []) => {
     let { $deleteOne } = this.props;
     let paging = this.paging;
-    let props = {
-      content: `确认删除选中订单?`,
-      onCancel() {
-        Modal.destroyAll();
-      },
-    };
+    UiUtils.showConfirmModal({
+      ids: ids,
+      dispatch: $deleteOne,
+      callback: paging,
+    });
+  };
 
-    if (ids.length > 1) {
-      // TODO
-    } else {
-      props = {
-        content: `确认删除该订单?`,
-        onOk() {
-          $deleteOne({
-            payload: {
-              id: ids[0],
-            },
-            callback: paging,
-          });
-        },
-      };
-    }
-    Modal.confirm(props);
+  onClickShowCloseModal = (ids) => {
+    let { $closeOne } = this.props;
+    let paging = this.paging;
+    UiUtils.showConfirmModal({
+      ids: ids,
+      dispatch: $closeOne,
+      callback: paging,
+    });
+  };
+
+  onClickShowShippedModal = (ids) => {
+    let { $shippedOne } = this.props;
+    let paging = this.paging;
+    UiUtils.showConfirmModal({
+      ids: ids,
+      dispatch: $shippedOne,
+      callback: paging,
+    });
   };
 
   onClickCloseUpdateModal = () => {
@@ -277,7 +291,6 @@ class index extends React.Component {
       visibleUpdate: false,
     }, this.paging);
   };
-
 }
 
 export default index;

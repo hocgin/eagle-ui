@@ -40,11 +40,28 @@ export default {
     },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {
-
+      let result = yield OrderApi.update(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
       let result = yield OrderApi.delete(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
+    // 关闭
+    * close({ payload = {}, callback }, { call, put }) {
+      let result = yield OrderApi.close(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
+    // 发货
+    * shipped({ payload = {}, callback }, { call, put }) {
+      let result = yield OrderApi.shipped(payload); // API
       if (UiUtils.showErrorMessageIfExits(result)) {
         if (callback) callback(result);
       }
