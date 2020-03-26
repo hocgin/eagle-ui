@@ -30,4 +30,20 @@ export class EnumFormatter {
     return (<Badge status={['processing', 'success'][int]} text={title}/>);
   }
 
+  /**
+   * 退款申请状态
+   * @param int
+   * @param title
+   * @return {*}
+   */
+  static refundApplyStatus(int, title = '无') {
+    return this.status(['processing', 'warning', 'success', 'error'], int, title);
+  }
+
+  static status(enums = [], int, title = 'N/A') {
+    if (int === null || int === undefined) {
+      return 'N/A';
+    }
+    return (<Badge status={[...enums][int]} text={title}/>);
+  }
 }

@@ -74,18 +74,15 @@ class index extends React.Component {
               return <Tag key={key}>{key}/{value}</Tag>;
             })}
           </span>),
-      }, {
-        title: '退款状态',
-        dataIndex: 'refundStatus',
-        key: 'refundStatus',
-        render: (val, { refundStatusName }) => EnumFormatter.refundApplyStatus(val, refundStatusName),
-      }, {
+      },
+      {
         title: '单价',
         dataIndex: 'productPrice',
         key: 'productPrice',
         align: 'right',
         render: (val) => val && LangFormatter.formatRMB(val),
-      }, {
+      },
+      {
         title: '数量（件）',
         dataIndex: 'productQuantity',
         key: 'productQuantity',
@@ -93,7 +90,8 @@ class index extends React.Component {
         render: (text, row, index) => {
           return `${text}`;
         },
-      }, {
+      },
+      {
         title: '小计',
         dataIndex: 'realAmount',
         key: 'realAmount',
@@ -145,7 +143,7 @@ class index extends React.Component {
                  });
                  return (<>
                    <tr>
-                     <th colSpan={6}>总计</th>
+                     <th colSpan={5}>总计</th>
                      <td align={'right'}>{totalQuantity}</td>
                      <td align={'right'}>{LangFormatter.formatRMB(totalAmount)}</td>
                    </tr>
