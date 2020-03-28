@@ -213,8 +213,6 @@ class index extends React.Component {
    */
   onClickMenuRowItem = ({ key }) => {
     let { operateRow } = this.state;
-    console.log('operateRow', operateRow);
-
     switch (key) {
       case 'rowDetail': {
         router.push({

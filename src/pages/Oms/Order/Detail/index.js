@@ -108,7 +108,7 @@ class index extends React.Component {
       },
     ];
 
-    return (<PageHeaderWrapper title={`单号: ${orderSn}`}
+    return (<PageHeaderWrapper title={`订单单号: ${orderSn}`}
                                loading={detailLoading}
                                content={this.renderPageHeaderContent()}
                                extraContent={this.renderExtra()}

@@ -1,6 +1,7 @@
-import Utils from '@/utils/Utils';
 import UiUtils from '@/utils/UiUtils';
 import OrderRefundApplyApi from '@/services/OrderRefundApply';
+import qs from 'query-string';
+import pathToRegexp from 'path-to-regexp';
 
 export default {
   namespace: 'orderRefundApply',
@@ -42,6 +43,13 @@ export default {
     * update({ payload = {}, callback }, { call, put }) {
 
     },
+    // 更新
+    * handle({ payload = {}, callback }, { call, put }) {
+      let result = yield OrderRefundApplyApi.handle(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
 
@@ -67,5 +75,22 @@ export default {
       };
     },
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }, done) {
+      return history.listen(({ pathname, search }) => {
+        const query = qs.parse(search);
+        // 订单详情
+        if (pathToRegexp('/oms/order-refund-apply/:id').test(pathname)) {
+          let index = pathname.lastIndexOf('/');
+          let id = pathname.substr(index + 1);
+          dispatch({
+            type: 'getOne',
+            payload: {
+              id,
+            },
+          });
+        }
+      });
+    },
+  },
 };

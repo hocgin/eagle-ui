@@ -10,6 +10,7 @@ import DetailModal from '@/pages/User/Account/Modal/DetailModal';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import router from 'umi/router';
 
 @connect(({ global, orderRefundApply: { paging }, loading, ...rest }) => {
   return {
@@ -76,23 +77,10 @@ class index extends React.Component {
             this.onClickMenuRowItem(e, record);
           });
       };
-
-      const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowGrant">⭕️ 通过</Menu.Item>
-        <Menu.Item key="rowGrant">❌ 拒绝</Menu.Item>
-      </Menu>);
-
       return <>
         <a href={null}
            rel="noopener noreferrer"
            onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
-        <Divider type="vertical"/>
-        <Dropdown overlay={MoreMenus}>
-          <a href={null}
-             rel="noopener noreferrer">
-            更多操作 <DownOutlined/>
-          </a>
-        </Dropdown>
       </>;
     },
   }];
@@ -151,10 +139,11 @@ class index extends React.Component {
    * @param key
    */
   onClickMenuRowItem = ({ key }) => {
+    let { operateRow } = this.state;
     switch (key) {
       case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
+        router.push({
+          pathname: `/oms/order-refund-apply/${operateRow}`,
         });
         break;
       }

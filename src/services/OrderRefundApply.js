@@ -1,5 +1,4 @@
 import request from '@/utils/request';
-import { stringify } from 'qs';
 
 export default class OrderRefundApplyApi {
 
@@ -14,11 +13,17 @@ export default class OrderRefundApplyApi {
 
   static getOne({ id, ...payload }) {
     return request(`/api/order-refund-apply/${id}`, {
+      method: 'GET',
+    });
+  }
+
+
+  static handle({ id, ...payload }) {
+    return request(`/api/order-refund-apply/${id}/handle`, {
       method: 'POST',
       body: {
         ...payload,
       },
     });
   }
-
 }

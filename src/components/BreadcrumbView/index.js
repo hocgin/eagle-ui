@@ -13,7 +13,7 @@ class Index extends React.PureComponent {
       {(menuPaths || []).map(({ path, title, icon }) => (<Breadcrumb.Item key={`${title}`} href={path}>
         <Link to={path}>
           {icon && <LegacyIcon type={`${icon}`}/>}
-          <span>{title}</span>
+          <span> {title}</span>
         </Link>
       </Breadcrumb.Item>))}
     </Breadcrumb>);
