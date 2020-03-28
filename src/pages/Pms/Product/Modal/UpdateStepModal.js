@@ -1,11 +1,26 @@
 import React from 'react';
-import { Button, Col, Form, Input, InputNumber, message, Modal, Row, Select, Steps, Switch, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Row,
+  Select,
+  Steps,
+  Switch,
+  Table,
+  TreeSelect,
+} from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import memoizeOne from 'memoize-one';
 import PicturesWall from '@/components/PicturesWall';
 import isEqual from 'lodash/isEqual';
 import Utils from '@/utils/Utils';
+import UiUtils from '@/utils/UiUtils';
 
 
 function getTreePath(parentPath = [], childrenList = []) {
@@ -46,7 +61,7 @@ let defaultValue = {
   publishStatus: true,
 };
 
-@connect(({ global, loading, product: { detail }, ...rest }) => {
+@connect(({ global, loading, productCategory: { tree }, product: { detail }, ...rest }) => {
   let detailLoading = loading.effects['role/getOne'];
   let itemDetail = detail;
   if (detail) {
@@ -58,9 +73,11 @@ let defaultValue = {
   return {
     itemDetail,
     detailLoading,
+    productCategoryTree: tree,
     confirmLoading: loading.effects['product/update'],
   };
 }, dispatch => ({
+  $getProductCategoryTree: (args = {}) => dispatch({ type: 'productCategory/getTree', ...args }),
   $updateOne: (args = {}) => dispatch({ type: 'product/update', ...args }),
   $getOne: (args = {}) => dispatch({ type: 'product/getOne', ...args }),
 }))
@@ -78,10 +95,6 @@ class index extends React.PureComponent {
     specValue: {},
     datasource: [],
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   componentWillReceiveProps({ itemDetail }) {
     let sku = itemDetail.sku || [];
@@ -111,8 +124,9 @@ class index extends React.PureComponent {
   }
 
   componentDidMount() {
-    let { id, $getOne } = this.props;
+    let { id, $getOne, $getProductCategoryTree } = this.props;
     $getOne({ payload: { id } });
+    $getProductCategoryTree({});
   }
 
   render() {
@@ -146,6 +160,7 @@ class index extends React.PureComponent {
    * @constructor
    */
   Step1 = () => {
+    let { productCategoryTree } = this.props;
     return ([
       <Form.Item {...formLayout} label="商品标题"
                  rules={[{ required: true, message: '请输入商品标题' }]}
@@ -155,7 +170,11 @@ class index extends React.PureComponent {
       <Form.Item {...formLayout} label="品类"
                  rules={[{ required: true, message: '请输入商品品类' }]}
                  name="productCategoryId">
-        <Input style={{ width: '100%' }} placeholder="请输入商品品类"/>
+        <TreeSelect onSelect={this.onSelectRows}
+                    allowClear
+                    placeholder="请选择商品品类">
+          {UiUtils.renderTreeSelectNodes(productCategoryTree)}
+        </TreeSelect>
       </Form.Item>,
       <Form.Item {...formLayout} label="采购地"
                  rules={[{ required: false, message: '请输入采购地' }]}

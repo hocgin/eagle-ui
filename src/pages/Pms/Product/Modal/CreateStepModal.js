@@ -1,10 +1,25 @@
 import React from 'react';
-import { Button, Col, Form, Input, InputNumber, message, Modal, Row, Select, Steps, Switch, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Row,
+  Select,
+  Steps,
+  Switch,
+  Table,
+  TreeSelect,
+} from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import memoizeOne from 'memoize-one';
 import PicturesWall from '@/components/PicturesWall';
 import isEqual from 'lodash/isEqual';
+import UiUtils from '@/utils/UiUtils';
 
 
 function getTreePath(parentPath = [], childrenList = []) {
@@ -45,11 +60,13 @@ let defaultValue = {
   publishStatus: true,
 };
 
-@connect(({ global, loading, ...rest }) => {
+@connect(({ global, productCategory: { tree }, loading, ...rest }) => {
   return {
+    productCategoryTree: tree,
     confirmLoading: loading.effects['product/insert'],
   };
 }, dispatch => ({
+  $getProductCategoryTree: (args = {}) => dispatch({ type: 'productCategory/getTree', ...args }),
   $insertOne: (args = {}) => dispatch({ type: 'product/insert', ...args }),
 }))
 class index extends React.PureComponent {
@@ -67,11 +84,12 @@ class index extends React.PureComponent {
   };
 
   componentDidMount() {
-    let {} = this.props;
+    let { $getProductCategoryTree } = this.props;
+    $getProductCategoryTree();
   }
 
   render() {
-    const { visible, onClose } = this.props;
+    const { visible, onClose, productCategoryTree } = this.props;
     const { step, formValue } = this.state;
     return (<Modal width={640}
                    bodyStyle={{ padding: '32px 40px 48px' }}
@@ -98,6 +116,7 @@ class index extends React.PureComponent {
    * @constructor
    */
   Step1 = () => {
+    let { productCategoryTree } = this.props;
     return ([
       <Form.Item {...formLayout} label="商品标题"
                  rules={[{ required: true, message: '请输入商品标题' }]}
@@ -107,7 +126,11 @@ class index extends React.PureComponent {
       <Form.Item {...formLayout} label="品类"
                  rules={[{ required: true, message: '请输入商品品类' }]}
                  name="productCategoryId">
-        <Input style={{ width: '100%' }} placeholder="请输入商品品类"/>
+        <TreeSelect onSelect={this.onSelectRows}
+                    allowClear
+                    placeholder="请选择商品品类">
+          {UiUtils.renderTreeSelectNodes(productCategoryTree)}
+        </TreeSelect>
       </Form.Item>,
       <Form.Item {...formLayout} label="采购地"
                  rules={[{ required: false, message: '请输入采购地' }]}
