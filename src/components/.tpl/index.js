@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './index.less';
+import PropTypes from 'prop-types';
 
 class Index extends React.PureComponent {
   render() {
@@ -10,6 +11,14 @@ class Index extends React.PureComponent {
       </div>
     );
   }
+
+  static propTypes = {
+    children: PropTypes.node,
+  };
+
+  static defaultProps = {
+    children: <></>,
+  };
 }
 
 export default Index;

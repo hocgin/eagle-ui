@@ -1,10 +1,12 @@
 import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Dropdown, Input, Layout, Menu } from 'antd';
+import { Avatar, Dropdown, Input, Layout, Menu } from 'antd';
 import React from 'react';
 import styles from './index.less';
 import memoizeOne from 'memoize-one';
 import pathToRegexp from 'path-to-regexp';
+import DocumentTitle from 'react-document-title';
+import { ContainerQuery } from 'react-container-query';
 import isEqual from 'lodash/isEqual';
 import classnames from 'classnames';
 import { connect } from 'dva';
@@ -15,6 +17,32 @@ import Link from 'umi/link';
 import NoticeIcon from '@/components/NoticeIcon';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import EmptyNotify from '@/assets/EmptyNotify.svg';
+import Context from './MenuContext';
+
+const query = {
+  'screen-xs': {
+    maxWidth: 575,
+  },
+  'screen-sm': {
+    minWidth: 576,
+    maxWidth: 767,
+  },
+  'screen-md': {
+    minWidth: 768,
+    maxWidth: 991,
+  },
+  'screen-lg': {
+    minWidth: 992,
+    maxWidth: 1199,
+  },
+  'screen-xl': {
+    minWidth: 1200,
+    maxWidth: 1599,
+  },
+  'screen-xxl': {
+    minWidth: 1600,
+  },
+};
 
 const { Search } = Input;
 const { Header, Sider, Content, Footer } = Layout;
@@ -58,6 +86,7 @@ class BasicLayout extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this.getPageTitle = memoizeOne(this.getPageTitle);
     this.fastMatchParamsPath = memoizeOne(this.matchParamsPath, isEqual);
     this.fastGetDefaultCollapsedSubMenus = memoizeOne(getDefaultCollapsedSubMenus, isEqual);
   }
@@ -95,80 +124,78 @@ class BasicLayout extends React.Component {
     let defaultOpenKeys = menu ? [menu.code] : null;
     let openMenus = this.fastGetDefaultCollapsedSubMenus(pathname, menuData);
 
-    return <>
-      <Layout className={styles.component}>
-        {/*左侧*/}
-        <Sider className={styles.sider}
-               width={250}
-               trigger={null} collapsible collapsed={collapsed}>
-          <div className={styles.logo}/>
-          <SiderMenus {...this.props}
-                      data={menuData}
-                      defaultOpenKeys={defaultOpenKeys}
-                      className={styles.menus}/>
-        </Sider>
-        {/*右侧*/}
-        <Layout>
-          <Header className={styles.header}>
-            <LegacyIcon className={styles.trigger}
-                        type={collapsed ? 'menu-unfold' : 'menu-fold'}
-                        onClick={this.onToggle}/>
-            <div style={{ flex: 1 }}>
+    let layout = <Layout className={styles.component}>
+      {/*左侧*/}
+      <Sider className={styles.sider}
+             width={250}
+             trigger={null} collapsible collapsed={collapsed}>
+        <div className={styles.logo}/>
+        <SiderMenus {...this.props}
+                    data={menuData}
+                    defaultOpenKeys={defaultOpenKeys}
+                    className={styles.menus}/>
+      </Sider>
+      {/*右侧*/}
+      <Layout>
+        <Header className={styles.header}>
+          <LegacyIcon className={styles.trigger}
+                      type={collapsed ? 'menu-unfold' : 'menu-fold'}
+                      onClick={this.onToggle}/>
+          <div style={{ flex: 1 }}>
+          </div>
+          <div className={styles.toolbar}>
+            <div>
+              <Search
+                placeholder="搜索.."
+                onSearch={value => console.log(value)}
+                style={{ width: 230, marginRight: 40 }}/>
             </div>
-            <div className={styles.toolbar}>
-              <div>
-                <Search
-                  placeholder="搜索.."
-                  onSearch={value => console.log(value)}
-                  style={{ width: 230, marginRight: 40 }}/>
-              </div>
-              <NoticeIcon className={classnames(styles.btn, styles.notice)}
-                          popupAlign={{ offset: [-160, -16] }}
-                          count={notifySummary.unready}>
-                <NoticeIcon.Tab title="私信"
-                                list={(notifySummary.privateLetter || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
-                                name="privateLetter"
-                                emptyText="暂无私信"
-                                emptyImage={EmptyNotify}/>
-                <NoticeIcon.Tab title="通知"
-                                list={(notifySummary.subscription || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
-                                name="subscription"
-                                emptyText="暂无通知"
-                                emptyImage={EmptyNotify}/>
-                <NoticeIcon.Tab title="公告"
-                                list={(notifySummary.announcement || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
-                                name="announcement"
-                                emptyText="暂无公告"
-                                emptyImage={EmptyNotify}/>
-              </NoticeIcon>
-              <div className={classnames(styles.btn, styles.username)}>
-                <Dropdown overlay={userDropdownMenus}>
-                  <a onClick={e => e.preventDefault()}>
-                    <Avatar shape="circle" icon={<UserOutlined/>} src={avatar}/> {nickname}
-                  </a>
-                </Dropdown>
-              </div>
-              <div className={styles.btn}>
-                <SettingOutlined style={{ fontSize: 18 }}/>
-              </div>
+            <NoticeIcon className={classnames(styles.btn, styles.notice)}
+                        popupAlign={{ offset: [-160, -16] }}
+                        count={notifySummary.unready}>
+              <NoticeIcon.Tab title="私信"
+                              list={(notifySummary.privateLetter || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
+                              name="privateLetter"
+                              emptyText="暂无私信"
+                              emptyImage={EmptyNotify}/>
+              <NoticeIcon.Tab title="通知"
+                              list={(notifySummary.subscription || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
+                              name="subscription"
+                              emptyText="暂无通知"
+                              emptyImage={EmptyNotify}/>
+              <NoticeIcon.Tab title="公告"
+                              list={(notifySummary.announcement || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}
+                              name="announcement"
+                              emptyText="暂无公告"
+                              emptyImage={EmptyNotify}/>
+            </NoticeIcon>
+            <div className={classnames(styles.btn, styles.username)}>
+              <Dropdown overlay={userDropdownMenus}>
+                <a onClick={e => e.preventDefault()}>
+                  <Avatar shape="circle" icon={<UserOutlined/>} src={avatar}/> {nickname}
+                </a>
+              </Dropdown>
             </div>
-          </Header>
-          <Content className={styles.content}>
-            {/*路径*/}
-            <Breadcrumb className={styles.breadcrumb}>
-              {(openMenus || []).map(({ url, title, icon }) => (
-                <Breadcrumb.Item href={url}>
-                  {icon && <LegacyIcon type={`${icon}`}/>}
-                  <span>{title}</span>
-                </Breadcrumb.Item>
-              ))}
-            </Breadcrumb>
-            {/*内容*/}
-            {children}
-          </Content>
-          <Footer>Hi.</Footer>
-        </Layout>
+            <div className={styles.btn}>
+              <SettingOutlined style={{ fontSize: 18 }}/>
+            </div>
+          </div>
+        </Header>
+        <Content className={styles.content}>
+          {/*内容*/}
+          {children}
+        </Content>
+        <Footer>Hi.</Footer>
       </Layout>
+    </Layout>;
+    return <>
+      <DocumentTitle title={this.getPageTitle(pathname)}>
+        <ContainerQuery query={query}>
+          {params => (<Context.Provider value={{ menuPaths: openMenus }}>
+            <div className={classnames(params, styles.contentWrapper)}>{layout}</div>
+          </Context.Provider>)}
+        </ContainerQuery>
+      </DocumentTitle>
     </>;
   }
 
@@ -219,6 +246,10 @@ class BasicLayout extends React.Component {
     mergeMenuAndRouter(menuData);
     return routerMap;
   }
+
+  getPageTitle = pathname => {
+    return `Eagle 后台`;
+  };
 
   /**
    * 切换菜单展开和缩起

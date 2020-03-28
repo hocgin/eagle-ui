@@ -63,7 +63,7 @@ export const getDefaultCollapsedSubMenus = (pathname, data = []) => {
         ...item,
         hasChildren: (item.children.length > 0),
       }];
-      if (item.path === pathname) {
+      if (pathToRegexp(item.path).test(pathname)) {
         targetLink = newLink;
         return;
       }
@@ -114,16 +114,14 @@ class SiderMenus extends React.PureComponent {
     if (!selectedKeys.length && openKeys) {
       selectedKeys = [openKeys[openKeys.length - 1]];
     }
-    return (
-      <Menu className={classnames(styles.component, className)}
-            selectedKeys={selectedKeys}
-            openKeys={openKeys}
-            onClick={onClick}
-            onOpenChange={this.onOpenChange}
-            theme="dark" mode="inline">
-        {this.renderMenus(data)}
-      </Menu>
-    );
+    return (<Menu className={classnames(styles.component, className)}
+                  selectedKeys={selectedKeys}
+                  openKeys={openKeys}
+                  onClick={onClick}
+                  onOpenChange={this.onOpenChange}
+                  theme="dark" mode="inline">
+      {this.renderMenus(data)}
+    </Menu>);
   }
 
   /**
@@ -159,11 +157,10 @@ class SiderMenus extends React.PureComponent {
    */
   renderMenus = (items = []) => {
     return (items || []).map((item) => {
-      const { code, icon, title, children = [], path } = item;
+      const { code, hideChildrenInMenu = false, icon, title, children = [], path } = item;
       const isMenuGroup = children.length > 0;
-      if (isMenuGroup) {
-        return (<SubMenu key={`${path}`}
-                         title={<span>{getIcon(icon)}<span>{title}</span></span>}>
+      if (!hideChildrenInMenu && isMenuGroup) {
+        return (<SubMenu key={`${path}`} title={<span>{getIcon(icon)}<span>{title}</span></span>}>
           {this.renderMenus(children)}
         </SubMenu>);
       } else {

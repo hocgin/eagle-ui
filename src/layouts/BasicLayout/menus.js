@@ -15,12 +15,13 @@ export default class MenuUtils {
     let data = MenuUtils.getRoutes(routes);
     return (tree || []).map(({ title, authorityCode, children = [] }) => {
       let item = MenuUtils.getItem(authorityCode, data);
-      console.log(`获取菜单, Code=${authorityCode}, 获取结果: `, item);
+      // console.log(`获取菜单, Code=${authorityCode}, 获取结果: `, item);
       if (!item) {
         return null;
       }
       return {
         ...{
+          hideChildrenInMenu: item.hideChildrenInMenu || false,
           code: item.code,
           icon: item.icon,
           path: item.path,
