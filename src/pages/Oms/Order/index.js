@@ -165,7 +165,8 @@ class index extends React.Component {
       <ComplexTable toolbarTitle={'订单列表'}
                     toolbarMenu={BatchMenus}
                     searchBarChildren={[
-                      <Form.Item label="关键词搜索"
+                      <Form.Item key={1}
+                                 label="关键词搜索"
                                  name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
                       </Form.Item>,
