@@ -1,6 +1,6 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
-import { Badge, message, Modal, TreeSelect } from 'antd';
+import { Badge, message, Modal, Tree, TreeSelect } from 'antd';
 
 export default class UiUtils {
 
@@ -116,14 +116,35 @@ export default class UiUtils {
   static fastPagingPagination = memoizeOne(this.getPagingPagination);
 
 
+  /**
+   * <Tree.Select/>
+   * @param data
+   * @return {unknown[]}
+   */
   static renderTreeSelectNodes(data) {
     return (data || []).map(item => {
       if (item.children && item.children.length > 0) {
-        return (<TreeSelect.TreeNode value={item.id} title={item.title} dataRef={item}>
+        return (<TreeSelect.TreeNode key={`${item.id}`} value={item.id} title={item.title} dataRef={item}>
           {this.renderTreeSelectNodes(item.children)}
         </TreeSelect.TreeNode>);
       }
-      return <TreeSelect.TreeNode value={item.id} key={item.authorityCode} title={item.title} dataRef={item}/>;
+      return <TreeSelect.TreeNode value={item.id} key={`${item.id}`} title={item.title} dataRef={item}/>;
+    });
+  };
+
+  /**
+   * <Tree/>
+   * @param data
+   * @return {unknown[]}
+   */
+  static renderTreeNodes(data) {
+    return (data || []).map(item => {
+      if (item.children && item.children.length > 0) {
+        return (<Tree.TreeNode key={`${item.id}`} value={item.id} title={item.title} dataRef={item}>
+          {this.renderTreeNodes(item.children)}
+        </Tree.TreeNode>);
+      }
+      return <Tree.TreeNode value={item.id} key={`${item.id}`} title={item.title} dataRef={item}/>;
     });
   };
 

@@ -5,66 +5,59 @@ import { connect } from 'dva';
 import TextRow from '@/components/TextRow';
 import ComplexCollapse from '@/components/ComplexCollapse';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 const { Panel } = Collapse;
 
 @connect(({
             global,
-            authority: { authorityTree, detail },
+            productCategory: { detail },
             loading, ...rest
           }) => {
 
   return {
     detail: detail,
-    detailLoading: loading.effects['authority/getAuthority'],
+    detailLoading: loading.effects['productCategory/getOne'],
   };
 }, dispatch => ({
-  $getOne: (args = {}) => dispatch({ type: 'authority/getAuthority', ...args }),
+  $getOne: (args = {}) => dispatch({ type: 'productCategory/getOne', ...args }),
 }))
 class DetailModal extends PureComponent {
-
   componentDidMount() {
     let { id, $getOne } = this.props;
     $getOne({ payload: { id: id } });
   }
 
   render() {
-    const { visible, detailLoading, onClose, detail } = this.props;
+    const { detail, detailLoading, visible, onClose, ...rest } = this.props;
     if (detailLoading) {
       return null;
     }
-    let { title, createdAt, creatorName, lastUpdatedAt, lastUpdaterName, typeName, authorityCode, platformName, parentName, enabledName, roles } = detail;
+    let { title, createdAt, creatorName, lastUpdatedAt, remark, lastUpdaterName, keywords, enabled, enabledName } = detail;
     return (<Modal width={640}
                    bodyStyle={{ padding: '10px 20px 48px' }}
-                   title="权限详情"
+                   title="品类详情"
                    visible={visible}
                    maskClosable
                    onCancel={onClose}
                    footer={this.renderFooter()}>
       <ComplexCollapse defaultActiveKey={['1']}>
         <Panel header="基础信息" key="1">
-          <TextRow first={true} title={'父级名称'}>{parentName || '顶级'}</TextRow>
-          <TextRow title={'权限名称'}>{title}</TextRow>
-          <TextRow title={'权限类型'}>{typeName}</TextRow>
-          <TextRow title={'权限码'}>{authorityCode}</TextRow>
-          <TextRow title={'平台'}>{platformName}</TextRow>
-          <TextRow title={'开启状态'}>{enabledName}</TextRow>
+          <TextRow first={true} title={'品类名称'}>{title}</TextRow>
+          <TextRow title={'描述'}>{remark || '暂无'}</TextRow>
+          <TextRow title={'关键词'}>{keywords}</TextRow>
+          <TextRow title={'开启状态'}>{EnumFormatter.enabledStatus(enabled, enabledName)}</TextRow>
           <TextRow title={'创建时间'}>{DateFormatter.timestampAs(createdAt)}</TextRow>
           <TextRow title={'创建人'}>{creatorName}</TextRow>
           <TextRow title={'最后更新时间'}>{DateFormatter.timestampAs(lastUpdatedAt)}</TextRow>
           <TextRow title={'最后更新人'}>{lastUpdaterName || '暂无'}</TextRow>
-        </Panel>
-        <Panel header="关联角色" key="2">
-          {(roles || []).map(({ title, roleCode }, index) =>
-            <TextRow first={index === 0}
-                     title={'角色名称'}>{title}({roleCode})</TextRow>)}
         </Panel>
       </ComplexCollapse>
     </Modal>);
   }
 
   renderFooter = () => {
-    return ([<Button key="cancel" htmlType="button" type="primary" onClick={this.onCancel}>退出 </Button>]);
+    return ([<Button key="cancel" htmlType="button" type="primary" onClick={this.onCancel}>退出</Button>]);
   };
 
   /**
@@ -89,6 +82,5 @@ class DetailModal extends PureComponent {
     },
   };
 }
-
 
 export default DetailModal;

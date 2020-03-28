@@ -10,6 +10,7 @@ import CreateModal from './Modal/CreateModal';
 import UpdateModal from './Modal/UpdateModal';
 import DetailModal from './Modal/DetailModal';
 import GrantModal from './Modal/GrantModal';
+import UiUtils from '@/utils/UiUtils';
 
 const { TreeNode } = Tree;
 
@@ -35,19 +36,6 @@ class index extends React.Component {
     let { $getTree } = this.props;
     $getTree();
   }
-
-  renderTreeNodes = data => {
-    return (data || []).map(item => {
-      if (item.children) {
-        return (
-          <TreeNode key={`${item.authorityCode}`} title={item.title} dataRef={item}>
-            {this.renderTreeNodes(item.children)}
-          </TreeNode>
-        );
-      }
-      return <TreeNode key={`${item.authorityCode}`} title={item.title} dataRef={item}/>;
-    });
-  };
 
   render() {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant } = this.state;
@@ -79,9 +67,8 @@ class index extends React.Component {
                       type="primary">新建</Button>
             </Toolbar>
           </div>
-          <Tree
-            onSelect={this.onSelectRows}>
-            {this.renderTreeNodes(data)}
+          <Tree onSelect={this.onSelectRows}>
+            {UiUtils.renderTreeNodes(data)}
           </Tree>
         </Card>
         <CreateModal visible={visibleCreate}

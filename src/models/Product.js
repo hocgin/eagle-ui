@@ -1,4 +1,3 @@
-import Utils from '@/utils/Utils';
 import UiUtils from '@/utils/UiUtils';
 import ProductApi from '@/services/Product';
 

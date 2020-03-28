@@ -40,6 +40,13 @@ export class EnumFormatter {
     return this.status(['processing', 'warning', 'success', 'error'], int, title);
   }
 
+  /**
+   * 开启状态
+   */
+  static enabledStatus(int, title = '无') {
+    return this.status(['error', 'success'], int, title);
+  }
+
   static status(enums = [], int, title = 'N/A') {
     if (int === null || int === undefined) {
       return 'N/A';

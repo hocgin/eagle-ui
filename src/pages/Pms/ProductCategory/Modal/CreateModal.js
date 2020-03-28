@@ -4,42 +4,33 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 
-const { TreeNode } = TreeSelect;
-const { Option } = Select;
-
 const formLayout = {
   labelCol: { span: 7 },
   wrapperCol: { span: 13 },
 };
 
-@connect(({ global, authority: { authorityTree }, dataDict: { allPlatform, allAuthorityType }, loading, ...rest }) => {
+@connect(({ global, productCategory: { tree }, loading, ...rest }) => {
   return {
-    data: authorityTree,
-    allPlatform: allPlatform,
-    allAuthorityType: allAuthorityType,
-    confirmLoading: loading.effects['authority/insertOne'],
+    data: tree,
+    confirmLoading: loading.effects['productCategory/insertOne'],
   };
 }, dispatch => ({
-  $getTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
-  $insertOne: (args = {}) => dispatch({ type: 'authority/insertOne', ...args }),
-  $getAllPlatform: (args = {}) => dispatch({ type: 'dataDict/getAllPlatform', ...args }),
-  $getAllAuthorityType: (args = {}) => dispatch({ type: 'dataDict/getAllAuthorityType', ...args }),
+  $getTree: (args = {}) => dispatch({ type: 'productCategory/getTree', ...args }),
+  $insertOne: (args = {}) => dispatch({ type: 'productCategory/insert', ...args }),
 }))
 class CreateModal extends PureComponent {
   createForm = React.createRef();
 
   componentDidMount() {
-    let { $getTree, $getAllPlatform, $getAllAuthorityType } = this.props;
+    let { $getTree } = this.props;
     $getTree();
-    $getAllPlatform();
-    $getAllAuthorityType();
   }
 
   render() {
     const { form, visible, data, parentId, onClose, allPlatform, allAuthorityType, ...rest } = this.props;
     return (<Modal width={640}
                    bodyStyle={{ padding: '32px 40px 48px' }}
-                   title="新增权限"
+                   title="新增品类"
                    visible={visible}
                    maskClosable
                    onCancel={onClose}
@@ -55,31 +46,20 @@ class CreateModal extends PureComponent {
             {UiUtils.renderTreeSelectNodes(data)}
           </TreeSelect>
         </Form.Item>
-        <Form.Item {...formLayout} label="平台" hasFeedback
-                   rules={[{ required: true, message: '请选择平台' }]}
-                   name="platform">
-          <Select>
-            {(allPlatform).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item {...formLayout} label="类型" hasFeedback
-                   rules={[{ required: true, message: '请选择类型' }]}
-                   name="type">
-          <Select>
-            {(allAuthorityType).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item {...formLayout} label="权限名称" hasFeedback
-                   rules={[{ required: true, message: '请输入权限名称' }]}
+        <Form.Item {...formLayout} label="品类名称" hasFeedback
+                   rules={[{ required: true, message: '请输入品类名称' }]}
                    name="title">
           <Input style={{ width: '100%' }}
-                 placeholder="请输入权限名称"/>
+                 placeholder="请输入品类名称"/>
         </Form.Item>
-        <Form.Item {...formLayout} label="权限码" hasFeedback
-                   rules={[{ required: true, message: '请输入权限码' }]}
+        <Form.Item {...formLayout} label="品类描述" hasFeedback
+                   rules={[{ required: true, message: '请输入品类描述' }]}
                    name="authorityCode">
           <Input style={{ width: '100%' }}
-                 placeholder="请输入权限码"/>
+                 placeholder="请输入品类描述"/>
+        </Form.Item>
+        <Form.Item {...formLayout} label="关键词" name="keywords">
+          <Select mode="tags" style={{ width: '100%' }} placeholder="请输入关键词"/>
         </Form.Item>
         <Form.Item {...formLayout} label="启用状态"
                    valuePropName="checked"
@@ -92,7 +72,7 @@ class CreateModal extends PureComponent {
 
   renderFooter = () => {
     let { confirmLoading } = this.props;
-    return ([<Button key="cancel" htmlType="button" onClick={this.onCancel}>取消 </Button>,
+    return ([<Button key="cancel" htmlType="button" onClick={this.onCancel}>取消</Button>,
       <Button loading={confirmLoading} key="submit" htmlType="button" type="primary"
               onClick={this.onDone}>完成</Button>]);
   };
