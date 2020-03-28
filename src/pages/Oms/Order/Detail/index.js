@@ -18,7 +18,7 @@ const { Description } = DescriptionList;
             loading, ...rest
           }) => {
   return {
-    detail: detail,
+    detail: detail || {},
     detailLoading: loading.effects['order/getOne'],
   };
 }, dispatch => ({
@@ -28,9 +28,6 @@ class index extends React.Component {
 
   render() {
     const { detailLoading, detail } = this.props;
-    if (detailLoading) {
-      return <></>;
-    }
     let {
       orderSn, orderStatus, orderStatusName, accountName, confirmStatusName, confirmStatus,
       receiverName, receiverPhone, receiverPostCode, receiverProvince, receiverCity, receiverRegion, receiverDetailAddress,
@@ -112,6 +109,7 @@ class index extends React.Component {
     ];
 
     return (<PageHeaderWrapper title={`单号: ${orderSn}`}
+                               loading={detailLoading}
                                content={this.renderPageHeaderContent()}
                                extraContent={this.renderExtra()}
                                wrapperClassName={styles.page}>

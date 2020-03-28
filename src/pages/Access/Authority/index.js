@@ -16,10 +16,11 @@ const { TreeNode } = Tree;
 @connect(({ global, authority: { authorityTree = [] }, loading, ...rest }) => {
   return {
     data: authorityTree,
+    treeLoading: loading.effects['authority/getAuthorityTree'],
   };
 }, dispatch => ({
   $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
-  $deleteAuthority: (args = {}) => dispatch({ type: 'authority/delete', ...args }),
+  $delete: (args = {}) => dispatch({ type: 'authority/delete', ...args }),
 }))
 class index extends React.Component {
   state = {
@@ -33,10 +34,6 @@ class index extends React.Component {
   componentDidMount() {
     let { $getAuthorityTree } = this.props;
     $getAuthorityTree();
-  }
-
-  componentDidUpdate() {
-    // window.removeEventListener('resize', this.handleResize);
   }
 
   renderTreeNodes = data => {
@@ -54,7 +51,8 @@ class index extends React.Component {
 
   render() {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant } = this.state;
-    let { data } = this.props;
+    let { data, treeLoading } = this.props;
+
     const toolbarMenus = (
       <Menu onClick={this.onClickMenuItem}>
         <Menu.Item key="add">新增节点</Menu.Item>
@@ -76,7 +74,7 @@ class index extends React.Component {
             <Toolbar menu={toolbarMenus}
                      selectedRows={selectedRows}>
               <Button htmlType="button"
-                      icon={<PlusOutlined />}
+                      icon={<PlusOutlined/>}
                       onClick={this.onClickShowCreateModal}
                       type="primary">新建</Button>
             </Toolbar>
@@ -148,13 +146,13 @@ class index extends React.Component {
   };
 
   onClickShowDeleteModal = (isForce = false) => {
-    let { $deleteAuthority, $getAuthorityTree } = this.props;
+    let { $delete, $getAuthorityTree } = this.props;
     let { selectedRows } = this.state;
     const id = selectedRows[0];
     Modal.confirm({
       content: `确认${isForce ? '强制' : ''}删除选中权限?`,
       onOk() {
-        $deleteAuthority({
+        $delete({
           payload: {
             id,
             force: isForce,
