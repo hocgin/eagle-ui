@@ -78,25 +78,28 @@ export default [
       // 【订单系统】
       {
         code: 'oms', icon: 'shop', path: '/oms',
-        routes: [
-          { code: 'oms:order', path: '/oms/order', component: '../pages/Oms/Order' },
-          { code: 'oms:order:detail', path: '/oms/order/:id', component: '../pages/Oms/Order/Detail' },
-          {
-            code: 'oms:order-refund-apply',
-            path: '/oms/order-refund-apply',
-            hideChildrenInMenu: true,
-            routes: [{
+        routes: [{
+          code: 'oms:order', path: '/oms/order', hideChildrenInMenu: true,
+          routes: [
+            { code: 'oms:order', path: '/oms/order', component: '../pages/Oms/Order' },
+            { code: 'oms:order:detail', path: '/oms/order/:id', component: '../pages/Oms/Order/Detail' },
+          ],
+        }, {
+          code: 'oms:order-refund-apply', path: '/oms/order-refund-apply', hideChildrenInMenu: true,
+          routes: [
+            {
               code: 'oms:order-refund-apply',
               path: '/oms/order-refund-apply',
               component: '../pages/Oms/OrderRefundApply',
-            },{
+            },
+            {
               code: 'oms:order-refund-apply:detail',
               path: '/oms/order-refund-apply/:id',
               component: '../pages/Oms/OrderRefundApply/Detail',
-            }]
-          },
-        ],
+            },
+          ],
+        }],
       },
     ],
-  }
+  },
 ];

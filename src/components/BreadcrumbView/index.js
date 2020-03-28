@@ -9,12 +9,10 @@ class Index extends React.PureComponent {
   render() {
     let { menuPaths } = this.props;
     return (<Breadcrumb className={classnames(styles.component)}>
-      {(menuPaths || []).map(({ url, title, icon }) => (
-        <Breadcrumb.Item href={url}>
-          {icon && <LegacyIcon type={`${icon}`}/>}
-          <span>{title}</span>
-        </Breadcrumb.Item>
-      ))}
+      {(menuPaths || []).map(({ path, title, icon }) => (<Breadcrumb.Item key={`${path}`} href={path}>
+        {icon && <LegacyIcon type={`${icon}`}/>}
+        <span>{title}</span>
+      </Breadcrumb.Item>))}
     </Breadcrumb>);
   }
 

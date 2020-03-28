@@ -10,6 +10,7 @@ import CreateStepModal from '@/pages/Pms/Product/Modal/CreateStepModal';
 import Img from 'react-image';
 import DetailModal from '@/pages/Pms/Product/Modal/DetailModal';
 import UpdateStepModal from '@/pages/Pms/Product/Modal/UpdateStepModal';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 
 @connect(({ global, product: { paging }, loading, ...rest }) => {
@@ -108,7 +109,7 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    return (<div className={styles.page}>
+    return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={'商品列表'}
                     toolbarMenu={BatchMenus}
                     toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
@@ -137,7 +138,7 @@ class index extends React.Component {
       {visibleUpdate && <UpdateStepModal visible={visibleUpdate}
                                          id={operateRow}
                                          onClose={this.onClickCloseUpdateModal}/>}
-    </div>);
+    </PageHeaderWrapper>);
   }
 
   /**

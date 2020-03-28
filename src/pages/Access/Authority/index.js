@@ -68,7 +68,7 @@ class index extends React.Component {
     );
 
     return (
-      <PageHeaderWrapper className={styles.page}>
+      <PageHeaderWrapper wrapperClassName={styles.page}>
         <Card bordered={false}>
           {/*工具条*/}
           <div className={classnames(styles.toolbar, styles.toolbarExt)}>

@@ -10,6 +10,7 @@ import CreateModal from '@/pages/Access/Role/Modal/CreateModal';
 import DetailModal from '@/pages/Access/Role/Modal/DetailModal';
 import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 @connect(({ global, role: { paging }, loading, ...rest }) => {
   return {
@@ -17,8 +18,8 @@ import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
     pagingLoading: loading.effects['role/paging'],
   };
 }, dispatch => ({
-  $pagingRole: (args = {}) => dispatch({ type: 'role/paging', ...args }),
-  $deleteRole: (args = {}) => dispatch({ type: 'role/delete', ...args }),
+  $paging: (args = {}) => dispatch({ type: 'role/paging', ...args }),
+  $delete: (args = {}) => dispatch({ type: 'role/delete', ...args }),
 }))
 class index extends React.Component {
 
@@ -87,7 +88,9 @@ class index extends React.Component {
         const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
           <Menu.Item key="rowUpdate">修改</Menu.Item>
           <Menu.Item key="rowGrant">赋予权限</Menu.Item>
-          <Menu.Item><del>查询关联账号</del></Menu.Item>
+          <Menu.Item>
+            <del>查询关联账号</del>
+          </Menu.Item>
           <Menu.Divider/>
           <Menu.Item key="rowDelete">删除</Menu.Item>
         </Menu>);
@@ -115,42 +118,40 @@ class index extends React.Component {
         <Menu.Item key="delete">删除角色</Menu.Item>
       </Menu>
     );
-    return (
-      <div className={styles.page}>
-        <ComplexTable toolbarTitle={'角色列表'}
-                      toolbarMenu={BatchMenus}
-                      toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                               onClick={this.onClickShowCreateModal}>新建</Button>}
-                      searchBarChildren={[
-                        <Form.Item label="关键词搜索"
-                                   name="keyword">
-                          <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
-                        </Form.Item>,
-                      ]}
-                      tableLoading={pagingLoading}
-                      tableData={{
-                        list: UiUtils.fastGetPagingList(pagingRole),
-                        pagination: UiUtils.fastPagingPagination(pagingRole),
-                      }}
-                      selectedRows={selectedRows}
-                      onSelectRow={this.onChangeSelectRow}
-                      onClickSearch={this.onClickSearch}
-                      onChangeStandardTable={this.onChangeStandardTable}
-                      tableColumns={this.tableColumns}
-        />
-        <CreateModal visible={visibleCreate}
-                     onClose={this.onClickCloseCreateModal}/>
-        {visibleDetail && <DetailModal visible={visibleDetail}
-                                       id={operateRow}
-                                       onClose={this.onClickCloseDetailModal}/>}
-        {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                       id={operateRow}
-                                       onClose={this.onClickCloseUpdateModal}/>}
-        {visibleGrant && <GrantModal visible={visibleGrant}
+    return (<PageHeaderWrapper wrapperClassName={styles.page}>
+      <ComplexTable toolbarTitle={'角色列表'}
+                    toolbarMenu={BatchMenus}
+                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
+                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                    searchBarChildren={[
+                      <Form.Item label="关键词搜索"
+                                 name="keyword">
+                        <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
+                      </Form.Item>,
+                    ]}
+                    tableLoading={pagingLoading}
+                    tableData={{
+                      list: UiUtils.fastGetPagingList(pagingRole),
+                      pagination: UiUtils.fastPagingPagination(pagingRole),
+                    }}
+                    selectedRows={selectedRows}
+                    onSelectRow={this.onChangeSelectRow}
+                    onClickSearch={this.onClickSearch}
+                    onChangeStandardTable={this.onChangeStandardTable}
+                    tableColumns={this.tableColumns}
+      />
+      <CreateModal visible={visibleCreate}
+                   onClose={this.onClickCloseCreateModal}/>
+      {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
-                                     onClose={this.onClickCloseGrantModal}/>}
-      </div>
-    );
+                                     onClose={this.onClickCloseDetailModal}/>}
+      {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseUpdateModal}/>}
+      {visibleGrant && <GrantModal visible={visibleGrant}
+                                   id={operateRow}
+                                   onClose={this.onClickCloseGrantModal}/>}
+    </PageHeaderWrapper>);
   }
 
   /**
@@ -243,12 +244,8 @@ class index extends React.Component {
    */
   paging = () => {
     let { searchValue } = this.state;
-    let { $pagingRole } = this.props;
-    $pagingRole({
-      payload: {
-        ...searchValue,
-      },
-    });
+    let { $paging } = this.props;
+    $paging({ payload: { ...searchValue } });
   };
 
   onChangeSelectRow = (rows) => {
@@ -260,7 +257,7 @@ class index extends React.Component {
 
 
   onClickShowDeleteModal = (ids = []) => {
-    let { $deleteRole } = this.props;
+    let { $delete } = this.props;
     let paging = this.paging;
     let props = {
       content: `确认删除选中角色?`,
@@ -275,7 +272,7 @@ class index extends React.Component {
       props = {
         content: `确认删除该角色?`,
         onOk() {
-          $deleteRole({
+          $delete({
             payload: {
               id: ids[0],
             },

@@ -75,6 +75,7 @@ export const getDefaultCollapsedSubMenus = (pathname, data = []) => {
 
   getLinks([], data);
 
+  console.log('当前页路径:', targetLink);
   return (targetLink || []);
 };
 

@@ -11,6 +11,7 @@ import DetailModal from '@/pages/Devtools/DataDict/Modal/DetailModal';
 import UpdateModal from '@/pages/Devtools/DataDict/Modal/UpdateModal';
 import DataDictItem from './DataDictItem/index';
 import CreateSubItemModal from '@/pages/Devtools/DataDict/Modal/CreateSubItemModal';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 @connect(({ global, dataDict: { paging }, loading, ...rest }) => {
   return {
@@ -18,8 +19,8 @@ import CreateSubItemModal from '@/pages/Devtools/DataDict/Modal/CreateSubItemMod
     pagingLoading: loading.effects['role/paging'],
   };
 }, dispatch => ({
-  $pagingDataDict: (args = {}) => dispatch({ type: 'dataDict/paging', ...args }),
-  $deletesDataDict: (args = {}) => dispatch({ type: 'dataDict/deletes', ...args }),
+  $paging: (args = {}) => dispatch({ type: 'dataDict/paging', ...args }),
+  $deletes: (args = {}) => dispatch({ type: 'dataDict/deletes', ...args }),
 }))
 class index extends React.Component {
 
@@ -120,43 +121,37 @@ class index extends React.Component {
         <Menu.Item key="delete">删除选中项</Menu.Item>
       </Menu>
     );
-    return (
-      <div className={styles.page}>
-        <ComplexTable toolbarTitle={'数据字典列表'}
-                      expandable={this.expandedRowRender()}
-                      toolbarMenu={BatchMenus}
-                      toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                               onClick={this.onClickShowCreateModal}>新建</Button>}
-                      searchBarChildren={[
-                        <Form.Item label="关键词搜索"
-                                   name="keyword">
-                          <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
-                        </Form.Item>,
-                      ]}
-                      tableLoading={pagingLoading}
-                      tableData={{
-                        list: UiUtils.fastGetPagingList(pagingDataDict),
-                        pagination: UiUtils.fastPagingPagination(pagingDataDict),
-                      }}
-                      selectedRows={selectedRows}
-                      onSelectRow={this.onChangeSelectRow}
-                      onClickSearch={this.onClickSearch}
-                      onChangeStandardTable={this.onChangeStandardTable}
-                      tableColumns={this.tableColumns}
-        />
-        <CreateModal visible={visibleCreate}
-                     onClose={this.onClickCloseCreateModal}/>
-        {visibleDetail && <DetailModal visible={visibleDetail}
-                                       id={operateRow}
-                                       onClose={this.onClickCloseDetailModal}/>}
-        {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                       id={operateRow}
-                                       onClose={this.onClickCloseUpdateModal}/>}
-        {visibleCreateSubItem && <CreateSubItemModal visible={visibleCreateSubItem}
-                                                     id={operateRow}
-                                                     onClose={this.onClickCloseCreateSubItemModal}/>}
-      </div>
-    );
+    return (<PageHeaderWrapper wrapperClassName={styles.page} title="数据字典">
+      <ComplexTable toolbarTitle={'数据字典列表'}
+                    expandable={this.expandedRowRender()}
+                    toolbarMenu={BatchMenus}
+                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
+                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                    searchBarChildren={[<Form.Item label="关键词搜索" name="keyword">
+                      <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
+                    </Form.Item>]}
+                    tableLoading={pagingLoading}
+                    tableData={{
+                      list: UiUtils.fastGetPagingList(pagingDataDict),
+                      pagination: UiUtils.fastPagingPagination(pagingDataDict),
+                    }}
+                    selectedRows={selectedRows}
+                    onSelectRow={this.onChangeSelectRow}
+                    onClickSearch={this.onClickSearch}
+                    onChangeStandardTable={this.onChangeStandardTable}
+                    tableColumns={this.tableColumns}/>
+      <CreateModal visible={visibleCreate}
+                   onClose={this.onClickCloseCreateModal}/>
+      {visibleDetail && <DetailModal visible={visibleDetail}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseDetailModal}/>}
+      {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseUpdateModal}/>}
+      {visibleCreateSubItem && <CreateSubItemModal visible={visibleCreateSubItem}
+                                                   id={operateRow}
+                                                   onClose={this.onClickCloseCreateSubItemModal}/>}
+    </PageHeaderWrapper>);
   }
 
   /**
@@ -249,12 +244,8 @@ class index extends React.Component {
    */
   paging = () => {
     let { searchValue } = this.state;
-    let { $pagingDataDict } = this.props;
-    $pagingDataDict({
-      payload: {
-        ...searchValue,
-      },
-    });
+    let { $paging } = this.props;
+    $paging({ payload: { ...searchValue } });
   };
 
   onChangeSelectRow = (rows) => {
@@ -266,7 +257,7 @@ class index extends React.Component {
 
 
   onClickShowDeleteModal = (ids = []) => {
-    let { $deletesDataDict } = this.props;
+    let { $deletes } = this.props;
     let paging = this.paging;
     let props = {
       content: `确认删除选中数据字典?`,
@@ -279,7 +270,7 @@ class index extends React.Component {
       props = {
         ...props,
         onOk() {
-          $deletesDataDict({
+          $deletes({
             payload: {
               id: ids,
               force: true,
@@ -293,7 +284,7 @@ class index extends React.Component {
         ...props,
         content: `确认删除该数据字典?`,
         onOk() {
-          $deletesDataDict({
+          $deletes({
             payload: {
               id: ids,
               force: true,

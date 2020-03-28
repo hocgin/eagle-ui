@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './index.less';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 class index extends React.Component {
 
@@ -9,8 +10,9 @@ class index extends React.Component {
 
   render() {
     let {} = this.props;
-    return (<div className={styles.page}>
-    </div>);
+    return (<PageHeaderWrapper wrapperClassName={styles.page}>
+      品类
+    </PageHeaderWrapper>);
   }
 }
 

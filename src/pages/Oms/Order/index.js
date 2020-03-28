@@ -10,6 +10,7 @@ import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import UpdateModal from '@/pages/Oms/Order/Modal/UpdateModal';
 import router from 'umi/router';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 
 @connect(({ global, order: { paging }, loading, ...rest }) => {
@@ -160,7 +161,7 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    return (<div className={styles.page}>
+    return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={'订单列表'}
                     toolbarMenu={BatchMenus}
                     searchBarChildren={[
@@ -182,7 +183,7 @@ class index extends React.Component {
       {visibleUpdate && <UpdateModal visible={visibleUpdate}
                                      id={operateRow}
                                      onClose={this.onClickCloseUpdateModal}/>}
-    </div>);
+    </PageHeaderWrapper>);
   }
 
   /**
@@ -221,7 +222,7 @@ class index extends React.Component {
         break;
       }
       case 'rowUpdate': {
-        this.setState({ visibleUpdate: true, });
+        this.setState({ visibleUpdate: true });
         break;
       }
       case 'rowDelete': {

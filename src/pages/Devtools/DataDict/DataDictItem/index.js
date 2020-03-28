@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
   return {
   };
 }, dispatch => ({
-  $deletesDataDictItem: (args = {}) => dispatch({ type: 'dataDictItem/deletes', ...args }),
+  $deletes: (args = {}) => dispatch({ type: 'dataDictItem/deletes', ...args }),
 }))
 class index extends React.Component {
   state = {
@@ -93,11 +93,11 @@ class index extends React.Component {
   };
 
   onClickShowDeleteModal = (ids = []) => {
-    let { $deletesDataDictItem, paging } = this.props;
+    let { $deletes, paging } = this.props;
     let props = {
       content: `确认删除选中数据字典项?`,
       onOk() {
-        $deletesDataDictItem({
+        $deletes({
           payload: {
             id: ids,
           },

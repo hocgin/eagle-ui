@@ -1,6 +1,7 @@
 import UiUtils from '@/utils/UiUtils';
 import OrderApi from '@/services/Order';
 import qs from 'query-string';
+import pathToRegexp from 'path-to-regexp';
 
 export default {
   namespace: 'order',
@@ -92,10 +93,9 @@ export default {
       return history.listen(({ pathname, search }) => {
         const query = qs.parse(search);
         // 订单详情
-        if (new RegExp('^/oms/order/\\d?\\d$').test(`${pathname}`)) {
+        if (pathToRegexp('/oms/order/:id').test(pathname)) {
           let index = pathname.lastIndexOf('/');
           let id = pathname.substr(index + 1);
-          console.log('id', id);
           dispatch({
             type: 'getOne',
             payload: {

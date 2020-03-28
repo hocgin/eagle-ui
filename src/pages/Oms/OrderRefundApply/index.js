@@ -9,6 +9,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import DetailModal from '@/pages/User/Account/Modal/DetailModal';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 @connect(({ global, orderRefundApply: { paging }, loading, ...rest }) => {
   return {
@@ -100,7 +101,7 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    return (<div className={styles.page}>
+    return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={'申请列表'}
                     toolbarMenu={BatchMenus}
                     toolbarChildren={null}
@@ -124,7 +125,7 @@ class index extends React.Component {
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
-    </div>);
+    </PageHeaderWrapper>);
   }
 
   /**

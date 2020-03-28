@@ -7,6 +7,7 @@ import Img from 'react-image';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 const { Description } = DescriptionList;
 
@@ -111,7 +112,8 @@ class index extends React.Component {
     ];
 
 
-    return (<div className={styles.page}>
+    return (<PageHeaderWrapper wrapperClassName={styles.page}
+                               title="订单详情">
       <Card bordered={false}>
         <DescriptionList size="large" title="基本信息" style={{ marginBottom: 32 }}>
           <Description term="单号">{orderSn}</Description>
@@ -133,7 +135,8 @@ class index extends React.Component {
         </DescriptionList>
         <Divider style={{ marginBottom: 32 }}/>
         <div className={styles.title}>商品信息</div>
-        <Table style={{ marginBottom: 24 }}
+        <Table rowKey={'id'}
+               style={{ marginBottom: 24 }}
                pagination={false}
                loading={false}
                summary={data => {
@@ -162,15 +165,14 @@ class index extends React.Component {
         </DescriptionList>
         <Divider style={{ marginBottom: 32 }}/>
         <div className={styles.title}>订单日志</div>
-        <Table
-          style={{ marginBottom: 16 }}
-          pagination={false}
-          loading={true}
-          dataSource={[]}
-          columns={[]}
-        />
+        <Table rowKey={'id'}
+               style={{ marginBottom: 16 }}
+               pagination={false}
+               loading={true}
+               dataSource={[]}
+               columns={[]}/>
       </Card>
-    </div>);
+    </PageHeaderWrapper>);
   }
 
 }

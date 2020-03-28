@@ -3,6 +3,7 @@ import styles from './index.less';
 import { Skeleton, Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import BreadcrumbView from '@/components/BreadcrumbView';
+import * as classnames from 'classnames';
 
 const { TabPane } = Tabs;
 
@@ -14,6 +15,9 @@ class Index extends React.PureComponent {
       tabBarExtraContent,
       tabDefaultActiveKey,
       tabActiveKey,
+      className,
+      menuPaths,
+      ...restProps
     } = this.props;
 
     const activeKeyProps = {};
@@ -25,7 +29,7 @@ class Index extends React.PureComponent {
     }
 
     return (
-      <div className={styles.component}>
+      <div className={classnames(styles.component, className)} {...restProps}>
         <div>
           <Skeleton title={false}
                     loading={loading}
@@ -51,7 +55,7 @@ class Index extends React.PureComponent {
               {...activeKeyProps}
               onChange={this.onChange}
               tabBarExtraContent={tabBarExtraContent}>
-              {tabList.map(item => (<TabPane tab={item.tab} key={item.key}/>))}
+              {tabList.map((item) => (<TabPane tab={item.tab} key={item.key}/>))}
             </Tabs>) : null}
           </Skeleton>
         </div>
