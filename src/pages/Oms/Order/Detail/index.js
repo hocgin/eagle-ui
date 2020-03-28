@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.less';
-import { Card, Divider, Table, Tag } from 'antd';
+import { Card, Col, Divider, Row, Table, Tag } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import { connect } from 'dva';
 import Img from 'react-image';
@@ -111,19 +111,11 @@ class index extends React.Component {
       },
     ];
 
-
-    return (<PageHeaderWrapper wrapperClassName={styles.page}
-                               title="订单详情">
+    return (<PageHeaderWrapper title={`单号: ${orderSn}`}
+                               content={this.renderPageHeaderContent()}
+                               extraContent={this.renderExtra()}
+                               wrapperClassName={styles.page}>
       <Card bordered={false}>
-        <DescriptionList size="large" title="基本信息" style={{ marginBottom: 32 }}>
-          <Description term="单号">{orderSn}</Description>
-          <Description term="下单人">{accountName}</Description>
-          <Description term="创建时间">{DateFormatter.timestampAs(createdAt)}</Description>
-          <Description term="订单状态">{EnumFormatter.orderStatus(orderStatus, orderStatusName)}</Description>
-          <Description term="确认状态">{EnumFormatter.confirmStatus(confirmStatus, confirmStatusName)}</Description>
-          <Description term="订单备注">{remark}</Description>
-        </DescriptionList>
-        <Divider style={{ marginBottom: 32 }}/>
         <DescriptionList size="large" title="收货人信息" style={{ marginBottom: 32 }}>
           <Description term="姓名">{receiverName}</Description>
           <Description term="手机号码">{receiverPhone}</Description>
@@ -174,6 +166,36 @@ class index extends React.Component {
       </Card>
     </PageHeaderWrapper>);
   }
+
+  renderPageHeaderContent = () => {
+    const { detail } = this.props;
+    let {
+      createdAt, orderStatus, orderStatusName, accountName, confirmStatusName, confirmStatus, remark,
+    } = detail;
+    return (<DescriptionList size="small" col="2">
+      <Description term="创建人">{accountName}</Description>
+      <Description term="确认状态">{EnumFormatter.confirmStatus(confirmStatus, confirmStatusName)}</Description>
+      <Description term="创建时间">{DateFormatter.timestampAs(createdAt)}</Description>
+      <Description term="关联退费单据">
+        <a href="">12421</a>
+      </Description>
+      <Description term="客户备注">{remark}</Description>
+    </DescriptionList>);
+  };
+
+  renderExtra = () => {
+    const { detail: { totalAmount, orderStatus, orderStatusName } } = this.props;
+    return (<Row>
+      <Col xs={24} sm={12}>
+        <div className={styles.textSecondary}>订单状态</div>
+        <div className={styles.heading}>{EnumFormatter.orderStatus(orderStatus, orderStatusName)}</div>
+      </Col>
+      <Col xs={24} sm={12}>
+        <div className={styles.textSecondary}>订单金额</div>
+        <div className={styles.heading}>{LangFormatter.formatRMB(totalAmount)}</div>
+      </Col>
+    </Row>);
+  };
 
 }
 
