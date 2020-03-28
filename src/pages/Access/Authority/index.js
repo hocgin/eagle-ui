@@ -19,7 +19,7 @@ const { TreeNode } = Tree;
     treeLoading: loading.effects['authority/getAuthorityTree'],
   };
 }, dispatch => ({
-  $getAuthorityTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
+  $getTree: (args = {}) => dispatch({ type: 'authority/getAuthorityTree', ...args }),
   $delete: (args = {}) => dispatch({ type: 'authority/delete', ...args }),
 }))
 class index extends React.Component {
@@ -32,8 +32,8 @@ class index extends React.Component {
   };
 
   componentDidMount() {
-    let { $getAuthorityTree } = this.props;
-    $getAuthorityTree();
+    let { $getTree } = this.props;
+    $getTree();
   }
 
   renderTreeNodes = data => {
@@ -100,6 +100,11 @@ class index extends React.Component {
     );
   }
 
+  refresh = () => {
+    let { $getTree } = this.props;
+    $getTree();
+  };
+
   // 选择树节点
   onSelectRows = (rows, target) => {
     let selectedRows = [];
@@ -146,7 +151,7 @@ class index extends React.Component {
   };
 
   onClickShowDeleteModal = (isForce = false) => {
-    let { $delete, $getAuthorityTree } = this.props;
+    let { $delete, $getTree } = this.props;
     let { selectedRows } = this.state;
     const id = selectedRows[0];
     Modal.confirm({
@@ -157,7 +162,7 @@ class index extends React.Component {
             id,
             force: isForce,
           },
-          callback: $getAuthorityTree,
+          callback: $getTree,
         });
       },
       onCancel() {
@@ -175,45 +180,29 @@ class index extends React.Component {
     visibleUpdate: true,
   });
 
-  onClickCloseCreateModal = () => {
-    let { $getAuthorityTree } = this.props;
-    $getAuthorityTree();
-    this.setState({
-      visibleCreate: false,
-    });
-  };
+  onClickCloseCreateModal = () => this.setState({
+    visibleCreate: false,
+  }, this.refresh);
 
-  onClickCloseUpdateModal = () => {
-    let { $getAuthorityTree } = this.props;
-    $getAuthorityTree();
-    this.setState({
-      visibleUpdate: false,
-    });
-  };
+  onClickCloseUpdateModal = () => this.setState({
+    visibleUpdate: false,
+  }, this.refresh);
 
-  onClickShowDetailModal = () => {
-    this.setState({
-      visibleDetail: true,
-    });
-  };
+  onClickShowDetailModal = () => this.setState({
+    visibleDetail: true,
+  });
 
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
-    });
-  };
+  onClickCloseDetailModal = () => this.setState({
+    visibleDetail: false,
+  });
 
-  onClickShowGrantModal = () => {
-    this.setState({
-      visibleGrant: true,
-    });
-  };
+  onClickShowGrantModal = () => this.setState({
+    visibleGrant: true,
+  });
 
-  onClickCloseGrantModal = () => {
-    this.setState({
-      visibleGrant: false,
-    });
-  };
+  onClickCloseGrantModal = () => this.setState({
+    visibleGrant: false,
+  });
 
 }
 
