@@ -1,25 +1,24 @@
 import React from 'react';
 import styles from './index.less';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Badge, Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
+import { Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import CreateModal from '@/pages/Access/Role/Modal/CreateModal';
-import DetailModal from '@/pages/Access/Role/Modal/DetailModal';
 import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { LangFormatter } from '@/utils/formatter/LangFormatter';
 
-@connect(({ global, role: { paging }, loading, ...rest }) => {
+@connect(({ global, coupon: { paging }, loading, ...rest }) => {
   return {
     paging: paging,
-    pagingLoading: loading.effects['role/paging'],
+    pagingLoading: loading.effects['coupon/paging'],
   };
 }, dispatch => ({
-  $paging: (args = {}) => dispatch({ type: 'role/paging', ...args }),
-  $delete: (args = {}) => dispatch({ type: 'role/delete', ...args }),
+  $paging: (args = {}) => dispatch({ type: 'coupon/paging', ...args }),
 }))
 class index extends React.Component {
 
@@ -37,28 +36,44 @@ class index extends React.Component {
     this.paging();
   }
 
-  componentDidUpdate() {
-    // window.removeEventListener('resize', this.handleResize);
-  }
-
-
   tableColumns = [{
-    title: '角色名称',
+    title: '优惠券名称',
     dataIndex: 'title',
     key: 'title',
   }, {
-    title: '角色码',
-    dataIndex: 'roleCode',
-    key: 'roleCode',
+    title: '优惠类型',
+    dataIndex: 'couponTypeName',
+    key: 'couponTypeName',
   }, {
-    title: '平台',
+    title: '可用范围',
+    dataIndex: 'useTypeName',
+    key: 'useTypeName',
+  }, {
+    title: '使用门槛',
+    dataIndex: 'minPoint',
+    key: 'minPoint',
+    render: (val) => LangFormatter.formatRMB(val),
+  }, {
+    title: '折扣',
+    dataIndex: 'credit',
+    key: 'credit',
+    render: (val, { couponType }) => {
+      let v = val;
+      if (couponType === 1) {
+        v = LangFormatter.formatRMB(v);
+      } else {
+        v = `${v} 折`;
+      }
+      return v;
+    },
+  }, {
+    title: '适用平台',
     dataIndex: 'platformName',
     key: 'platformName',
   }, {
-    title: '启用状态',
-    dataIndex: 'enabledName',
-    key: 'enabledName',
-    render: (val, { enabled }) => <Badge status={['error', 'success'][enabled]} text={val}/>,
+    title: '备注',
+    dataIndex: 'remark',
+    key: 'remark',
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',
@@ -86,13 +101,14 @@ class index extends React.Component {
         };
 
         const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-          <Menu.Item key="rowUpdate">修改</Menu.Item>
-          <Menu.Item key="rowGrant">赋予权限</Menu.Item>
-          <Menu.Item>
-            <del>查询关联账号</del>
+          <Menu.Item key="rowUpdate">
+            <del>修改</del>
           </Menu.Item>
+          <Menu.Item key="rowGrant">发送</Menu.Item>
           <Menu.Divider/>
-          <Menu.Item key="rowDelete">删除</Menu.Item>
+          <Menu.Item key="rowDelete">
+            <del>禁止派发</del>
+          </Menu.Item>
         </Menu>);
 
         return <>
@@ -113,13 +129,9 @@ class index extends React.Component {
   render() {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
-    const BatchMenus = (
-      <Menu onClick={this.onClickMenuBatchItem}>
-        <Menu.Item key="delete">删除角色</Menu.Item>
-      </Menu>
-    );
+    const BatchMenus = null;
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
-      <ComplexTable toolbarTitle={'角色列表'}
+      <ComplexTable toolbarTitle={'优惠券列表'}
                     toolbarMenu={BatchMenus}
                     toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
                                              onClick={this.onClickShowCreateModal}>新建</Button>}
@@ -138,13 +150,9 @@ class index extends React.Component {
                     onSelectRow={this.onChangeSelectRow}
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
-                    tableColumns={this.tableColumns}
-      />
+                    tableColumns={this.tableColumns}/>
       <CreateModal visible={visibleCreate}
                    onClose={this.onClickCloseCreateModal}/>
-      {visibleDetail && <DetailModal visible={visibleDetail}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseDetailModal}/>}
       {visibleUpdate && <UpdateModal visible={visibleUpdate}
                                      id={operateRow}
                                      onClose={this.onClickCloseUpdateModal}/>}
@@ -179,10 +187,6 @@ class index extends React.Component {
    */
   onClickMenuBatchItem = ({ key }) => {
     switch (key) {
-      case 'delete': {
-        this.onClickShowDeleteModal(this.state.selectedRows || []);
-        break;
-      }
       default: {
         Modal.error({
           content: '无效操作',
@@ -256,34 +260,6 @@ class index extends React.Component {
   };
 
 
-  onClickShowDeleteModal = (ids = []) => {
-    let { $delete } = this.props;
-    let paging = this.paging;
-    let props = {
-      content: `确认删除选中角色?`,
-      onCancel() {
-        Modal.destroyAll();
-      },
-    };
-
-    if (ids.length > 1) {
-      // TODO
-    } else {
-      props = {
-        content: `确认删除该角色?`,
-        onOk() {
-          $delete({
-            payload: {
-              id: ids[0],
-            },
-            callback: paging,
-          });
-        },
-      };
-    }
-    Modal.confirm(props);
-  };
-
   onClickShowCreateModal = () => this.setState({
     visibleCreate: true,
   });
@@ -302,12 +278,6 @@ class index extends React.Component {
     this.setState({
       visibleUpdate: false,
     }, this.paging);
-  };
-
-  onClickShowDetailModal = (id) => {
-    this.setState({
-      visibleDetail: true,
-    });
   };
 
   onClickCloseDetailModal = () => {

@@ -22,31 +22,28 @@ export default [
       { code: 'index', icon: 'home', path: '/home' },
       { path: '/dashboard', redirect: '/home/dashboard' },
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
-      // 【用户中心】
       {
+        // 【用户中心】
         code: 'user', icon: 'user', path: '/user',
         routes: [
           { code: 'account', path: '/user/account', component: '../pages/User/Account' },
         ],
-      },
-      // 【访问控制】
-      {
+      }, {
+        // 【访问控制】
         code: 'access', icon: 'control', path: '/access',
         routes: [
           { code: 'authority', path: '/access/authority', component: '../pages/Access/Authority' },
           { code: 'role', path: '/access/role', component: '../pages/Access/Role' }],
-      },
-      // 【开发工具】
-      {
+      }, {
+        // 【开发工具】
         code: 'devtools', icon: 'tool', path: '/devtools',
         routes: [
           { code: 'data-dict', icon: 'database', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
           { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
           { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
         ],
-      },
-      //【个人设置】
-      {
+      }, {
+        //【个人设置】
         path: '/profile',
         routes: [
           {
@@ -66,17 +63,15 @@ export default [
             // ],
           },
         ],
-      },
-      // 【商品系统】
-      {
+      }, {
+        // 【商品系统】
         code: 'pms', icon: 'shopping', path: '/pms',
         routes: [
           { code: 'pms:product', path: '/pms/product', component: '../pages/Pms/Product' },
           { code: 'pms:product-category', path: '/pms/product-category', component: '../pages/Pms/ProductCategory' },
         ],
-      },
-      // 【订单系统】
-      {
+      }, {
+        // 【订单系统】
         code: 'oms', icon: 'shop', path: '/oms',
         routes: [{
           code: 'oms:order', path: '/oms/order', hideChildrenInMenu: true,
@@ -86,18 +81,30 @@ export default [
           ],
         }, {
           code: 'oms:order-refund-apply', path: '/oms/order-refund-apply', hideChildrenInMenu: true,
-          routes: [
-            {
-              code: 'oms:order-refund-apply',
-              path: '/oms/order-refund-apply',
-              component: '../pages/Oms/OrderRefundApply',
-            },
-            {
-              code: 'oms:order-refund-apply:detail',
-              path: '/oms/order-refund-apply/:id',
-              component: '../pages/Oms/OrderRefundApply/Detail',
-            },
-          ],
+          routes: [{
+            code: 'oms:order-refund-apply',
+            path: '/oms/order-refund-apply',
+            component: '../pages/Oms/OrderRefundApply',
+          }, {
+            code: 'oms:order-refund-apply:detail',
+            path: '/oms/order-refund-apply/:id',
+            component: '../pages/Oms/OrderRefundApply/Detail',
+          }],
+        }],
+      }, {
+        // 【营销系统】
+        code: 'mkt', icon: 'shop', path: '/mkt',
+        routes: [{
+          code: 'mkt:coupon', path: '/mkt/coupon', hideChildrenInMenu: true,
+          routes: [{
+            code: 'mkt:coupon',
+            path: '/mkt/coupon',
+            component: '../pages/Mkt/Coupon',
+          }, {
+            code: 'mkt:coupon:detail',
+            path: '/mkt/coupon/:id',
+            component: '../pages/Mkt/Coupon/Detail',
+          }],
         }],
       },
     ],

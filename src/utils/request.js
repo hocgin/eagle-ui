@@ -2,6 +2,7 @@ import Config from '@/config';
 import hash from 'hash.js';
 import { Global } from '@/utils/constant/global';
 import LocalStorage from '@/utils/LocalStorage';
+import Goto from '@/utils/Goto';
 
 export default function request(
     url,
@@ -78,6 +79,10 @@ export default function request(
             if (Config.isDev()) {
                 console.debug(`${response.status}:[请求地址]:${response.url}`);
             }
+            if (response.status === 401) {
+              Goto.login();
+            }
+
             if (response.status >= 200 && response.status < 500) {
                 return response;
             }

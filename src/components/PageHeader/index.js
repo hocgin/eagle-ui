@@ -5,9 +5,15 @@ import PropTypes from 'prop-types';
 import BreadcrumbView from '@/components/BreadcrumbView';
 import * as classnames from 'classnames';
 
-const { TabPane } = Tabs;
 
 class Index extends React.PureComponent {
+  onChange = key => {
+    const { onTabChange } = this.props;
+    if (onTabChange) {
+      onTabChange(key);
+    }
+  };
+
   render() {
     let {
       loading, hiddenBreadcrumb, logo, title, action, content, extraContent,
@@ -55,7 +61,7 @@ class Index extends React.PureComponent {
               {...activeKeyProps}
               onChange={this.onChange}
               tabBarExtraContent={tabBarExtraContent}>
-              {tabList.map((item) => (<TabPane tab={item.tab} key={item.key}/>))}
+              {tabList.map((item) => (<Tabs.TabPane tab={item.tab} key={item.key}/>))}
             </Tabs>) : null}
           </Skeleton>
         </div>

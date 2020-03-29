@@ -21,7 +21,7 @@ const ButtonGroup = Button.Group;
           }) => {
   return {
     detail: detail,
-    id: detail.id,
+    id: (detail || {}).id,
     detailLoading: loading.effects['orderRefundApply/getOne'],
   };
 }, dispatch => ({

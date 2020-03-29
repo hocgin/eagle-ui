@@ -18,7 +18,6 @@ class SearchBar extends React.PureComponent {
         let { isExpand } = this.state;
         // let ele = children(this.searchBarForm);
         let ele = children;
-        console.log(ele);
         let rowStyle = { width: '100%' };
         return (
           <div className={classnames(styles.tableListForm, className)}>
