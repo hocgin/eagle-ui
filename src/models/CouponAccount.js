@@ -1,10 +1,8 @@
 import UiUtils from '@/utils/UiUtils';
-import CouponApi from '@/services/Coupon';
-import qs from 'query-string';
-import pathToRegexp from 'path-to-regexp';
+import CouponAccountApi from '@/services/CouponAccount';
 
 export default {
-  namespace: 'coupon',
+  namespace: 'couponAccount',
   state: {
     paging: null,
     detail: null,
@@ -21,7 +19,7 @@ export default {
     },
     // 分页查询
     * paging({ payload = {}, callback }, { call, put }) {
-      let result = yield CouponApi.paging(payload); // API
+      let result = yield CouponAccountApi.paging(payload); // API
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillPaging', payload: result.data });
         if (callback) callback(result);
@@ -29,7 +27,7 @@ export default {
     },
     // 详情
     * getOne({ payload = {}, callback }, { call, put }) {
-      let result = yield CouponApi.getOne(payload); // API
+      let result = {}; // API
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillDetail', payload: result.data });
         if (callback) callback(result);
@@ -37,17 +35,7 @@ export default {
     },
     // 新增
     * insert({ payload = {}, callback }, { call, put }) {
-      let result = yield CouponApi.insert(payload); // API
-      if (UiUtils.showErrorMessageIfExits(result)) {
-        if (callback) callback(result);
-      }
-    },
-    // 赠送
-    * give({ payload = {}, callback }, { call, put }) {
-      let result = yield CouponApi.give(payload); // API
-      if (UiUtils.showErrorMessageIfExits(result)) {
-        if (callback) callback(result);
-      }
+
     },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {
@@ -78,18 +66,5 @@ export default {
       };
     },
   },
-  subscriptions: {
-    setup({ dispatch, history }, done) {
-      return history.listen(({ pathname, search }) => {
-        const query = qs.parse(search);
-        // 订单详情
-        if (pathToRegexp('/mkt/coupon/:id').test(pathname)) {
-          let index = pathname.lastIndexOf('/');
-          let id = pathname.substr(index + 1);
-          dispatch({ type: 'getOne', payload: { id } });
-          dispatch({ type: 'couponAccount/paging', payload: { couponId: id } });
-        }
-      });
-    },
-  },
+  subscriptions: {},
 };

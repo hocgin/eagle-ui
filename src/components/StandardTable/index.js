@@ -1,6 +1,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { Alert, Table } from 'antd';
 import styles from './index.less';
+import PropTypes from 'prop-types';
 
 function initTotalList(columns) {
   const totalList = [];
@@ -70,6 +71,7 @@ class StandardTable extends PureComponent {
       expandable,
       rowKey,
       expandedRowRender,
+      hiddenAlert,
     } = this.props;
 
     const paginationProps = {
@@ -87,28 +89,23 @@ class StandardTable extends PureComponent {
       }),
     };
 
-    return (
-      <div className={styles.standardTable}>
-        <div className={styles.tableAlert}>
-          <Alert
-            message={
-              <Fragment>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                {needTotalList.map(item => (<span style={{ marginLeft: 8 }} key={item.dataIndex}>
+    return (<div className={styles.standardTable}>
+        {hiddenAlert ? null : <div className={styles.tableAlert}>
+          <Alert message={<Fragment>
+            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+            {needTotalList.map(item => (<span style={{ marginLeft: 8 }} key={item.dataIndex}>
                     {item.title} 总计&nbsp;
-                  <span style={{ fontWeight: 600 }}>
+              <span style={{ fontWeight: 600 }}>
                       {item.render ? item.render(item.total) : item.total}
                     </span>
                   </span>))}
-                <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
-                  清空
-                </a>
-              </Fragment>
-            }
-            type="info"
-            showIcon
-          />
-        </div>
+            <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
+              清空
+            </a>
+          </Fragment>}
+                 type="info"
+                 showIcon/>
+        </div>}
         <Table rowKey={rowKey || 'key'}
                scroll={{ x: 1500 }}
                loading={loading}
@@ -118,11 +115,19 @@ class StandardTable extends PureComponent {
                columns={columns}
                expandedRowRender={expandedRowRender}
                pagination={paginationProps}
-               onChange={this.handleTableChange}
-        />
-      </div>
-    );
+               onChange={this.handleTableChange}/>
+      </div>);
   }
+
+  static propTypes = {
+    hiddenAlert: PropTypes.bool,
+    selectedRows: PropTypes.array,
+  };
+
+  static defaultProps = {
+    hiddenAlert: false,
+    selectedRows: [],
+  };
 }
 
 export default StandardTable;

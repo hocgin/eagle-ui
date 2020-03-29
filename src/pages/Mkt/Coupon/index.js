@@ -11,6 +11,7 @@ import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
+import Goto from '@/utils/Goto';
 
 @connect(({ global, coupon: { paging }, loading, ...rest }) => {
   return {
@@ -200,15 +201,14 @@ class index extends React.Component {
    * @param key
    */
   onClickMenuRowItem = ({ key }) => {
+    let { operateRow } = this.state;
     switch (key) {
       case 'rowDelete': {
         this.onClickShowDeleteModal([this.state.operateRow]);
         break;
       }
       case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
-        });
+        Goto.couponDetail(operateRow);
         break;
       }
       case 'rowUpdate': {

@@ -6,6 +6,8 @@ import { connect } from 'dva';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import StandardTable from '@/components/StandardTable';
+import UiUtils from '@/utils/UiUtils';
 
 const { Description } = DescriptionList;
 
@@ -21,14 +23,18 @@ const tabList = [{
 @connect(({
             global,
             coupon: { detail },
+            couponAccount: { paging },
             loading, ...rest
           }) => {
   return {
     detail: detail || {},
+    couponAccountPaging: paging,
     detailLoading: loading.effects['coupon/getOne'],
+    couponAccountPagingLoading: loading.effects['couponAccount/paging'],
   };
 }, dispatch => ({
   $getOne: (args = {}) => dispatch({ type: 'coupon/getOne', ...args }),
+  $pagingCouponAccount: (args = {}) => dispatch({ type: 'couponAccount/paging', ...args }),
 }))
 class index extends React.Component {
   state = {
@@ -53,13 +59,100 @@ class index extends React.Component {
   }
 
   renderCardContent = (key) => {
-    // -
-    // 1. 适用商品
-    // 2. 适用商品品类
+    return {
+      'tab1': this.renderTab1,
+      'tab2': this.renderTab2,
+    }[key]();
+  };
+  renderTab1 = () => {
+    const { detail: { remark, useType, creatorName, createdAt, canUseProduct, canUseProductCategory }, couponAccountPaging } = this.props;
+    let table1 = (<>
+      <div className={styles.title}>使用范围 · 指定商品品类</div>
+      <StandardTable rowKey="id" data={{ list: canUseProductCategory, pagination: null }}
+                     hiddenAlert={true}
+                     columns={[{
+                       title: 'ID',
+                       dataIndex: 'id',
+                       key: 'id',
+                     }, {
+                       title: '品类名称',
+                       dataIndex: 'title',
+                       key: 'title',
+                     }]}/>
+    </>);
+    let table2 = (<>
+      <div className={styles.title}>使用范围 · 指定商品</div>
+      <StandardTable rowKey="id" data={{ list: canUseProduct, pagination: null, }}
+                     hiddenAlert={true}
+                     columns={[{
+                       title: 'ID',
+                       dataIndex: 'id',
+                       key: 'id',
+                     }, {
+                       title: '商品名称',
+                       dataIndex: 'title',
+                       key: 'title',
+                     }]}/>
+    </>);
+    let tables = {
+      '0': <></>,
+      '1': table1,
+      '2': table2,
+    };
 
-    // -
-    // 相关人员
-    return key;
+    return (<>
+      <DescriptionList size="large" title="基础信息" style={{ marginBottom: 32 }}>
+        <Description term="创建人">{creatorName}</Description>
+        <Description term="创建时间">{DateFormatter.timestampAs(createdAt)}</Description>
+        <Description term="备注">{remark}</Description>
+      </DescriptionList>
+      {tables[`${useType}`]}
+    </>);
+  };
+
+  renderTab2 = () => {
+    let { couponAccountPaging, couponAccountPagingLoading } = this.props;
+    const tableColumns = [{
+      title: '优惠卷码',
+      dataIndex: 'couponSn',
+      key: 'couponSn',
+    }, {
+      title: '持有人',
+      dataIndex: 'accountName',
+      key: 'accountName',
+    }, {
+      title: '优惠券状态',
+      dataIndex: 'useStatusName',
+      key: 'useStatusName',
+    }, {
+      title: '领取时间',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: val => <span>{DateFormatter.timestampAs(val)}</span>,
+    }, {
+      title: '生效时间',
+      dataIndex: 'startAt',
+      key: 'startAt',
+      render: (val, { endAt }) => <span>{DateFormatter.timestampAs(val)}}</span>,
+    }, {
+      title: '失效时间',
+      dataIndex: 'endAt',
+      key: 'endAt',
+      render: (val, { endAt }) => <span>{DateFormatter.timestampAs(val)}</span>,
+    }];
+    return (<>
+      <div className={styles.title}>用户列表</div>
+      <StandardTable rowKey="id" selectedRows={[]}
+                     hiddenAlert={true}
+                     expandable={null}
+                     loading={couponAccountPagingLoading}
+                     data={{
+                       list: UiUtils.fastGetPagingList(couponAccountPaging),
+                       pagination: UiUtils.fastPagingPagination(couponAccountPaging),
+                     }}
+                     onChange={this.onChangeStandardTable}
+                     columns={tableColumns}/>
+    </>);
   };
 
   renderPageHeaderContent = () => {
@@ -75,9 +168,6 @@ class index extends React.Component {
       <Description term="使用说明">{instructions}</Description>
       <Description term="适用平台">{platformName}</Description>
       <Description term="使用范围">{useTypeName}</Description>
-      <Description term="创建人">{creatorName}</Description>
-      <Description term="创建时间">{DateFormatter.timestampAs(createdAt)}</Description>
-      <Description term="备注">{remark}</Description>
     </DescriptionList>);
   };
 
@@ -99,6 +189,17 @@ class index extends React.Component {
         <div className={styles.heading}>{v}</div>
       </Col>
     </Row>);
+  };
+
+  onChangeStandardTable = ({ pageSize, current }, filtersArg, sorter) => {
+    let { searchValue } = this.state;
+    this.setState({
+      searchValue: {
+        ...searchValue,
+        size: pageSize,
+        page: current,
+      },
+    }, this.props.$pagingCouponAccount);
   };
 
   onChangeTab = (key) => {

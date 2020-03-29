@@ -11,6 +11,7 @@ import UpdateModal from '@/pages/Oms/Order/Modal/UpdateModal';
 import router from 'umi/router';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import Goto from '@/utils/Goto';
 
 
 @connect(({ global, order: { paging }, loading, ...rest }) => {
@@ -215,9 +216,7 @@ class index extends React.Component {
     let { operateRow } = this.state;
     switch (key) {
       case 'rowDetail': {
-        router.push({
-          pathname: `/oms/order/${operateRow}`,
-        });
+        Goto.orderDetail(operateRow);
         break;
       }
       case 'rowUpdate': {
