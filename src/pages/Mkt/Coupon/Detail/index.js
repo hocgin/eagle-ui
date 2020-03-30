@@ -168,12 +168,7 @@ class index extends React.Component {
 
   renderExtra = () => {
     const { detail: { credit, couponType } } = this.props;
-    let v = credit;
-    if (couponType === 0) {
-      v = LangFormatter.formatRMB(v);
-    } else {
-      v = `${v * 100} 折`;
-    }
+    let v = LangFormatter.formatCouponValue(credit, couponType === 0);
     return (<Row>
       <Col xs={24} sm={12}>
         <div className={styles.textSecondary}>优惠券状态</div>

@@ -7,8 +7,7 @@ import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import CreateModal from '@/pages/Mkt/Coupon/Modal/CreateModal';
-import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
-import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
+import SendModal from '@/pages/Mkt/Coupon/Modal/SendModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import Goto from '@/utils/Goto';
@@ -28,8 +27,7 @@ class index extends React.Component {
     selectedRows: [],
     operateRow: null,
     visibleCreate: false,
-    visibleUpdate: false,
-    visibleDetail: false,
+    visibleSend: true,
   };
 
   componentDidMount() {
@@ -58,13 +56,7 @@ class index extends React.Component {
     dataIndex: 'credit',
     key: 'credit',
     render: (val, { couponType }) => {
-      let v = val;
-      if (couponType === 0) {
-        v = LangFormatter.formatRMB(v);
-      } else {
-        v = `${v * 100} 折`;
-      }
-      return v;
+      return LangFormatter.formatCouponValue(val, couponType === 0);
     },
   }, {
     title: '适用平台',
@@ -104,7 +96,7 @@ class index extends React.Component {
           <Menu.Item key="rowUpdate">
             <del>修改</del>
           </Menu.Item>
-          <Menu.Item key="rowGrant">发送</Menu.Item>
+          <Menu.Item key="rowSend">派发</Menu.Item>
           <Menu.Divider/>
           <Menu.Item key="rowDelete">
             <del>禁止派发</del>
@@ -127,7 +119,7 @@ class index extends React.Component {
     }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, operateRow } = this.state;
+    let { selectedRows, visibleCreate, visibleSend, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
@@ -153,9 +145,9 @@ class index extends React.Component {
                     tableColumns={this.tableColumns}/>
       <CreateModal visible={visibleCreate}
                    onClose={this.onClickCloseCreateModal}/>
-      {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseUpdateModal}/>}
+      {visibleSend && <SendModal visible={visibleSend}
+                                 id={operateRow}
+                                 onClose={this.onClickCloseSendModal}/>}
     </PageHeaderWrapper>);
   }
 
@@ -177,21 +169,6 @@ class index extends React.Component {
     }, this.paging);
   };
 
-
-  /**
-   * 【批量操作】点击菜单
-   * @param rest
-   */
-  onClickMenuBatchItem = ({ key }) => {
-    switch (key) {
-      default: {
-        Modal.error({
-          content: '无效操作',
-        });
-      }
-    }
-  };
-
   /**
    * 每行的【更多操作】
    * @param key
@@ -199,17 +176,13 @@ class index extends React.Component {
   onClickMenuRowItem = ({ key }) => {
     let { operateRow } = this.state;
     switch (key) {
-      case 'rowDelete': {
-        this.onClickShowDeleteModal([this.state.operateRow]);
-        break;
-      }
       case 'rowDetail': {
         Goto.couponDetail(operateRow);
         break;
       }
-      case 'rowUpdate': {
+      case 'rowSend': {
         this.setState({
-          visibleUpdate: true,
+          visibleSend: true,
         });
         break;
       }
@@ -260,17 +233,12 @@ class index extends React.Component {
     }, this.paging);
   };
 
-  onClickCloseUpdateModal = () => {
+  onClickCloseSendModal = () => {
     this.setState({
-      visibleUpdate: false,
+      visibleSend: false,
     }, this.paging);
   };
 
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
-    });
-  };
 }
 
 export default index;

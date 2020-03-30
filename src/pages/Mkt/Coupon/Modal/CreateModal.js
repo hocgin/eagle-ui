@@ -183,12 +183,10 @@ class CreateModal extends PureComponent {
   static propTypes = {
     onClose: PropTypes.func,
     visible: PropTypes.bool,
-    parentId: PropTypes.number.isRequired,
   };
 
   static defaultProps = {
     visible: false,
-    parentId: null,
     onClose: () => {
     },
   };

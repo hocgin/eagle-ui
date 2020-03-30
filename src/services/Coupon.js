@@ -4,7 +4,7 @@ import { stringify } from 'qs';
 export default class CouponApi {
 
   static give({ id, ...payload }) {
-    return request(`/api/${id}/give`, {
+    return request(`/api/coupon/${id}/give`, {
       method: 'POST',
       body: {
         ...payload,
