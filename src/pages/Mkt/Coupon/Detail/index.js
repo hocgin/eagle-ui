@@ -20,12 +20,7 @@ const tabList = [{
   tab: '用户列表',
 }];
 
-@connect(({
-            global,
-            coupon: { detail },
-            couponAccount: { paging },
-            loading, ...rest
-          }) => {
+@connect(({ global, coupon: { detail }, couponAccount: { paging }, loading, ...rest }) => {
   return {
     detail: detail || {},
     couponAccountPaging: paging,
@@ -82,7 +77,7 @@ class index extends React.Component {
     </>);
     let table2 = (<>
       <div className={styles.title}>使用范围 · 指定商品</div>
-      <StandardTable rowKey="id" data={{ list: canUseProduct, pagination: null, }}
+      <StandardTable rowKey="id" data={{ list: canUseProduct, pagination: null }}
                      hiddenAlert={true}
                      columns={[{
                        title: 'ID',
@@ -174,10 +169,10 @@ class index extends React.Component {
   renderExtra = () => {
     const { detail: { credit, couponType } } = this.props;
     let v = credit;
-    if (couponType === 1) {
+    if (couponType === 0) {
       v = LangFormatter.formatRMB(v);
     } else {
-      v = `${v} 折`;
+      v = `${v * 100} 折`;
     }
     return (<Row>
       <Col xs={24} sm={12}>

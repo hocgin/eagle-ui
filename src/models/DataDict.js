@@ -10,6 +10,9 @@ export default {
     allPlatform: [],
     allAuthorityType: [],
     allEnabled: [],
+    allCouponType: [],
+    allCouponPlatformType: [],
+    allCouponUseType: [],
   },
   effects: {
     * paging({ payload = {}, callback }, { call, put }) {
@@ -51,6 +54,13 @@ export default {
         if (callback) callback(result);
       }
     },
+    * getAllCouponType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'couponType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillAllCouponType', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
     * getAllAuthorityType({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.getAllDataDict({ code: 'authorityType' });
       if (UiUtils.showErrorMessageIfExits(result)) {
@@ -58,10 +68,24 @@ export default {
         if (callback) callback(result);
       }
     },
+    * getAllCouponPlatformType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'couponPlatformType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillAllCouponPlatformType', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
     * getAllEnabled({ payload = {}, callback }, { call, put }) {
       let result = yield DataDictApi.getAllDataDict({ code: 'enabled' });
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillAllEnabled', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
+    * getAllCouponUseType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'couponUseType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allCouponUseType', data: result.data } });
         if (callback) callback(result);
       }
     },
@@ -73,10 +97,25 @@ export default {
         paging: payload,
       };
     },
+    fillData(state, { payload: { field, data } }) {
+      return { ...state, [field]: data };
+    },
     fillAllPlatform(state, { payload }) {
       return {
         ...state,
         allPlatform: payload,
+      };
+    },
+    fillAllCouponPlatformType(state, { payload }) {
+      return {
+        ...state,
+        allCouponPlatformType: payload,
+      };
+    },
+    fillAllCouponType(state, { payload }) {
+      return {
+        ...state,
+        allCouponType: payload,
       };
     },
     fillAllAuthorityType(state, { payload }) {

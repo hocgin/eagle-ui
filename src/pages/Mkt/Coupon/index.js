@@ -6,7 +6,7 @@ import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import CreateModal from '@/pages/Access/Role/Modal/CreateModal';
+import CreateModal from '@/pages/Mkt/Coupon/Modal/CreateModal';
 import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -30,7 +30,6 @@ class index extends React.Component {
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
-    visibleGrant: false,
   };
 
   componentDidMount() {
@@ -60,10 +59,10 @@ class index extends React.Component {
     key: 'credit',
     render: (val, { couponType }) => {
       let v = val;
-      if (couponType === 1) {
+      if (couponType === 0) {
         v = LangFormatter.formatRMB(v);
       } else {
-        v = `${v} 折`;
+        v = `${v * 100} 折`;
       }
       return v;
     },
@@ -128,7 +127,7 @@ class index extends React.Component {
     }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
@@ -157,9 +156,6 @@ class index extends React.Component {
       {visibleUpdate && <UpdateModal visible={visibleUpdate}
                                      id={operateRow}
                                      onClose={this.onClickCloseUpdateModal}/>}
-      {visibleGrant && <GrantModal visible={visibleGrant}
-                                   id={operateRow}
-                                   onClose={this.onClickCloseGrantModal}/>}
     </PageHeaderWrapper>);
   }
 
@@ -217,12 +213,6 @@ class index extends React.Component {
         });
         break;
       }
-      case 'rowGrant': {
-        this.setState({
-          visibleGrant: true,
-        });
-        break;
-      }
       default: {
         Modal.error({
           content: '无效操作',
@@ -269,10 +259,6 @@ class index extends React.Component {
       visibleCreate: false,
     }, this.paging);
   };
-
-  onClickCloseGrantModal = () => this.setState({
-    visibleGrant: false,
-  }, this.paging);
 
   onClickCloseUpdateModal = () => {
     this.setState({
