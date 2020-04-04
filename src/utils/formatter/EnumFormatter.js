@@ -47,6 +47,13 @@ export class EnumFormatter {
     return this.status(['error', 'success'], int, title);
   }
 
+  /**
+   * 优惠券状态
+   */
+  static couponUseStatus(int, title = '无') {
+    return this.status(['warning', 'success', 'default'], int, title);
+  }
+
   static status(enums = [], int, title = 'N/A') {
     if (int === null || int === undefined) {
       return 'N/A';

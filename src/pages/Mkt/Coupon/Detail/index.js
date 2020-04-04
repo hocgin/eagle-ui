@@ -8,6 +8,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import StandardTable from '@/components/StandardTable';
 import UiUtils from '@/utils/UiUtils';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 const { Description } = DescriptionList;
 
@@ -117,8 +118,9 @@ class index extends React.Component {
       key: 'accountName',
     }, {
       title: '优惠券状态',
-      dataIndex: 'useStatusName',
-      key: 'useStatusName',
+      dataIndex: 'useStatus',
+      key: 'useStatus',
+      render: (val, { useStatusName }) => EnumFormatter.couponUseStatus(val, useStatusName),
     }, {
       title: '领取时间',
       dataIndex: 'createdAt',
