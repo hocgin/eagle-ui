@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Carousel, Collapse, Modal, Table } from 'antd';
+import { Button, Collapse, Modal, Table } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import Img from 'react-image';
@@ -97,9 +97,7 @@ class DetailModal extends PureComponent {
           <TextRow title={'最后更新人'}>{lastUpdaterName || '暂无'}</TextRow>
         </Panel>
         <Panel header="商品图片列表" key="2">
-          <Carousel>
-            {(photos || []).map(({ url }, index) => <Img src={url}/>)}
-          </Carousel>
+          {(photos || []).map(({ url }, index) => <Img style={{ maxWidth: 200 }} src={url}/>)}
         </Panel>
         <Panel header="商品规格" key="3">
           <Table key="specTable" bordered

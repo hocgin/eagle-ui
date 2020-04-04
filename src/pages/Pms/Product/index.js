@@ -38,7 +38,7 @@ class index extends React.Component {
     title: '商品图片',
     dataIndex: 'photos',
     key: 'photos',
-    render: val => <Img src={val.length > 0 && val[0].url}/>,
+    render: val => <Img style={{maxWidth: 80}} src={val.length > 0 && val[0].url}/>,
   }, {
     title: '商品标题',
     dataIndex: 'title',

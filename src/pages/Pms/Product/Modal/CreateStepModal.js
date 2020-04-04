@@ -263,9 +263,11 @@ class index extends React.PureComponent {
   Footer = (index) => {
     let { confirmLoading } = this.props;
     const previousBtn = (
-        <Button key="previous" htmlType="button" style={{ float: 'left' }} onClick={this.onPrevious}>上一步 </Button>),
-      nextBtn = (<Button key="next" type="primary" htmlType="button" onClick={this.onNextOrDone}>下一步</Button>),
-      cancelBtn = (<Button key="cancel" htmlType="button" onClick={this.onCancel}>取消</Button>),
+        <Button key="previous" loading={confirmLoading} htmlType="button" style={{ float: 'left' }}
+                onClick={this.onPrevious}>上一步 </Button>),
+      nextBtn = (<Button key="next" loading={confirmLoading} type="primary" htmlType="button"
+                         onClick={this.onNextOrDone}>下一步</Button>),
+      cancelBtn = (<Button key="cancel" loading={confirmLoading} htmlType="button" onClick={this.onCancel}>取消</Button>),
       doneBtn = (<Button key="submit" loading={confirmLoading} htmlType="button" type="primary"
                          onClick={this.onNextOrDone}>完成</Button>);
 
