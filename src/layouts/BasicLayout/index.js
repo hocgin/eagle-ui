@@ -151,7 +151,7 @@ class BasicLayout extends React.Component {
                 style={{ width: 230, marginRight: 40 }}/>
             </div>
             <NoticeIcon className={classnames(styles.btn, styles.notice)}
-                        popupAlign={{ offset: [-160, -16] }}
+                        popupAlign={{ offset: [0, -16] }}
                         count={notifySummary.unready}>
               <NoticeIcon.Tab title="私信"
                               list={(notifySummary.privateLetter || []).map(({ content, ...rest }) => formatMessage({ title: content, ...rest }))}

@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { Button, DatePicker, Form, message, Modal, Select } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import ScrollList from '@/components/ScrollList';
 import UiUtils from '@/utils/UiUtils';
 
 const { RangePicker } = DatePicker;
@@ -15,29 +14,30 @@ const formLayout = {
   wrapperCol: { span: 13 },
 };
 
-@connect(({ global, productCategory: { tree }, product: { all }, loading, ...rest }) => {
+@connect(({ global, account: { complete }, loading, ...rest }) => {
   return {
-    allProduct: all,
+    completeUser: complete,
     confirmLoading: loading.effects['coupon/give'],
   };
 }, dispatch => ({
-  $getCompleteProduct: (args = {}) => dispatch({ type: 'product/getComplete', ...args }),
+  $getCompleteUser: (args = {}) => dispatch({ type: 'account/getComplete', ...args }),
   $give: (args = {}) => dispatch({ type: 'coupon/give', ...args }),
 }))
 class SendModal extends PureComponent {
-  createForm = React.createRef();
+  sendForm = React.createRef();
 
-  state = {
-    useType: 0,
-    couponType: 0,
-  };
+  componentDidMount() {
+    let { $getCompleteUser } = this.props;
+    $getCompleteUser();
+  }
 
   render() {
     const {
-      form, visible, data, productCategoryTree, onClose,
-      allProduct, allCouponPlatformType, allCouponType, allCouponUseType, ...rest
+      form, visible, data, onClose,
+      completeUser,
+      ...rest
     } = this.props;
-    let { useType, couponType } = this.state;
+    console.log('completeUser', completeUser);
 
     return (<Modal width={640}
                    bodyStyle={{ padding: '32px 40px 48px' }}
@@ -46,26 +46,25 @@ class SendModal extends PureComponent {
                    maskClosable
                    onCancel={onClose}
                    footer={this.renderFooter()}>
-      <Form ref={this.createForm}
-            initialValues={{ couponType: couponType, minPoint: 0, useType: useType, platform: 0 }}>
+      <Form ref={this.sendForm}>
         <Form.Item {...formLayout} label="有效期"
                    rules={[{ type: 'array', required: true, message: '请选择有效期' }]}
                    name="datetime">
-          <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" placeholder={['生效时间', '失效时间']}/>
+          <RangePicker format="YYYY-MM-DD" placeholder={['生效时间', '失效时间']}/>
         </Form.Item>
         <Form.Item {...formLayout} label="用户列表"
                    rules={[{ required: true, message: '请选择用户' }]}
                    name="accountId">
-          <Select allowClear showArrow showSearch
+          <Select allowClear showSearch
                   mode="multiple"
+                  labelInValue
+                  filterOption={false}
+                  onSearch={this.onSearchWithUser}
+                  notFoundContent="暂无数据"
                   placeholder="请选择用户">
-            {(allProduct || []).map(({ id, title }) => <Option value={id}>{title}</Option>)}
+            {(completeUser || []).map(({ id, avatar, nickname, username, phone }) => <Option
+              value={id}>{nickname} - {username}</Option>)}
           </Select>
-        </Form.Item>
-        <Form.Item {...formLayout} label="名单"
-                   rules={[{ type: 'array', required: true, message: '请选择有效期' }]}
-                   name="datetime">
-          <ScrollList/>
         </Form.Item>
       </Form>
     </Modal>);
@@ -78,8 +77,17 @@ class SendModal extends PureComponent {
               onClick={this.onDone}>完成</Button>]);
   };
 
-  onChangeUseType = (e) => this.setState({ useType: e.target.value });
-  onChangeCouponType = (e) => this.setState({ couponType: e.target.value });
+  onSearchWithUser = (val) => {
+    if (!val) {
+      return;
+    }
+    let { $getCompleteUser } = this.props;
+    $getCompleteUser({
+      payload: { keyword: val }, callback: () => {
+        this.forceUpdate();
+      },
+    });
+  };
 
   /**
    * 取消
@@ -99,12 +107,13 @@ class SendModal extends PureComponent {
       onClose,
       $give,
     } = this.props;
-    let form = this.createForm.current;
+    let form = this.sendForm.current;
     form.validateFields()
-      .then(({ datetime, ...values }) => {
+      .then(({ datetime, accountId, ...values }) => {
         $give({
           payload: {
             id,
+            accountId: (accountId || []).map(({ key }) => key),
             startAt: datetime[0].valueOf(),
             endAt: datetime[1].valueOf(),
             ...values,

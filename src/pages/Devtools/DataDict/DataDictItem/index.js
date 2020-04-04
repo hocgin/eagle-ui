@@ -5,6 +5,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { connect } from 'dva';
 import UpdateModal from './Modal/UpdateModal';
 import PropTypes from 'prop-types';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 @connect(({ global, dataDict: { paging }, loading, ...rest }) => {
   return {
@@ -24,7 +25,7 @@ class index extends React.Component {
       title: '启用状态',
       dataIndex: 'enabledName',
       key: 'enabledName',
-      render: (val, { enabled }) => UiUtils.renderEnabled(enabled, val),
+      render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
     }, {
       title: '创建时间',
       dataIndex: 'createdAt',

@@ -3,8 +3,17 @@ import { stringify } from 'qs';
 
 export default class AccountApi {
 
+  static getComplete(payload) {
+    return request(`/api/account/_complete`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
   static paging(payload) {
-    return request(`/api/account/_search`, {
+    return request(`/api/account/_paging`, {
       method: 'POST',
       body: {
         ...payload,

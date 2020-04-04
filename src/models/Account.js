@@ -6,8 +6,17 @@ export default {
   state: {
     detail: null,
     paging: null,
+    complete: [],
   },
   effects: {
+    // 检索
+    * getComplete({ payload = {}, callback }, { call, put }) {
+      let result = yield AccountApi.getComplete(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillComplete', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
     * paging({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.paging(payload);
       if (UiUtils.showErrorMessageIfExits(result)) {
@@ -36,17 +45,14 @@ export default {
     },
   },
   reducers: {
+    fillComplete(state, { payload }) {
+      return { ...state, complete: payload };
+    },
     fillPaging(state, { payload }) {
-      return {
-        ...state,
-        paging: payload,
-      };
+      return { ...state, paging: payload };
     },
     fillDetail(state, { payload }) {
-      return {
-        ...state,
-        detail: payload,
-      };
+      return { ...state, detail: payload };
     },
   },
   subscriptions: {},

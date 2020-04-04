@@ -27,7 +27,7 @@ class index extends React.Component {
     selectedRows: [],
     operateRow: null,
     visibleCreate: false,
-    visibleSend: true,
+    visibleSend: false,
   };
 
   componentDidMount() {

@@ -1,6 +1,6 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
-import { Badge, message, Modal, Tree, TreeSelect } from 'antd';
+import { Avatar, Badge, message, Modal, Tree, TreeSelect } from 'antd';
 
 export default class UiUtils {
 
@@ -148,7 +148,6 @@ export default class UiUtils {
     });
   };
 
-  static renderEnabled(enabled, enabledName) {
-    return <Badge status={['error', 'success'][enabled]} text={enabledName}/>;
-  }
+
+
 };

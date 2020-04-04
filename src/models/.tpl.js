@@ -47,22 +47,13 @@ export default {
   },
   reducers: {
     fillAll(state, { payload }) {
-      return {
-        ...state,
-        all: payload,
-      };
+      return { ...state, all: payload };
     },
     fillPaging(state, { payload }) {
-      return {
-        ...state,
-        paging: payload,
-      };
+      return { ...state, paging: payload };
     },
     fillDetail(state, { payload }) {
-      return {
-        ...state,
-        detail: payload,
-      };
+      return { ...state, detail: payload };
     },
   },
   subscriptions: {},
