@@ -50,7 +50,12 @@ export default [
             path: '/devtools/request-log',
             component: '../pages/Devtools/RequestLog',
           },
-          { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
+          {
+            code: 'devtools:short-url',
+            icon: 'dashboard',
+            path: '/devtools/short-url',
+            component: '../pages/Devtools/ShortUrl',
+          },
         ],
       }, {
         //【个人设置】

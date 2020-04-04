@@ -1,6 +1,6 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
-import { Avatar, Badge, message, Modal, Tree, TreeSelect } from 'antd';
+import { message, Modal, Tree, TreeSelect } from 'antd';
 
 export default class UiUtils {
 
@@ -29,8 +29,7 @@ export default class UiUtils {
    * @param callback
    * @param title
    */
-  static showConfirmModal({
-                            ids = [],
+  static showConfirmModal({ ids = [],
                             dispatch = () => {
                             },
                             callback = () => {
@@ -77,6 +76,11 @@ export default class UiUtils {
    * @param errors
    */
   static getErrorMessage(errors) {
+    if (errors.errorFields && errors.errorFields.length > 0) {
+      return errors.errorFields[0].errors[0];
+    }
+
+    console.log(errors);
     let keys = Object.keys(errors || {});
     if (keys.length > 0) {
       return errors[keys[0]].message;
