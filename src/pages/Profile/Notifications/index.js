@@ -44,7 +44,8 @@ class index extends React.Component {
     } = this.state;
     let { notifyType } = this.props;
 
-    return (<PageHeaderWrapper hiddenBreadcrumb={true} className={styles.page}>
+    return (<PageHeaderWrapper hiddenBreadcrumb={true}
+                               className={styles.page}>
       <div className={styles.content}>
         <Tabs size="large"
               tabBarExtraContent={<Button type="primary" onClick={this.onClickShowSendModal}>发送消息</Button>}
