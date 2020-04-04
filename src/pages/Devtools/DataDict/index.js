@@ -12,6 +12,7 @@ import UpdateModal from '@/pages/Devtools/DataDict/Modal/UpdateModal';
 import DataDictItem from './DataDictItem/index';
 import CreateSubItemModal from '@/pages/Devtools/DataDict/Modal/CreateSubItemModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 @connect(({ global, dataDict: { paging }, loading, ...rest }) => {
   return {
@@ -55,7 +56,7 @@ class index extends React.Component {
     title: '启用状态',
     dataIndex: 'enabledName',
     key: 'enabledName',
-    render: (val, { enabled }) => <Badge status={['error', 'success'][enabled]} text={val}/>,
+    render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',

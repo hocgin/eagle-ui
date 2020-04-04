@@ -24,9 +24,9 @@ export default [
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
       {
         // 【用户中心】
-        code: 'user', icon: 'user', path: '/user',
+        code: 'ums', icon: 'user', path: '/user',
         routes: [
-          { code: 'account', path: '/user/account', component: '../pages/User/Account' },
+          { code: 'ums:account', path: '/user/account', component: '../pages/User/Account' },
         ],
       }, {
         // 【访问控制】

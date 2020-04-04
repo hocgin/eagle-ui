@@ -11,6 +11,7 @@ import DetailModal from '@/pages/Access/Role/Modal/DetailModal';
 import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 import GrantModal from '@/pages/Access/Role/Modal/GrantModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 @connect(({ global, role: { paging }, loading, ...rest }) => {
   return {
@@ -58,7 +59,7 @@ class index extends React.Component {
     title: '启用状态',
     dataIndex: 'enabledName',
     key: 'enabledName',
-    render: (val, { enabled }) => <Badge status={['error', 'success'][enabled]} text={val}/>,
+    render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './index.less';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Badge, Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
+import { Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
@@ -9,6 +9,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import DetailModal from '@/pages/User/Account/Modal/DetailModal';
 import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
 import GrantModal from '@/pages/User/Account/Modal/GrantModal';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 @connect(({ global, account: { paging }, loading, ...rest }) => {
   return {
@@ -53,17 +54,17 @@ class index extends React.Component {
     title: '启用状态',
     dataIndex: 'enabledName',
     key: 'enabledName',
-    render: (val, { enabled }) => <Badge status={['error', 'success'][enabled]} text={val}/>,
+    render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
   }, {
     title: '过期状态',
     dataIndex: 'expiredName',
     key: 'expiredName',
-    render: (val, { expired }) => <Badge status={['error', 'success'][expired]} text={val}/>,
+    render: (val, { expired }) => EnumFormatter.expiredStatus(expired, val),
   }, {
     title: '锁定状态',
     dataIndex: 'lockedName',
     key: 'lockedName',
-    render: (val, { locked }) => <Badge status={['error', 'success'][locked]} text={val}/>,
+    render: (val, { locked }) => EnumFormatter.lockedStatus(locked, val),
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',
@@ -119,37 +120,37 @@ class index extends React.Component {
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<div className={styles.page}>
-        <ComplexTable toolbarTitle={'账号列表'}
-                      toolbarMenu={BatchMenus}
-                      toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                               onClick={this.onClickShowCreateModal}>新建</Button>}
-                      searchBarChildren={[
-                        <Form.Item label="关键词搜索"
-                                   name="keyword">
-                          <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
-                        </Form.Item>,
-                      ]}
-                      tableLoading={pagingLoading}
-                      tableData={{
-                        list: UiUtils.fastGetPagingList(paging),
-                        pagination: UiUtils.fastPagingPagination(paging),
-                      }}
-                      selectedRows={selectedRows}
-                      onSelectRow={this.onChangeSelectRow}
-                      onClickSearch={this.onClickSearch}
-                      onChangeStandardTable={this.onChangeStandardTable}
-                      tableColumns={this.tableColumns}
-        />
-        {visibleDetail && <DetailModal visible={visibleDetail}
-                                       id={operateRow}
-                                       onClose={this.onClickCloseDetailModal}/>}
-        {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                       id={operateRow}
-                                       onClose={this.onClickCloseUpdateModal}/>}
-        {visibleGrant && <GrantModal visible={visibleGrant}
+      <ComplexTable toolbarTitle={'账号列表'}
+                    toolbarMenu={BatchMenus}
+                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
+                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                    searchBarChildren={[
+                      <Form.Item label="关键词搜索"
+                                 name="keyword">
+                        <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
+                      </Form.Item>,
+                    ]}
+                    tableLoading={pagingLoading}
+                    tableData={{
+                      list: UiUtils.fastGetPagingList(paging),
+                      pagination: UiUtils.fastPagingPagination(paging),
+                    }}
+                    selectedRows={selectedRows}
+                    onSelectRow={this.onChangeSelectRow}
+                    onClickSearch={this.onClickSearch}
+                    onChangeStandardTable={this.onChangeStandardTable}
+                    tableColumns={this.tableColumns}
+      />
+      {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
-                                     onClose={this.onClickCloseGrantModal}/>}
-      </div>);
+                                     onClose={this.onClickCloseDetailModal}/>}
+      {visibleUpdate && <UpdateModal visible={visibleUpdate}
+                                     id={operateRow}
+                                     onClose={this.onClickCloseUpdateModal}/>}
+      {visibleGrant && <GrantModal visible={visibleGrant}
+                                   id={operateRow}
+                                   onClose={this.onClickCloseGrantModal}/>}
+    </div>);
   }
 
   /**

@@ -11,6 +11,7 @@ import Img from 'react-image';
 import DetailModal from '@/pages/Pms/Product/Modal/DetailModal';
 import UpdateStepModal from '@/pages/Pms/Product/Modal/UpdateStepModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 
 @connect(({ global, product: { paging }, loading, ...rest }) => {
@@ -54,7 +55,7 @@ class index extends React.Component {
     title: '上架状态',
     dataIndex: 'publishStatusName',
     key: 'publishStatusName',
-    render: (val, { publishStatus }) => <Badge status={['error', 'success'][publishStatus]} text={val}/>,
+    render: (val, { publishStatus }) => EnumFormatter.publishStatus(publishStatus, val),
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',

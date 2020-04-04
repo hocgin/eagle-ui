@@ -48,10 +48,31 @@ export class EnumFormatter {
   }
 
   /**
+   * 过期状态
+   */
+  static expiredStatus(int, title = '无') {
+    return this.status(['error', 'success'], int, title);
+  }
+
+  /**
+   * 锁定状态
+   */
+  static lockedStatus(int, title = '无') {
+    return this.status(['error', 'success'], int, title);
+  }
+
+  /**
    * 优惠券状态
    */
   static couponUseStatus(int, title = '无') {
     return this.status(['warning', 'success', 'default'], int, title);
+  }
+
+  /**
+   * 发布状态
+   */
+  static publishStatus(int, title = '无') {
+    return this.status(['error', 'success'], int, title);
   }
 
   static status(enums = [], int, title = 'N/A') {

@@ -6,6 +6,7 @@ import Img from 'react-image';
 import TextRow from '@/components/TextRow';
 import ComplexCollapse from '@/components/ComplexCollapse';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
+import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 
 const { Panel } = Collapse;
 
@@ -54,7 +55,7 @@ class DetailModal extends PureComponent {
     }
     let {
       title, createdAt, creatorName, lastUpdatedAt, lastUpdaterName,
-      publishStatusName, productCategoryName, photos, sku,
+      publishStatus, publishStatusName, productCategoryName, photos, sku,
       procurement,
       unit,
       weight,
@@ -89,7 +90,7 @@ class DetailModal extends PureComponent {
           <TextRow title={'产地'}>{procurement}</TextRow>
           <TextRow title={'单位'}>{unit}</TextRow>
           <TextRow title={'商品重量(克)'}>{weight}</TextRow>
-          <TextRow title={'上架状态'}>{publishStatusName}</TextRow>
+          <TextRow title={'上架状态'}>{EnumFormatter.publishStatus(publishStatus, publishStatusName)}</TextRow>
           <TextRow title={'创建时间'}>{DateFormatter.timestampAs(createdAt)}</TextRow>
           <TextRow title={'创建人'}>{creatorName}</TextRow>
           <TextRow title={'最后更新时间'}>{DateFormatter.timestampAs(lastUpdatedAt)}</TextRow>
@@ -112,7 +113,7 @@ class DetailModal extends PureComponent {
   }
 
   renderFooter = () => {
-    return ([<Button key="cancel" htmlType="button" type="primary" onClick={this.onCancel}>退出 </Button>]);
+    return ([<Button key="cancel" htmlType="button" type="primary" onClick={this.onCancel}>退出</Button>]);
   };
 
   /**
