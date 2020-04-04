@@ -61,7 +61,7 @@ class SendModal extends PureComponent {
                   filterOption={false}
                   onSearch={this.onSearchWithUser}
                   notFoundContent="暂无数据"
-                  placeholder="请选择用户">
+                  placeholder="请输入编号或关键词搜索">
             {(completeUser || []).map(({ id, avatar, nickname, username, phone }) => <Option
               value={id}>{nickname} - {username}</Option>)}
           </Select>
@@ -78,15 +78,8 @@ class SendModal extends PureComponent {
   };
 
   onSearchWithUser = (val) => {
-    if (!val) {
-      return;
-    }
     let { $getCompleteUser } = this.props;
-    $getCompleteUser({
-      payload: { keyword: val }, callback: () => {
-        this.forceUpdate();
-      },
-    });
+    $getCompleteUser({ payload: { keyword: val } });
   };
 
   /**

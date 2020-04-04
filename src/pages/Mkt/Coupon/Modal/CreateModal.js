@@ -12,9 +12,9 @@ const formLayout = {
   wrapperCol: { span: 13 },
 };
 
-@connect(({ global, productCategory: { tree }, product: { all }, dataDict: { allCouponPlatformType, allCouponType, allCouponUseType }, loading, ...rest }) => {
+@connect(({ global, productCategory: { tree }, product: { complete }, dataDict: { allCouponPlatformType, allCouponType, allCouponUseType }, loading, ...rest }) => {
   return {
-    allProduct: all,
+    completeProduct: complete,
     productCategoryTree: tree,
     allCouponPlatformType: allCouponPlatformType,
     allCouponType: allCouponType,
@@ -22,7 +22,7 @@ const formLayout = {
     confirmLoading: loading.effects['coupon/insert'],
   };
 }, dispatch => ({
-  $getAllProduct: (args = {}) => dispatch({ type: 'product/getAll', ...args }),
+  $getCompleteProduct: (args = {}) => dispatch({ type: 'product/getComplete', ...args }),
   $getProductCategoryTree: (args = {}) => dispatch({ type: 'productCategory/getTree', ...args }),
   $insert: (args = {}) => dispatch({ type: 'coupon/insert', ...args }),
   $getAllCouponType: (args = {}) => dispatch({ type: 'dataDict/getAllCouponType', ...args }),
@@ -38,18 +38,18 @@ class CreateModal extends PureComponent {
   };
 
   componentDidMount() {
-    let { $getAllProduct, $getProductCategoryTree, $getAllCouponType, $getAllCouponPlatformType, $getAllCouponUseType } = this.props;
+    let { $getCompleteProduct, $getProductCategoryTree, $getAllCouponType, $getAllCouponPlatformType, $getAllCouponUseType } = this.props;
     $getAllCouponType();
     $getAllCouponPlatformType();
     $getAllCouponUseType();
     $getProductCategoryTree();
-    $getAllProduct();
+    $getCompleteProduct();
   }
 
   render() {
     const {
       form, visible, data, productCategoryTree, onClose,
-      allProduct, allCouponPlatformType, allCouponType, allCouponUseType, ...rest
+      completeProduct, allCouponPlatformType, allCouponType, allCouponUseType, ...rest
     } = this.props;
     let { useType, couponType } = this.state;
 
@@ -90,9 +90,9 @@ class CreateModal extends PureComponent {
         <Form.Item {...formLayout} label="适用平台"
                    rules={[{ required: true, message: '请选择适用平台' }]}
                    name="platform">
-          <Select>
-            {(allCouponPlatformType).map(({ key, value }) => <Option value={value * 1}>{key}</Option>)}
-          </Select>
+          <Radio.Group>
+            {(allCouponPlatformType).map(({ key, value }) => <Radio.Button value={value * 1}>{key}</Radio.Button>)}
+          </Radio.Group>
         </Form.Item>
         <Form.Item {...formLayout} label="使用门槛"
                    rules={[{ required: true, message: '请输入使用门槛' }]}
@@ -119,10 +119,14 @@ class CreateModal extends PureComponent {
         {useType === 2 && <Form.Item {...formLayout} label="商品列表"
                                      rules={[{ required: true, message: '请选择商品列表' }]}
                                      name="useProductId">
-          <Select allowClear showArrow showSearch
+          <Select allowClear showSearch
+                  labelInValue
+                  onSearch={this.onSearchWithProduct}
+                  filterOption={false}
                   mode="multiple"
-                  placeholder="请选择商品">
-            {(allProduct || []).map(({ id, title }) => <Option value={id}>{title}</Option>)}
+                  notFoundContent="暂无数据"
+                  placeholder="请输入编号或关键词搜索">
+            {(completeProduct || []).map(({ id, title }) => <Option value={id}>(编号: {id}) {title}</Option>)}
           </Select>
         </Form.Item>}
         <Form.Item {...formLayout} label="后台备注" hasFeedback
@@ -144,6 +148,10 @@ class CreateModal extends PureComponent {
 
   onChangeUseType = (e) => this.setState({ useType: e.target.value });
   onChangeCouponType = (e) => this.setState({ couponType: e.target.value });
+  onSearchWithProduct = (val) => {
+    let { $getCompleteProduct } = this.props;
+    $getCompleteProduct({ payload: { keyword: val } });
+  };
 
   /**
    * 取消
@@ -164,10 +172,11 @@ class CreateModal extends PureComponent {
     } = this.props;
     let form = this.createForm.current;
     form.validateFields()
-      .then(({ enabled, ...values }) => {
+      .then(({ enabled, useProductId, ...values }) => {
         $insert({
           payload: {
             ...values,
+            useProductId: (useProductId || []).map(({ key }) => key),
             enabled: enabled ? 1 : 0,
           },
           callback: () => {
