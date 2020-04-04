@@ -35,13 +35,13 @@ class Index extends React.PureComponent {
    * @param createdAt
    * @return {*}
    */
-  renderItem = ({ title = '', actor: { avatar }, content, createdAt }) => {
+  renderItem = ({ title = '', actor: { nickname, avatar }, content, createdAt }) => {
     let datetime = DateFormatter.timestampAs(createdAt);
     let description = content;
     let extra = '';
     const leftIcon = avatar ? (
       typeof avatar === 'string' ? (
-        <Avatar className={styles.avatar} src={avatar}/>
+        <Avatar size={50} className={styles.avatar} src={avatar}/>
       ) : (
         avatar
       )
@@ -52,18 +52,11 @@ class Index extends React.PureComponent {
         avatar={<span className={styles.iconElement}>{leftIcon}</span>}
         title={
           <div className={styles.title}>
-            {title}
-            <div className={styles.extra}>{extra}</div>
+            <div className={styles.username}>{nickname}</div>
+            <div className={styles.extra}>{datetime}</div>
           </div>
         }
-        description={
-          <div>
-            <div className={styles.description} title={description}>
-              {description}
-            </div>
-            <div className={styles.datetime}>{datetime}</div>
-          </div>
-        }
+        description={<div className={styles.description} title={description}>{description}</div>}
       />
     </List.Item>);
   };

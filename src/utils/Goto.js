@@ -13,9 +13,10 @@ export default class Goto {
   /**
    * 个人通知中心
    */
-  static profileNotifications() {
+  static profileNotifications(type = 'privateLetter') {
     router.push({
       pathname: '/profile/notifications',
+      query: { type: type },
     });
   }
 

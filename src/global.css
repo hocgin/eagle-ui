@@ -11,7 +11,9 @@ html, body, #root {
 /**
  * 修复因为动画导致悬浮框偏倚问题
  */
-.ant-tooltip, .ant-popover, .ant-tooltip * {
+.ant-tooltip,
+.ant-table-expanded-row-fixed,
+.ant-popover, .ant-tooltip * {
   transition: none;
 }
 

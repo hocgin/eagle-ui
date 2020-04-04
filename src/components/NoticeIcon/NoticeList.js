@@ -3,6 +3,7 @@ import { Avatar, List } from 'antd';
 import Link from 'umi/link';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
+import Goto from '@/utils/Goto';
 
 export default function NoticeList({
                                      data = [],
@@ -53,15 +54,9 @@ export default function NoticeList({
           </List.Item>);
         })}
       </List>
-      <div className={styles.clear} onClick={onClear}>
-        <Link to={{
-          pathname: `/account/notifications`,
-          query: { type: name },
-        }}>查看更多</Link>
-      </div>
-      {/*{showClear ? (<div className={styles.clear} onClick={onClear}>*/}
-      {/*  {locale.clear} {title}*/}
-      {/*</div>) : null}*/}
+      <div className={styles.clear} onClick={() => {
+        Goto.profileNotifications(name)
+      }}><a href={null}>查看更多</a></div>
     </div>
   );
 }
