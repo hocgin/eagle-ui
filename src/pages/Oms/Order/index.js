@@ -8,7 +8,6 @@ import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import UpdateModal from '@/pages/Oms/Order/Modal/UpdateModal';
-import router from 'umi/router';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Goto from '@/utils/Goto';

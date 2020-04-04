@@ -1,5 +1,3 @@
-import Utils from '@/utils/Utils';
-import { message } from 'antd';
 import NotifyApi from '@/services/Notify';
 import UiUtils from '@/utils/UiUtils';
 
@@ -9,6 +7,13 @@ export default {
   effects: {
     * getNotifications({ payload = {}, callback }, { call, put }) {
       let result = yield NotifyApi.getNotifications(payload);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
+    // 发送私聊
+    * publishPrivateLetter({ payload = {}, callback }, { call, put }) {
+      let result = yield NotifyApi.publishPrivateLetter(payload);
       if (UiUtils.showErrorMessageIfExits(result)) {
         if (callback) callback(result);
       }

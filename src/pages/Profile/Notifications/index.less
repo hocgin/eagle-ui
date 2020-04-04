@@ -1,11 +1,19 @@
 @import "~@/mixin.less";
 
 .page {
+  padding: 0;
+}
+
+.content {
   display: flex;
-  flex-direction: row;
-  //height: 100%;
+  flex-direction: column;
   background-color: #fff;
-  margin: 12px 24px 16px;
+
+  :global {
+    *:focus {
+      outline: unset !important;
+    }
+  }
 }
 
 .tabsBody {

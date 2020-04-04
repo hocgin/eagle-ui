@@ -1,17 +1,16 @@
 import React from 'react';
 import styles from './index.less';
-import { Tabs } from 'antd';
+import { Button, Tabs } from 'antd';
 import { connect } from 'dva';
 import NotifyList from './components/NotifyList';
 import UiUtils from '@/utils/UiUtils';
 import router from 'umi/router';
+import SendModal from '@/pages/Profile/Notifications/Modal/SendModal';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 let { TabPane } = Tabs;
 
-@connect(({
-            notify: { privateLetter },
-            notifications: { query }, loading, ...rest
-          }) => {
+@connect(({ notify: { privateLetter }, notifications: { query }, loading, ...rest }) => {
   return {
     notifyType: query.type || 'privateLetter',
     getNotificationsLoading: loading.effects['notify/getNotifications'],
@@ -33,45 +32,49 @@ class index extends React.Component {
     announcement: [],
     hasMoreAnnouncementLoading: true,
     announcementLoading: false,
+    visibleSend: false,
   };
-
-  componentDidMount() {
-  }
 
   render() {
     let {
       privateLetter, hasMorePrivateLetterLoading, privateLetterLoading,
       subscription, hasMoreSubscriptionLoading, subscriptionLoading,
       announcement, hasMoreAnnouncementLoading, announcementLoading,
+      visibleSend,
     } = this.state;
     let { notifyType } = this.props;
 
-    return (<div className={styles.page}>
-      <Tabs size="large"
-            onChange={this.onChange}
-            tabBarStyle={{ paddingLeft: 20 }}
-            className={styles.tabsBody}
-            defaultActiveKey={notifyType}>
-        <TabPane tab="私信" key="privateLetter">
-          <NotifyList dataSource={privateLetter}
-                      loading={privateLetterLoading}
-                      hasMore={hasMorePrivateLetterLoading}
-                      onLoadMore={this.onLoadMorePrivateLetter}/>
-        </TabPane>
-        <TabPane tab="通知" key="subscription">
-          <NotifyList dataSource={subscription}
-                      loading={subscriptionLoading}
-                      hasMore={hasMoreSubscriptionLoading}
-                      onLoadMore={this.onLoadMoreSubscription}/>
-        </TabPane>
-        <TabPane tab="公告" key="announcement">
-          <NotifyList dataSource={announcement}
-                      loading={announcementLoading}
-                      hasMore={hasMoreAnnouncementLoading}
-                      onLoadMore={this.onLoadMoreAnnouncement}/>
-        </TabPane>
-      </Tabs>
-    </div>);
+    return (<PageHeaderWrapper hiddenBreadcrumb={true} className={styles.page}>
+      <div className={styles.content}>
+        <Tabs size="large"
+              tabBarExtraContent={<Button type="primary" onClick={this.onClickShowSendModal}>发送消息</Button>}
+              onChange={this.onChange}
+              tabBarStyle={{ paddingLeft: 20, paddingRight: 20 }}
+              className={styles.tabsBody}
+              defaultActiveKey={notifyType}>
+          <TabPane tab="私信" key="privateLetter">
+            <NotifyList dataSource={privateLetter}
+                        loading={privateLetterLoading}
+                        hasMore={hasMorePrivateLetterLoading}
+                        onLoadMore={this.onLoadMorePrivateLetter}/>
+          </TabPane>
+          <TabPane tab="通知" key="subscription">
+            <NotifyList dataSource={subscription}
+                        loading={subscriptionLoading}
+                        hasMore={hasMoreSubscriptionLoading}
+                        onLoadMore={this.onLoadMoreSubscription}/>
+          </TabPane>
+          <TabPane tab="公告" key="announcement">
+            <NotifyList dataSource={announcement}
+                        loading={announcementLoading}
+                        hasMore={hasMoreAnnouncementLoading}
+                        onLoadMore={this.onLoadMoreAnnouncement}/>
+          </TabPane>
+        </Tabs>
+        {visibleSend && <SendModal visible={visibleSend}
+                                   onClose={this.onClickCloseSendModal}/>}
+      </div>
+    </PageHeaderWrapper>);
   }
 
   onChange = (key) => {
@@ -146,6 +149,18 @@ class index extends React.Component {
           };
         });
       },
+    });
+  };
+
+  onClickCloseSendModal = () => {
+    this.setState({
+      visibleSend: false,
+    });
+  };
+
+  onClickShowSendModal = () => {
+    this.setState({
+      visibleSend: true,
     });
   };
 

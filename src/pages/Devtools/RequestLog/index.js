@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.less';
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, Tooltip } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
@@ -34,7 +34,8 @@ class index extends React.Component {
     dataIndex: 'uri',
     fixed: 'left',
     key: 'uri',
-    render: (val, { method }) => `${method} ${val}`,
+    ellipsis: true,
+    render: (val, { method }) => <Tooltip placement="top" title={`${method} ${val}`}>{method} {val}</Tooltip>,
   }, {
     title: '入口描述',
     dataIndex: 'enterRemark',

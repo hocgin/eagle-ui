@@ -17,5 +17,14 @@ export default class NotifyApi {
     });
   }
 
+  static publishPrivateLetter({ ...payload }) {
+    return request(`/api/notification/private-letter/publish`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
 
 }

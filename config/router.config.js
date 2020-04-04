@@ -38,7 +38,12 @@ export default [
         // 【开发工具】
         code: 'devtools', icon: 'tool', path: '/devtools',
         routes: [
-          { code: 'devtools:data-dict', icon: 'database', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
+          {
+            code: 'devtools:data-dict',
+            icon: 'database',
+            path: '/devtools/data-dict',
+            component: '../pages/Devtools/DataDict',
+          },
           {
             code: 'devtools:request-log',
             icon: 'home',
@@ -62,10 +67,6 @@ export default [
           {
             path: '/profile/notifications',
             component: '../pages/Profile/Notifications',
-            // routes: [
-            //   { path: '/account/notifications', redirect: '/account/notifications/all' },
-            //   { path: '/account/notifications/all', component: '../pages/Account/Notifications/All' },
-            // ],
           },
         ],
       }, {
