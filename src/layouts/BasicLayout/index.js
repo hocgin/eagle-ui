@@ -13,11 +13,11 @@ import { connect } from 'dva';
 import MenuUtils from './menus';
 import SiderMenus from './components/SiderMenus';
 import { getDefaultCollapsedSubMenus } from '@/layouts/BasicLayout/components/SiderMenus';
-import Link from 'umi/link';
 import NoticeIcon from '@/components/NoticeIcon';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import EmptyNotify from '@/assets/EmptyNotify.svg';
 import Context from './MenuContext';
+import Goto from '@/utils/Goto';
 
 const query = {
   'screen-xs': {
@@ -113,9 +113,8 @@ class BasicLayout extends React.Component {
     }
 
     const userDropdownMenus = (<Menu>
-      <Menu.Item>
-        <Link to={'/profile/settings'}>个人资料</Link>
-      </Menu.Item>
+      <Menu.Item onClick={Goto.profileSettings}>个人资料</Menu.Item>
+      <Menu.Item onClick={Goto.profileNotifications}>通知中心</Menu.Item>
       <Menu.Item>修改密码</Menu.Item>
       <Menu.Item>退出登录</Menu.Item>
     </Menu>);
@@ -147,7 +146,6 @@ class BasicLayout extends React.Component {
             <div>
               <Search
                 placeholder="搜索.."
-                onSearch={value => console.log(value)}
                 style={{ width: 230, marginRight: 40 }}/>
             </div>
             <NoticeIcon className={classnames(styles.btn, styles.notice)}

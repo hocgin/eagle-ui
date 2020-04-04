@@ -38,9 +38,9 @@ export default [
         // 【开发工具】
         code: 'devtools', icon: 'tool', path: '/devtools',
         routes: [
-          { code: 'data-dict', icon: 'database', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
+          { code: 'devtools:data-dict', icon: 'database', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
           {
-            code: 'devtools:requestLog',
+            code: 'devtools:request-log',
             icon: 'home',
             path: '/devtools/request-log',
             component: '../pages/Devtools/RequestLog',

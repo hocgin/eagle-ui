@@ -46,8 +46,6 @@ class index extends React.Component {
     } = this.state;
     let { notifyType } = this.props;
 
-    console.log('this.props', this.props);
-
     return (<div className={styles.page}>
       <Tabs size="large"
             onChange={this.onChange}

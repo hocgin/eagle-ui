@@ -1,12 +1,31 @@
-import { router } from 'umi';
+import router from 'umi/router';
 
 export default class Goto {
+  /**
+   * 个人资料
+   */
+  static profileSettings() {
+    router.push({
+      pathname: '/profile/settings',
+    });
+  }
+
+  /**
+   * 个人通知中心
+   */
+  static profileNotifications() {
+    router.push({
+      pathname: '/profile/notifications',
+    });
+  }
 
   /**
    * 登录页面
    */
   static login() {
-    router.push('/login');
+    router.push({
+      pathname: '/login',
+    });
   }
 
   /**
