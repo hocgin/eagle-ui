@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Button, DatePicker, Form, message, Modal, Select } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import ScrollList from '@/components/ScrollList';
 import UiUtils from '@/utils/UiUtils';
 
 const { RangePicker } = DatePicker;
@@ -20,7 +21,7 @@ const formLayout = {
     confirmLoading: loading.effects['coupon/give'],
   };
 }, dispatch => ({
-  $getAllProduct: (args = {}) => dispatch({ type: 'product/getAll', ...args }),
+  $getCompleteProduct: (args = {}) => dispatch({ type: 'product/getComplete', ...args }),
   $give: (args = {}) => dispatch({ type: 'coupon/give', ...args }),
 }))
 class SendModal extends PureComponent {
@@ -30,11 +31,6 @@ class SendModal extends PureComponent {
     useType: 0,
     couponType: 0,
   };
-
-  componentDidMount() {
-    let { $getAllProduct } = this.props;
-    $getAllProduct();
-  }
 
   render() {
     const {
@@ -65,6 +61,11 @@ class SendModal extends PureComponent {
                   placeholder="请选择用户">
             {(allProduct || []).map(({ id, title }) => <Option value={id}>{title}</Option>)}
           </Select>
+        </Form.Item>
+        <Form.Item {...formLayout} label="名单"
+                   rules={[{ type: 'array', required: true, message: '请选择有效期' }]}
+                   name="datetime">
+          <ScrollList/>
         </Form.Item>
       </Form>
     </Modal>);

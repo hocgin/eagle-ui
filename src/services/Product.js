@@ -37,8 +37,8 @@ export default class ProductApi {
     });
   }
 
-  static getAll(payload) {
-    return request(`/api/product/all`, {
+  static getComplete(payload) {
+    return request(`/api/product/_complete`, {
       method: 'POST',
       body: {
         ...payload,

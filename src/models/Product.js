@@ -7,13 +7,14 @@ export default {
     paging: null,
     detail: null,
     all: [],
+    complete: [],
   },
   effects: {
-    // 获取所有
-    * getAll({ payload = {}, callback }, { call, put }) {
-      let result = yield ProductApi.getAll(payload); // API
+    // 检索
+    * getComplete({ payload = {}, callback }, { call, put }) {
+      let result = yield ProductApi.getComplete(payload); // API
       if (UiUtils.showErrorMessageIfExits(result)) {
-        yield put({ type: 'fillAll', payload: result.data });
+        yield put({ type: 'fillComplete', payload: result.data });
         if (callback) callback(result);
       }
     },
@@ -72,6 +73,12 @@ export default {
       return {
         ...state,
         detail: payload,
+      };
+    },
+    fillComplete(state, { payload }) {
+      return {
+        ...state,
+        complete: payload,
       };
     },
   },
