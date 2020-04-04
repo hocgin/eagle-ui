@@ -1,24 +1,20 @@
 import React from 'react';
 import styles from './index.less';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import DetailModal from '@/pages/User/Account/Modal/DetailModal';
-import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
-import GrantModal from '@/pages/User/Account/Modal/GrantModal';
-import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
+import DetailModal from '@/pages/Devtools/RequestLog/Modal/DetailModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
-@connect(({ global, account: { paging }, loading, ...rest }) => {
+@connect(({ global, requestLog: { paging }, loading, ...rest }) => {
   return {
     paging: paging,
-    pagingLoading: loading.effects['account/paging'],
+    pagingLoading: loading.effects['requestLog/paging'],
   };
 }, dispatch => ({
-  $paging: (args = {}) => dispatch({ type: 'account/paging', ...args }),
+  $paging: (args = {}) => dispatch({ type: 'requestLog/paging', ...args }),
 }))
 class index extends React.Component {
 
@@ -26,9 +22,7 @@ class index extends React.Component {
     searchValue: {},
     selectedRows: [],
     operateRow: null,
-    visibleUpdate: false,
     visibleDetail: false,
-    visibleGrant: false,
   };
 
   componentDidMount() {
@@ -36,45 +30,32 @@ class index extends React.Component {
   }
 
   tableColumns = [{
-    title: '昵称',
-    dataIndex: 'nickname',
-    key: 'nickname',
+    title: '请求入口',
+    dataIndex: 'uri',
+    fixed: 'left',
+    key: 'uri',
+    render: (val, { method }) => `${method} ${val}`,
   }, {
-    title: '登录名',
-    dataIndex: 'username',
-    key: 'username',
+    title: '入口描述',
+    dataIndex: 'enterRemark',
+    key: 'enterRemark',
   }, {
-    title: '手机号',
-    dataIndex: 'phone',
-    key: 'phone',
+    title: '用户昵称',
+    dataIndex: 'creatorName',
+    key: 'creatorName',
   }, {
-    title: '邮箱号',
-    dataIndex: 'email',
-    key: 'email',
+    title: '用户IP',
+    dataIndex: 'clientIp',
+    key: 'clientIp',
   }, {
-    title: '启用状态',
-    dataIndex: 'enabledName',
-    key: 'enabledName',
-    render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
+    title: '请求耗时',
+    dataIndex: 'totalTimeMillis',
+    key: 'totalTimeMillis',
+    render: (val) => `${val}ms`,
   }, {
-    title: '过期状态',
-    dataIndex: 'expiredName',
-    key: 'expiredName',
-    render: (val, { expired }) => EnumFormatter.expiredStatus(expired, val),
-  }, {
-    title: '锁定状态',
-    dataIndex: 'lockedName',
-    key: 'lockedName',
-    render: (val, { locked }) => EnumFormatter.lockedStatus(locked, val),
-  }, {
-    title: '创建时间',
+    title: '操作时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
-    render: val => <span>{DateFormatter.timestampAs(val)}</span>,
-  }, {
-    title: '最后更新时间',
-    dataIndex: 'lastUpdatedAt',
-    key: 'lastUpdatedAt',
     render: val => <span>{DateFormatter.timestampAs(val)}</span>,
   }, {
     title: '操作',
@@ -91,40 +72,22 @@ class index extends React.Component {
           });
       };
 
-      const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowGrant">赋予角色</Menu.Item>
-        <Menu.Item key="rowUpdate">修改</Menu.Item>
-        <Menu.Divider/>
-        <Menu.Item key="rowReset">
-          <del>重制密码</del>
-        </Menu.Item>
-        <Menu.Divider/>
-      </Menu>);
-
       return <>
         <a href={null}
            rel="noopener noreferrer"
            onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
-        <Divider type="vertical"/>
-        <Dropdown overlay={MoreMenus}>
-          <a href={null}
-             rel="noopener noreferrer">
-            更多操作 <DownOutlined/>
-          </a>
-        </Dropdown>
       </>;
     },
   }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
-      <ComplexTable toolbarTitle={'账号列表'}
+      <ComplexTable toolbarTitle={'请求日志'}
                     toolbarMenu={BatchMenus}
-                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                    toolbarChildren={null}
                     searchBarChildren={[
                       <Form.Item label="关键词搜索"
                                  name="keyword">
@@ -144,12 +107,6 @@ class index extends React.Component {
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
-      {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseUpdateModal}/>}
-      {visibleGrant && <GrantModal visible={visibleGrant}
-                                   id={operateRow}
-                                   onClose={this.onClickCloseGrantModal}/>}
     </PageHeaderWrapper>);
   }
 
@@ -180,18 +137,6 @@ class index extends React.Component {
       case 'rowDetail': {
         this.setState({
           visibleDetail: true,
-        });
-        break;
-      }
-      case 'rowUpdate': {
-        this.setState({
-          visibleUpdate: true,
-        });
-        break;
-      }
-      case 'rowGrant': {
-        this.setState({
-          visibleGrant: true,
         });
         break;
       }
@@ -232,26 +177,6 @@ class index extends React.Component {
     let rowsId = rows.map(({ id }) => id);
     this.setState({
       selectedRows: rowsId,
-    });
-  };
-
-  onClickShowCreateModal = () => this.setState({
-    visibleCreate: true,
-  });
-
-  onClickCloseGrantModal = () => this.setState({
-    visibleGrant: false,
-  }, this.paging);
-
-  onClickCloseUpdateModal = () => {
-    this.setState({
-      visibleUpdate: false,
-    }, this.paging);
-  };
-
-  onClickShowDetailModal = (id) => {
-    this.setState({
-      visibleDetail: true,
     });
   };
 

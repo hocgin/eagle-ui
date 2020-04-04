@@ -39,7 +39,12 @@ export default [
         code: 'devtools', icon: 'tool', path: '/devtools',
         routes: [
           { code: 'data-dict', icon: 'database', path: '/devtools/data-dict', component: '../pages/Devtools/DataDict' },
-          { code: 'test', icon: 'home', path: '/devtools/test2', component: '../pages/index' },
+          {
+            code: 'devtools:requestLog',
+            icon: 'home',
+            path: '/devtools/request-log',
+            component: '../pages/Devtools/RequestLog',
+          },
           { code: 'test5', icon: 'dashboard', path: '/devtools/test5', component: '../pages/home/dashboard' },
         ],
       }, {
