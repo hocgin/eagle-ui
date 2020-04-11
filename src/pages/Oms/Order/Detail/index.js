@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.less';
-import { Card, Col, Divider, Row, Table, Tag } from 'antd';
+import { Card, Col, Divider, Row, Table, Tag, Tooltip } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import { connect } from 'dva';
 import Img from 'react-image';
@@ -10,6 +10,7 @@ import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import UiUtils from '@/utils/UiUtils';
 import StandardTable from '@/components/StandardTable';
+import Goto from '@/utils/Goto';
 
 const { Description } = DescriptionList;
 
@@ -80,7 +81,15 @@ class index extends React.Component {
         title: '退款状态',
         dataIndex: 'refundStatus',
         key: 'refundStatus',
-        render: (val, { refundStatusName }) => EnumFormatter.refundApplyStatus(val, refundStatusName),
+        render: (val, { refundStatusName, refundApplyId }) => {
+          if (!!refundApplyId) {
+            return (<Tooltip title="点击查看退款申请单"
+                             onClick={() => {
+                               Goto.refundApplyDetail(refundApplyId);
+                             }}>{EnumFormatter.refundApplyStatus(val, refundStatusName)}</Tooltip>);
+          }
+          return EnumFormatter.refundApplyStatus(val, refundStatusName);
+        },
       }, {
         title: '单价',
         dataIndex: 'productPrice',
@@ -223,9 +232,9 @@ class index extends React.Component {
       <Description term="创建人">{accountName}</Description>
       <Description term="确认状态">{EnumFormatter.confirmStatus(confirmStatus, confirmStatusName)}</Description>
       <Description term="创建时间">{DateFormatter.timestampAs(createdAt)}</Description>
-      <Description term="关联退费单据">
-        <a href="">12421</a>
-      </Description>
+      {/*<Description term="关联退费单据">*/}
+      {/*  <a href="">12421</a>*/}
+      {/*</Description>*/}
       <Description term="客户备注">{remark}</Description>
     </DescriptionList>);
   };

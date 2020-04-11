@@ -14,11 +14,7 @@ import HandleModal from '@/pages/Oms/OrderRefundApply/Detail/Modal/HandleModal';
 const ButtonGroup = Button.Group;
 
 
-@connect(({
-            global,
-            orderRefundApply: { detail = {} },
-            loading, ...rest
-          }) => {
+@connect(({ global, orderRefundApply: { detail = {} }, loading, ...rest }) => {
   return {
     detail: detail,
     id: (detail || {}).id,
@@ -118,7 +114,7 @@ class index extends React.Component {
       },
     ];
 
-    const isHandled = (!handlerAt);
+    const isHandled = (!!handlerAt);
 
     const action = (
       <>

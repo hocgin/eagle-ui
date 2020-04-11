@@ -48,4 +48,12 @@ export default class Goto {
       pathname: `/oms/order/${id}`,
     });
   }
+
+  /**
+   * 退费申请详情
+   * @param id
+   */
+  static refundApplyDetail(id) {
+    router.push({ pathname: `/oms/order-refund-apply/${id}` });
+  }
 };
