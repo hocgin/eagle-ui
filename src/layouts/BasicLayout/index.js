@@ -18,6 +18,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import EmptyNotify from '@/assets/EmptyNotify.svg';
 import Context from './MenuContext';
 import Goto from '@/utils/Goto';
+import Config from '@/config';
 
 const query = {
   'screen-xs': {
@@ -99,6 +100,7 @@ class BasicLayout extends React.Component {
         $getNotifySummary();
       },
     });
+    Config.init()
   }
 
   render() {

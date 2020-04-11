@@ -2,10 +2,8 @@ import React, { PureComponent } from 'react';
 import { Button, Form, Input, message, Modal, Select, Switch } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import Utils from '@/utils/Utils';
 import UiUtils from '@/utils/UiUtils';
 
-const { Option } = Select;
 const formLayout = {
     labelCol: { span: 7 },
     wrapperCol: { span: 13 },

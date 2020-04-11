@@ -1,6 +1,7 @@
 import memoizeOne from 'memoize-one';
 import React from 'react';
 import { message, Modal, Tree, TreeSelect } from 'antd';
+import isEqual from 'lodash/isEqual';
 
 export default class UiUtils {
 

@@ -56,6 +56,17 @@ export default [
             path: '/devtools/short-url',
             component: '../pages/Devtools/ShortUrl',
           },
+          {
+            code: 'devtools:debug',
+            icon: 'debug',
+            path: '/devtools/debug',
+            routes: [{
+              code: 'devtools:debug:comment',
+              icon: 'dashboard',
+              path: '/devtools/debug/comment',
+              component: '../pages/Devtools/Debug/Comment',
+            }],
+          },
         ],
       }, {
         //【个人设置】

@@ -5,11 +5,9 @@ import PropTypes from 'prop-types';
 class Index extends React.PureComponent {
   render() {
     let {} = this.props;
-    return (
-      <div className={styles.component}>
-        <div>tpl</div>
-      </div>
-    );
+    return (<div className={styles.component}>
+      <div>tpl</div>
+    </div>);
   }
 
   static propTypes = {

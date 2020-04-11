@@ -1,4 +1,10 @@
+import * as moment from 'moment';
+
 export default class Config {
+  static init() {
+    moment.locale('zh-cn');
+  }
+
   /**
    * 默认配置
    * @type {{}}
