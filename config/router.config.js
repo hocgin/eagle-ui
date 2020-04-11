@@ -46,23 +46,23 @@ export default [
           },
           {
             code: 'devtools:request-log',
-            icon: 'home',
+            icon: 'cloud',
             path: '/devtools/request-log',
             component: '../pages/Devtools/RequestLog',
           },
           {
             code: 'devtools:short-url',
-            icon: 'dashboard',
+            icon: 'link',
             path: '/devtools/short-url',
             component: '../pages/Devtools/ShortUrl',
           },
           {
             code: 'devtools:debug',
-            icon: 'debug',
+            icon: 'sketch',
             path: '/devtools/debug',
             routes: [{
               code: 'devtools:debug:comment',
-              icon: 'dashboard',
+              icon: 'comment',
               path: '/devtools/debug/comment',
               component: '../pages/Devtools/Debug/Comment',
             }],

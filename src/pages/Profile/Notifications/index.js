@@ -116,7 +116,7 @@ class index extends React.Component {
     });
     $getNotifications({
       payload: {
-        notifyType: 2,
+        notifyType: 100,
         page,
       },
       callback: (paging) => {
