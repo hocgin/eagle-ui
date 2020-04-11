@@ -2,6 +2,7 @@ import UiUtils from '@/utils/UiUtils';
 import OrderApi from '@/services/Order';
 import qs from 'query-string';
 import pathToRegexp from 'path-to-regexp';
+import ChangeLogApi from '@/services/ChangeLog';
 
 export default {
   namespace: 'order',
@@ -9,6 +10,7 @@ export default {
     paging: null,
     detail: null,
     all: [],
+    changeLogPaging: null,
   },
   effects: {
     // 获取所有
@@ -67,8 +69,21 @@ export default {
         if (callback) callback(result);
       }
     },
+    * pagingChangeLog({ payload: { id, ...payload }, callback }, { call, put }) {
+      let result = yield ChangeLogApi.paging({ ...payload, refId: id, refType: 0 }); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillChangeLogPaging', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
   },
   reducers: {
+    fillChangeLogPaging(state, { payload }) {
+      return {
+        ...state,
+        changeLogPaging: payload,
+      };
+    },
     fillAll(state, { payload }) {
       return {
         ...state,
@@ -96,12 +111,8 @@ export default {
         if (pathToRegexp('/oms/order/:id').test(pathname)) {
           let index = pathname.lastIndexOf('/');
           let id = pathname.substr(index + 1);
-          dispatch({
-            type: 'getOne',
-            payload: {
-              id,
-            },
-          });
+          dispatch({ type: 'getOne', payload: { id } });
+          dispatch({ type: 'pagingChangeLog', payload: { id } });
         }
       });
     },

@@ -8,23 +8,27 @@ import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import UiUtils from '@/utils/UiUtils';
+import StandardTable from '@/components/StandardTable';
 
 const { Description } = DescriptionList;
 
 
-@connect(({
-            global,
-            order: { detail },
-            loading, ...rest
-          }) => {
+@connect(({ global, order: { detail, changeLogPaging }, loading, ...rest }) => {
   return {
     detail: detail || {},
+    changeLogPaging: changeLogPaging,
     detailLoading: loading.effects['order/getOne'],
+    changeLogLoading: loading.effects['order/pagingChangeLog'],
   };
 }, dispatch => ({
   $getOne: (args = {}) => dispatch({ type: 'order/getOne', ...args }),
+  $pagingChangeLog: (args = {}) => dispatch({ type: 'order/pagingChangeLog', ...args }),
 }))
 class index extends React.Component {
+  state = {
+    searchValue: {},
+  };
 
   render() {
     const { detailLoading, detail } = this.props;
@@ -155,15 +159,60 @@ class index extends React.Component {
         </DescriptionList>
         <Divider style={{ marginBottom: 32 }}/>
         <div className={styles.title}>订单日志</div>
-        <Table rowKey={'id'}
-               style={{ marginBottom: 16 }}
-               pagination={false}
-               loading={true}
-               dataSource={[]}
-               columns={[]}/>
+        {this.renderChangeLogTable()}
       </Card>
     </PageHeaderWrapper>);
   }
+
+  renderChangeLogTable = () => {
+    let { changeLogPaging, changeLogLoading } = this.props;
+    let tableColumns = [{
+      title: '日志编号',
+      dataIndex: 'logSn',
+      key: 'logSn',
+      fixed: 'left',
+    }, {
+      title: '日志类型',
+      dataIndex: 'refTypeName',
+      key: 'refTypeName',
+      render: (val, { changeTypeName }, index) => {
+        return `${val}:${changeTypeName}`;
+      },
+    }, {
+      title: '操作日志',
+      dataIndex: 'changes',
+      key: 'changes',
+      width: 600,
+      render: (val, { changeTypeName }, index) => {
+        let changes = (val || []).map(({ changeRemark }) => {
+          return (<li>{changeRemark}</li>);
+        });
+        return (<ul>{changes}</ul>);
+      },
+    }, {
+      title: '操作人',
+      dataIndex: 'creatorName',
+      key: 'creatorName',
+      fixed: 'right',
+    }, {
+      title: '操作时间',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      fixed: 'right',
+      render: val => <span>{DateFormatter.timestampAs(val)}</span>,
+    }];
+
+    return (<StandardTable rowKey="id"
+                           hiddenAlert={true}
+                           expandable={null}
+                           loading={changeLogLoading}
+                           data={{
+                             list: UiUtils.fastGetPagingList(changeLogPaging),
+                             pagination: UiUtils.fastPagingPagination(changeLogPaging),
+                           }}
+                           columns={tableColumns}
+                           onChange={this.onChangeStandardTable}/>);
+  };
 
   renderPageHeaderContent = () => {
     const { detail } = this.props;
@@ -194,6 +243,29 @@ class index extends React.Component {
       </Col>
     </Row>);
   };
+
+
+  /**
+   * 条件变更
+   * @param pageSize
+   * @param current
+   * @param filtersArg
+   * @param sorter
+   */
+  onChangeStandardTable = ({ pageSize, current }, filtersArg, sorter) => {
+    let { searchValue } = this.state;
+    this.setState({
+      searchValue: { ...searchValue, size: pageSize, page: current },
+    }, this.paging);
+  };
+
+  paging = () => {
+    let { searchValue } = this.state;
+    let { detail: { id } } = this.props;
+    let { $pagingChangeLog } = this.props;
+    $pagingChangeLog({ payload: { ...searchValue, id: id } });
+  };
+
 
 }
 
