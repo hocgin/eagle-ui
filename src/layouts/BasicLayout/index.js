@@ -1,5 +1,5 @@
 import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { SettingOutlined, UserOutlined, HeartFilled } from '@ant-design/icons';
 import { Avatar, Dropdown, Input, Layout, Menu } from 'antd';
 import React from 'react';
 import styles from './index.less';
@@ -185,7 +185,12 @@ class BasicLayout extends React.Component {
           {/*内容*/}
           {children}
         </Content>
-        <Footer>Hi.</Footer>
+        <Footer className={styles.footerInfo}>
+          <HeartFilled className={classnames(styles.heartbeat, styles.heart)} />
+          <a className={styles.me} href="https://hocg.in" target="_blank" rel="noopener noreferrer">HOCGIN</a>
+          &nbsp;
+          <span className={styles.year}>2020<sup>&copy;</sup></span>
+        </Footer>
       </Layout>
     </Layout>;
     return <>
