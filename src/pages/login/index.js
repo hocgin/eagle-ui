@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './index.less';
-import { UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import logo from '@/assets/logo.png';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { connect } from 'dva';
 
@@ -23,7 +24,7 @@ class index extends React.Component {
   render() {
     return (
       <div className={styles.page}>
-        <div>LOGO</div>
+        <div><img className={styles.logo} src={logo} alt="logo"/></div>
         <Form onFinish={this.onSubmit} ref={this.loginForm} className={styles.loginForm}>
           <Form.Item name="username"
                      rules={[{ required: true, message: '请输入你的账号' }]}>
@@ -34,7 +35,8 @@ class index extends React.Component {
           <Form.Item name="password"
                      rules={[{ required: true, message: '请输入你的密码' }]}>
             <Input style={{ width: '100%' }}
-                   prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }}/>}
+                   type="password"
+                   prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }}/>}
                    placeholder="密码"/>
           </Form.Item>
           <Form.Item>
