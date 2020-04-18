@@ -58,7 +58,7 @@ export default [
           },
           {
             code: 'devtools:settings',
-            icon: 'link',
+            icon: 'setting',
             path: '/devtools/settings',
             component: '../pages/Devtools/Settings',
           },
