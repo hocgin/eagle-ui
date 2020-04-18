@@ -57,6 +57,12 @@ export default [
             component: '../pages/Devtools/ShortUrl',
           },
           {
+            code: 'devtools:settings',
+            icon: 'link',
+            path: '/devtools/settings',
+            component: '../pages/Devtools/Settings',
+          },
+          {
             code: 'devtools:debug',
             icon: 'sketch',
             path: '/devtools/debug',
