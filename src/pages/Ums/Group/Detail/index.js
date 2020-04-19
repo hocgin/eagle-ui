@@ -141,6 +141,7 @@ class index extends React.Component {
     );
     return (<>
       <ComplexTable toolbarTitle={'组员'}
+                    rowKey={'accountId'}
                     selectedRows={selectedRows}
                     searchBarEnabled={false}
                     toolbarMenu={BatchMenus}
