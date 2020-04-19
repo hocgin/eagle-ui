@@ -6,9 +6,9 @@ import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import DetailModal from '@/pages/User/Account/Modal/DetailModal';
+import DetailModal from '@/pages/Ums/Account/Modal/DetailModal';
 import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
-import GrantModal from '@/pages/User/Account/Modal/GrantModal';
+import GrantModal from '@/pages/Ums/Account/Modal/GrantModal';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 

@@ -26,7 +26,7 @@ export default [
         // 【用户中心】
         code: 'ums', icon: 'user', path: '/user',
         routes: [
-          { code: 'ums:account', path: '/user/account', component: '../pages/User/Account' },
+          { code: 'ums:account', path: '/user/account', component: '../pages/Ums/Account' },
         ],
       }, {
         // 【访问控制】

@@ -1,12 +1,10 @@
 import React from 'react';
 import styles from './index.less';
-import { DownOutlined } from '@ant-design/icons';
-import { Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import DetailModal from '@/pages/User/Account/Modal/DetailModal';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -26,9 +24,6 @@ class index extends React.Component {
     searchValue: {},
     selectedRows: [],
     operateRow: null,
-    visibleUpdate: false,
-    visibleDetail: false,
-    visibleGrant: false,
   };
 
   componentDidMount() {
@@ -86,7 +81,7 @@ class index extends React.Component {
   }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
@@ -110,9 +105,6 @@ class index extends React.Component {
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}
       />
-      {visibleDetail && <DetailModal visible={visibleDetail}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseDetailModal}/>}
     </PageHeaderWrapper>);
   }
 
@@ -144,12 +136,6 @@ class index extends React.Component {
       case 'rowDetail': {
         router.push({
           pathname: `/oms/order-refund-apply/${operateRow}`,
-        });
-        break;
-      }
-      case 'rowGrant': {
-        this.setState({
-          visibleGrant: true,
         });
         break;
       }
@@ -190,32 +176,6 @@ class index extends React.Component {
     let rowsId = rows.map(({ id }) => id);
     this.setState({
       selectedRows: rowsId,
-    });
-  };
-
-  onClickShowCreateModal = () => this.setState({
-    visibleCreate: true,
-  });
-
-  onClickCloseGrantModal = () => this.setState({
-    visibleGrant: false,
-  }, this.paging);
-
-  onClickCloseUpdateModal = () => {
-    this.setState({
-      visibleUpdate: false,
-    }, this.paging);
-  };
-
-  onClickShowDetailModal = (id) => {
-    this.setState({
-      visibleDetail: true,
-    });
-  };
-
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
     });
   };
 }

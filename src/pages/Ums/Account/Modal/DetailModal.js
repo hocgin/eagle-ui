@@ -8,12 +8,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 
 const { Panel } = Collapse;
 
-@connect(({
-            global,
-            account: { detail },
-            loading, ...rest
-          }) => {
-
+@connect(({ global, account: { detail }, loading, ...rest }) => {
   return {
     detail: detail,
     detailLoading: loading.effects['account/getOne'],
