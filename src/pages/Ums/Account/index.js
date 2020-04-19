@@ -7,7 +7,7 @@ import { connect } from 'dva';
 import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import DetailModal from '@/pages/Ums/Account/Modal/DetailModal';
-import UpdateModal from '@/pages/Access/Role/Modal/UpdateModal';
+import UpdateModal from '@/pages/Ums/Account/Modal/UpdateModal';
 import GrantModal from '@/pages/Ums/Account/Modal/GrantModal';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
