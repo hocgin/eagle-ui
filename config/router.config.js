@@ -24,9 +24,21 @@ export default [
       { code: 'dashboard', icon: 'dashboard', path: '/home/dashboard', component: '../pages/home/dashboard' },
       {
         // 【用户中心】
-        code: 'ums', icon: 'user', path: '/user',
+        code: 'ums', icon: 'user', path: '/ums',
         routes: [
-          { code: 'ums:account', path: '/user/account', component: '../pages/Ums/Account' },
+          { code: 'ums:account', path: '/ums/account', component: '../pages/Ums/Account' },
+          {
+            code: 'ums:group', path: '/ums/group', hideChildrenInMenu: true,
+            routes: [{
+              code: 'ums:group',
+              path: '/ums/group',
+              component: '../pages/Ums/Group',
+            }, {
+              code: 'ums:group:detail',
+              path: '/ums/group/:id',
+              component: '../pages/Ums/Group/Detail',
+            }],
+          },
         ],
       }, {
         // 【访问控制】

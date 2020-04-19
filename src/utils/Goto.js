@@ -56,4 +56,12 @@ export default class Goto {
   static refundApplyDetail(id) {
     router.push({ pathname: `/oms/order-refund-apply/${id}` });
   }
+
+  /**
+   * 详情页面
+   * @param id
+   */
+  static accountMemberDetailPage(id) {
+    router.push({ pathname: `/ums/group/${id}` });
+  }
 };

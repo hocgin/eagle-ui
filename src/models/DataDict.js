@@ -13,6 +13,8 @@ export default {
     allCouponType: [],
     allCouponPlatformType: [],
     allCouponUseType: [],
+    allGroupMemberSource: [],
+    allAccountGroupType: [],
   },
   effects: {
     * paging({ payload = {}, callback }, { call, put }) {
@@ -86,6 +88,20 @@ export default {
       let result = yield DataDictApi.getAllDataDict({ code: 'couponUseType' });
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillData', payload: { field: 'allCouponUseType', data: result.data } });
+        if (callback) callback(result);
+      }
+    },
+    * getAllGroupMemberSource({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'groupMemberSource' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allGroupMemberSource', data: result.data } });
+        if (callback) callback(result);
+      }
+    },
+    * getAllAccountGroupType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'accountGroupType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allAccountGroupType', data: result.data } });
         if (callback) callback(result);
       }
     },

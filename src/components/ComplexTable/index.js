@@ -21,12 +21,13 @@ class ComplexTable extends React.PureComponent {
 
   render() {
     let {
+      rowKey,
       // Toolbar
       toolbarEnabled = true, toolbarTitle = null, toolbarMenu = null, toolbarChildren = null,
       // SearchBar
       searchBarEnabled = true, searchBarChildren, onClickSearch,
       // Table
-      tableColumns = [], tableData = [], tableLoading, selectedRows, onSelectRow, onChangeStandardTable, expandable
+      tableColumns = [], tableData = [], tableLoading, selectedRows, onSelectRow, onChangeStandardTable, expandable,
     } = this.props;
 
     return (<Card className={styles.component} bordered={false} bodyStyle={{ padding: 0 }}>
@@ -42,7 +43,7 @@ class ComplexTable extends React.PureComponent {
           </Toolbar>
         </div>}
         {/*数据展示*/}
-        <StandardTable rowKey="id" selectedRows={selectedRows}
+        <StandardTable rowKey={rowKey || 'id'} selectedRows={selectedRows}
                        expandable={expandable}
                        loading={tableLoading}
                        data={tableData}
