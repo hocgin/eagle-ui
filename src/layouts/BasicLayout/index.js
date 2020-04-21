@@ -4,7 +4,7 @@ import { Avatar, Dropdown, Input, Layout, Menu } from 'antd';
 import React from 'react';
 import styles from './index.less';
 import memoizeOne from 'memoize-one';
-import pathToRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 import DocumentTitle from 'react-document-title';
 import { ContainerQuery } from 'react-container-query';
 import isEqual from 'lodash/isEqual';

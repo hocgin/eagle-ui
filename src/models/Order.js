@@ -1,7 +1,7 @@
 import UiUtils from '@/utils/UiUtils';
 import OrderApi from '@/services/Order';
 import qs from 'query-string';
-import pathToRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 import ChangeLogApi from '@/services/ChangeLog';
 
 export default {

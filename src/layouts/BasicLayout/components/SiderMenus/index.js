@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './index.less';
-import Link from 'umi/link';
+import { Link } from 'umi';
 import classnames from 'classnames';
 import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { Menu } from 'antd';
-import pathToRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 import Utils from '@/utils/Utils';
 
 const { SubMenu } = Menu;

@@ -1,7 +1,7 @@
 import NotifyApi from '@/services/Notify';
 import AccountApi from '@/services/Account';
 import LocalStorage from '@/utils/LocalStorage';
-import { router } from 'umi';
+import { history } from 'umi';
 import { Global } from '@/utils/constant/global';
 import UiUtils from '@/utils/UiUtils';
 
@@ -25,7 +25,7 @@ export default {
       if (UiUtils.showErrorMessageIfExits(result)) {
         if (callback) callback(result);
         LocalStorage.setToken(result.data);
-        router.push(Global.INDEX_PAGE);
+        history.push(Global.INDEX_PAGE);
       }
     },
     * getCurrentAccountInfo({ payload = {}, callback }, { call, put }) {
@@ -35,7 +35,7 @@ export default {
         if (callback) callback(result);
         return;
       }
-      router.push(Global.LOGIN_PAGE);
+      history.push(Global.LOGIN_PAGE);
     },
     * getCurrentAccountAuthority({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.getCurrentAccountAuthority(payload);

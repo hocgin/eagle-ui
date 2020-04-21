@@ -1,11 +1,11 @@
-import router from 'umi/router';
+import { history } from 'umi';
 
 export default class Goto {
   /**
    * 个人资料
    */
   static profileSettings() {
-    router.push({
+    history.push({
       pathname: '/profile/settings',
     });
   }
@@ -14,7 +14,7 @@ export default class Goto {
    * 个人通知中心
    */
   static profileNotifications(type = 'privateLetter') {
-    router.push({
+    history.push({
       pathname: '/profile/notifications',
       query: { type: type },
     });
@@ -24,7 +24,7 @@ export default class Goto {
    * 登录页面
    */
   static login() {
-    router.push({
+    history.push({
       pathname: '/login',
     });
   }
@@ -34,7 +34,7 @@ export default class Goto {
    * @param id
    */
   static couponDetail(id) {
-    router.push({
+    history.push({
       pathname: `/mkt/coupon/${id}`,
     });
   }
@@ -44,7 +44,7 @@ export default class Goto {
    * @param id
    */
   static orderDetail(id) {
-    router.push({
+    history.push({
       pathname: `/oms/order/${id}`,
     });
   }
@@ -54,7 +54,7 @@ export default class Goto {
    * @param id
    */
   static refundApplyDetail(id) {
-    router.push({ pathname: `/oms/order-refund-apply/${id}` });
+    history.push({ pathname: `/oms/order-refund-apply/${id}` });
   }
 
   /**
@@ -62,6 +62,6 @@ export default class Goto {
    * @param id
    */
   static accountMemberDetailPage(id) {
-    router.push({ pathname: `/ums/group/${id}` });
+    history.push({ pathname: `/ums/group/${id}` });
   }
 };

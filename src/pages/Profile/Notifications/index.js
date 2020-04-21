@@ -4,7 +4,7 @@ import { Button, Tabs } from 'antd';
 import { connect } from 'dva';
 import NotifyList from './components/NotifyList';
 import UiUtils from '@/utils/UiUtils';
-import router from 'umi/router';
+import { history } from 'umi';
 import SendModal from '@/pages/Profile/Notifications/Modal/SendModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
@@ -80,7 +80,7 @@ class index extends React.Component {
 
   onChange = (key) => {
     let { location: { pathname } } = this.props;
-    router.push({
+    history.push({
       pathname: pathname,
       query: {
         type: key,

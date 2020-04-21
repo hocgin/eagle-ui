@@ -1,7 +1,7 @@
 import UiUtils from '@/utils/UiUtils';
 import OrderRefundApplyApi from '@/services/OrderRefundApply';
 import qs from 'query-string';
-import pathToRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 
 export default {
   namespace: 'orderRefundApply',

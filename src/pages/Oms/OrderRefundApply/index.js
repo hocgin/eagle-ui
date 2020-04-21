@@ -8,7 +8,7 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import router from 'umi/router';
+import { history } from 'umi';
 
 @connect(({ global, orderRefundApply: { paging }, loading, ...rest }) => {
   return {
@@ -134,7 +134,7 @@ class index extends React.Component {
     let { operateRow } = this.state;
     switch (key) {
       case 'rowDetail': {
-        router.push({
+        history.push({
           pathname: `/oms/order-refund-apply/${operateRow}`,
         });
         break;
