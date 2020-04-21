@@ -1,6 +1,5 @@
 import React from 'react';
 import { Avatar, List } from 'antd';
-import Link from 'umi/link';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
 import Goto from '@/utils/Goto';

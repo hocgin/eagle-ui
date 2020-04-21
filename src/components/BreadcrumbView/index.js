@@ -4,7 +4,7 @@ import { Breadcrumb } from 'antd';
 import { Icon as LegacyIcon } from '@ant-design/compatible';
 import * as classnames from 'classnames';
 import PropTypes from 'prop-types';
-import Link from 'umi/link';
+import { Link } from 'umi';
 
 class Index extends React.PureComponent {
   render() {
