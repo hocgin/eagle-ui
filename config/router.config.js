@@ -153,7 +153,7 @@ export default [
           { code: 'wx:mp-config', path: '/wx/mp-config', component: '../pages/Wx/Config' },
           { code: 'wx:mp-user', path: '/wx/mp-user', component: '../pages/Wx/User' },
           { code: 'wx:mp-menu', path: '/wx/mp-menu', component: '../pages/Wx/Menu' },
-          { code: 'wx:mp-material', path: '/wx/mp-menu', component: '../pages/Wx/Material' },
+          { code: 'wx:mp-material', path: '/wx/mp-material', component: '../pages/Wx/Material' },
         ],
       },
     ],
