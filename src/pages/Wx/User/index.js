@@ -37,7 +37,7 @@ class index extends React.Component {
   }
 
   tableColumns = [{
-    title: '用户昵称(微信)',
+    title: '微信昵称',
     dataIndex: 'nickname',
     key: 'nickname',
     fixed: 'left',
@@ -110,8 +110,6 @@ class index extends React.Component {
       <ComplexTable toolbarTitle={<span>微信用户列表</span>}
                     rowKey={`appid`}
                     toolbarMenu={BatchMenus}
-                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                             onClick={this.onClickShowCreateModal}>新建</Button>}
                     searchBarChildren={[
                       <Form.Item label="公众号" name="appid">
                         {this.renderAppIdWithSelect()}
