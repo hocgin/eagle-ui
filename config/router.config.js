@@ -152,7 +152,22 @@ export default [
         routes: [
           { code: 'wx:mp-config', path: '/wx/mp-config', component: '../pages/Wx/Config' },
           { code: 'wx:mp-user', path: '/wx/mp-user', component: '../pages/Wx/User' },
-          { code: 'wx:mp-menu', path: '/wx/mp-menu', component: '../pages/Wx/Menu' },
+          {
+            code: 'wx:mp-menu', path: '/wx/mp-menu', hideChildrenInMenu: true,
+            routes: [{
+              code: 'wx:mp-menu',
+              path: '/wx/mp-menu',
+              component: '../pages/Wx/Menu',
+            }, {
+              code: 'wx:mp-menu:add',
+              path: '/wx/mp-menu/add',
+              component: '../pages/Wx/Menu/Add',
+            }, {
+              code: 'wx:mp-menu:detail',
+              path: '/wx/mp-menu/:id',
+              component: '../pages/Wx/Menu/Detail',
+            }],
+          },
           { code: 'wx:mp-material', path: '/wx/mp-material', component: '../pages/Wx/Material' },
         ],
       },

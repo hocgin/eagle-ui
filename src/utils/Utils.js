@@ -57,4 +57,9 @@ export default class Utils {
   static distinct(array = []) {
     return Array.from(new Set(array));
   }
+
+  static delete(array = [], index) {
+    array.splice(index, 1)
+    return array;
+  }
 }

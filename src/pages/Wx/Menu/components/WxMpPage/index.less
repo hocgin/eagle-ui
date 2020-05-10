@@ -1,0 +1,141 @@
+@import "~@/mixin.less";
+
+.component {
+  display: flex;
+  flex-direction: row;
+}
+
+.wxMpPage {
+  @activeColor: #07c160;
+
+  width: 300px;
+  height: 580px;
+  background-position: 0 0;
+  border: 1px solid #e7e7eb;
+  position: relative;
+
+  .wxMpNav {
+    height: 60px;
+    background: transparent url("~@/assets/wx/wx_mp_top.png") no-repeat 0 0;
+    background-size: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .wxMpFooter {
+    height: 100%;
+
+    li, ul {
+      list-style-type: none;
+    }
+
+    .wxMpButton {
+      margin: 0;
+      background-image: url("~@/assets/wx/wx_mp_footer.png");
+      background-repeat: no-repeat;
+      background-position: bottom;
+      background-size: contain;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding-left: 40px;
+
+      li {
+        line-height: 48px;
+      }
+    }
+
+    .btnGroup1 {
+      display: flex;
+      flex-direction: row;
+
+      & > li {
+        flex: 1;
+        text-align: center;
+      }
+
+      .li1 {
+        position: relative;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        word-wrap: normal;
+        cursor: pointer;
+        width: auto;
+        box-sizing: border-box;
+        max-width: 33.33%;
+
+        .li1Title {
+          color: unset;
+          border-left: 1px solid #e7e7eb;
+          overflow-x: hidden;
+          line-height: 50px;
+          display: block;
+        }
+
+        .btnGroup2 {
+          display: none;
+          position: absolute;
+          bottom: 60px;
+          width: 100%;
+          left: 0;
+          border: 1px solid #e7e7eb;
+          border-top: none;
+          background-color: #fafafa;
+
+          &::before {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            left: calc(50% - 5px);
+            bottom: -5px;
+            content: '';
+            border-right: 5px solid transparent;
+            border-left: 5px solid transparent;
+            border-bottom: 5px solid #e7e7eb;
+            transform: rotate(180deg);
+          }
+
+          .li2 {
+            .li2Title {
+              display: block;
+              border-top: 1px solid #e7e7eb;
+              width: auto;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              word-wrap: normal;
+              cursor: pointer;
+            }
+
+            &:hover, &.subBtnActive {
+              .li2Title {
+                color: @activeColor;
+              }
+            }
+          }
+        }
+
+        &:hover, &.btnActive {
+          .btnGroup2 {
+            display: block;
+          }
+
+          .li1Title {
+            color: @activeColor;
+          }
+        }
+      }
+
+    }
+  }
+}
+
+.wxMpMenuPanel {
+  margin-left: 20px;
+}
+.wxMpMenuPanelHidden {
+  display: none;
+}

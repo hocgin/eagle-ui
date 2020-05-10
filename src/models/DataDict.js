@@ -15,6 +15,7 @@ export default {
     allCouponUseType: [],
     allGroupMemberSource: [],
     allAccountGroupType: [],
+    allWxMenuType: [],
   },
   effects: {
     * paging({ payload = {}, callback }, { call, put }) {
@@ -88,6 +89,13 @@ export default {
       let result = yield DataDictApi.getAllDataDict({ code: 'couponUseType' });
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillData', payload: { field: 'allCouponUseType', data: result.data } });
+        if (callback) callback(result);
+      }
+    },
+    * getAllWxMenuType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'wxMenuType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allWxMenuType', data: result.data } });
         if (callback) callback(result);
       }
     },
