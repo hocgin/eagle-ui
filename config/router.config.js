@@ -146,6 +146,12 @@ export default [
             component: '../pages/Mkt/Coupon/Detail',
           }],
         }],
+      }, {
+        // 【微信】
+        code: 'wx', icon: 'wechat', path: '/wx',
+        routes: [
+          { code: 'wx:config', path: '/wx/config', component: '../pages/Wx/Config' },
+        ],
       },
     ],
   },
