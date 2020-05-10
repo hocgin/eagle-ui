@@ -150,7 +150,8 @@ export default [
         // 【微信】
         code: 'wx', icon: 'wechat', path: '/wx',
         routes: [
-          { code: 'wx:config', path: '/wx/config', component: '../pages/Wx/Config' },
+          { code: 'wx:mp-config', path: '/wx/mp-config', component: '../pages/Wx/Config' },
+          { code: 'wx:mp-user', path: '/wx/mp-user', component: '../pages/Wx/User' },
         ],
       },
     ],

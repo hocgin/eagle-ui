@@ -1,24 +1,24 @@
 import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
-import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal } from 'antd';
+import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import DetailModal from '@/pages/Wx/Config/Modal/DetailModal';
-import CreateModal from '@/pages/Wx/Config/Modal/CreateModal';
-import UpdateModal from '@/pages/Wx/Config/Modal/UpdateModal';
+import DetailModal from '@/pages/Wx/User/Modal/DetailModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
 import UiUtils from '@/utils/UiUtils';
+import { WxEnum } from '@/pages/Wx/WxEnum';
 
-@connect(({ global, wxMpConfig: { paging }, loading, ...rest }) => {
+@connect(({ global, wxMpUser: { paging }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
     paging: paging,
-    pagingLoading: loading.effects['wxMpConfig/paging'],
+    allMpConfig: all,
+    pagingLoading: loading.effects['wxMpUser/paging'],
   };
 }, dispatch => ({
-  $paging: (args = {}) => dispatch({ type: 'wxMpConfig/paging', ...args }),
+  $paging: (args = {}) => dispatch({ type: 'wxMpUser/paging', ...args }),
+  $getAllWithWxMpConfig: (args = {}) => dispatch({ type: 'wxMpConfig/getAll', ...args }),
 }))
 class index extends React.Component {
   state = {
@@ -31,32 +31,40 @@ class index extends React.Component {
   };
 
   componentDidMount() {
+    let { $getAllWithWxMpConfig } = this.props;
+    $getAllWithWxMpConfig();
     this.paging();
   }
 
   tableColumns = [{
-    title: 'APP ID',
-    dataIndex: 'appid',
-    key: 'appid',
+    title: '用户昵称(微信)',
+    dataIndex: 'nickname',
+    key: 'nickname',
     fixed: 'left',
   }, {
-    title: '公众号标题(自有)',
-    dataIndex: 'title',
-    key: 'title',
+    title: '性别',
+    dataIndex: 'sex',
+    key: 'sex',
+    render: val => <span>{WxEnum.sex(val)}</span>,
   }, {
-    title: '启用状态',
-    dataIndex: 'enabledName',
-    key: 'enabledName',
-    render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
+    title: '所在地',
+    dataIndex: 'city',
+    key: 'city',
+    render: (city, { country, province }) => <span>{`${country} / ${province} / ${city}`}</span>,
   }, {
-    title: '创建时间',
+    title: '关注状态',
+    dataIndex: 'subscribe',
+    key: 'subscribe',
+    render: val => <span>{WxEnum.subscribe(val)}</span>,
+  }, {
+    title: '第一次关注时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
     render: val => <span>{DateFormatter.timestampAs(val)}</span>,
   }, {
-    title: '最后更新时间',
-    dataIndex: 'lastUpdatedAt',
-    key: 'lastUpdatedAt',
+    title: '关注时间',
+    dataIndex: 'subscribeTime',
+    key: 'subscribeTime',
     render: val => <span>{DateFormatter.timestampAs(val)}</span>,
   }, {
     title: '操作',
@@ -66,7 +74,7 @@ class index extends React.Component {
     render: (text, record) => {
       const onClickOperateRow = (record, e) => {
         this.setState({
-            operateRow: record.appid,
+            operateRow: record.id,
           },
           () => {
             this.onClickMenuRowItem(e, record);
@@ -74,7 +82,9 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowUpdate">修改</Menu.Item>
+        <Menu.Item key="rowRefresh">
+          <del>刷新用户信息</del>
+        </Menu.Item>
       </Menu>);
 
       return <>
@@ -97,12 +107,15 @@ class index extends React.Component {
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
-      <ComplexTable toolbarTitle={'公众号列表'}
+      <ComplexTable toolbarTitle={<span>微信用户列表</span>}
                     rowKey={`appid`}
                     toolbarMenu={BatchMenus}
                     toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
                                              onClick={this.onClickShowCreateModal}>新建</Button>}
                     searchBarChildren={[
+                      <Form.Item label="公众号" name="appid">
+                        {this.renderAppIdWithSelect()}
+                      </Form.Item>,
                       <Form.Item label="关键词搜索"
                                  name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
@@ -121,12 +134,16 @@ class index extends React.Component {
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
-      {visibleCreate && <CreateModal visible={visibleCreate}
-                                     onClose={this.onClickCloseCreateModal}/>}
-      {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseUpdateModal}/>}
     </PageHeaderWrapper>);
+  }
+
+  renderAppIdWithSelect() {
+    let { allMpConfig = [] } = this.props;
+
+    return (<Select defaultValue={null}>
+      <Select.Option>全部</Select.Option>
+      {(allMpConfig || []).map(({ appid, title }) => <Select.Option value={appid}>{title}</Select.Option>)}
+    </Select>);
   }
 
   /**
@@ -156,12 +173,6 @@ class index extends React.Component {
       case 'rowDetail': {
         this.setState({
           visibleDetail: true,
-        });
-        break;
-      }
-      case 'rowUpdate': {
-        this.setState({
-          visibleUpdate: true,
         });
         break;
       }
@@ -203,22 +214,6 @@ class index extends React.Component {
     this.setState({
       selectedRows: rowsId,
     });
-  };
-
-  onClickShowCreateModal = () => this.setState({
-    visibleCreate: true,
-  });
-
-  onClickCloseUpdateModal = () => {
-    this.setState({
-      visibleUpdate: false,
-    }, this.paging);
-  };
-
-  onClickCloseCreateModal = () => {
-    this.setState({
-      visibleCreate: false,
-    }, this.paging);
   };
 
   onClickCloseDetailModal = () => {
