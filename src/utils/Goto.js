@@ -64,4 +64,20 @@ export default class Goto {
   static accountMemberDetailPage(id) {
     history.push({ pathname: `/ums/group/${id}` });
   }
+
+  /**
+   * 查看菜单详情
+   * @param id
+   */
+  static menuDetail(id) {
+    history.push({ pathname: `/wx/mp-menu/${id}` });
+  }
+
+  static menuAdd(appid = '') {
+    history.push({
+      pathname: `/wx/mp-menu/add`, query: {
+        appid: `${appid}`,
+      },
+    });
+  }
 };

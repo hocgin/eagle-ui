@@ -164,7 +164,7 @@ export default [
               component: '../pages/Wx/Menu/Add',
             }, {
               code: 'wx:mp-menu:detail',
-              path: '/wx/mp-menu/:id',
+              path: '/wx/mp-menu/:id(\\d+)',
               component: '../pages/Wx/Menu/Detail',
             }],
           },

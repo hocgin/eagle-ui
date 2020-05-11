@@ -1,25 +1,26 @@
 import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Tooltip } from 'antd';
+import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select, Tooltip } from 'antd';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
 import UiUtils from '@/utils/UiUtils';
-import CreateModal from '@/pages/Devtools/Settings/Modal/CreateModal';
-import UpdateModal from '@/pages/Devtools/Settings/Modal/UpdateModal';
-import DetailModal from '@/pages/Devtools/Settings/Modal/DetailModal';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
+import Goto from '@/utils/Goto';
 
 
-@connect(({ global, wxMpMenu: { paging }, loading, ...rest }) => {
+@connect(({ global, wxMpMenu: { paging }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
     paging: paging,
+    allMpConfig: all,
     pagingLoading: loading.effects['wxMpMenu/paging'],
   };
 }, dispatch => ({
   $paging: (args = {}) => dispatch({ type: 'wxMpMenu/paging', ...args }),
+  $getAllWithWxMpConfig: (args = {}) => dispatch({ type: 'wxMpConfig/getAll', ...args }),
+  $sync: (args = {}) => dispatch({ type: 'wxMpMenu/sync', ...args }),
 }))
 class index extends React.Component {
 
@@ -33,13 +34,15 @@ class index extends React.Component {
   };
 
   componentDidMount() {
+    let { $getAllWithWxMpConfig } = this.props;
+    $getAllWithWxMpConfig();
     this.paging();
   }
 
   tableColumns = [{
     title: '标题',
     dataIndex: 'title',
-    fixed: 'title',
+    fixed: 'left',
     key: 'title',
     ellipsis: true,
     render: (val, { remark }) => <Tooltip placement="top" title={`${remark}`}>{val}</Tooltip>,
@@ -77,13 +80,13 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowUpdate">修改</Menu.Item>
+        <Menu.Item key="rowSync">同步微信</Menu.Item>
       </Menu>);
 
       return <>
         <a href={null}
            rel="noopener noreferrer"
-           onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
+           onClick={onClickOperateRow.bind(this, record, { key: 'rowUpdate' })}>查看or更新</a>
         <Divider type="vertical"/>
         <Dropdown overlay={MoreMenus}>
           <a href={null} rel="noopener noreferrer">
@@ -102,8 +105,11 @@ class index extends React.Component {
       <ComplexTable toolbarTitle={'微信菜单配置'}
                     toolbarMenu={BatchMenus}
                     toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                                             onClick={this.onClickGotoCreate}>新建</Button>}
                     searchBarChildren={[
+                      <Form.Item label="公众号" name="appid">
+                        {this.renderAppIdWithSelect()}
+                      </Form.Item>,
                       <Form.Item key="keyword" label="关键词搜索" name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
                       </Form.Item>,
@@ -118,15 +124,17 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
-      {visibleCreate && <CreateModal visible={visibleCreate}
-                                     onClose={this.onClickCloseCreateModal}/>}
-      {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseUpdateModal}/>}
-      {visibleDetail && <DetailModal visible={visibleDetail}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseDetailModal}/>}
     </PageHeaderWrapper>);
+  }
+
+  renderAppIdWithSelect() {
+    let { allMpConfig = [] } = this.props;
+
+    return (<Select defaultValue={null}>
+      <Select.Option key={-1} value={null}>全部</Select.Option>
+      {(allMpConfig || []).map(({ appid, title }, index) => <Select.Option key={index}
+                                                                           value={`${appid}`}>{title}</Select.Option>)}
+    </Select>);
   }
 
   /**
@@ -153,16 +161,12 @@ class index extends React.Component {
    */
   onClickMenuRowItem = ({ key }) => {
     switch (key) {
-      case 'rowUpdate': {
-        this.setState({
-          visibleUpdate: true,
-        });
+      case 'rowSync': {
+        this.onClickShowSyncModal(this.state.operateRow);
         break;
       }
-      case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
-        });
+      case 'rowUpdate': {
+        Goto.menuDetail(this.state.operateRow);
         break;
       }
       default: {
@@ -171,6 +175,18 @@ class index extends React.Component {
         });
       }
     }
+  };
+
+  onClickShowSyncModal = (id) => {
+    let { $sync } = this.props;
+    let paging = this.paging;
+    let props = {
+      content: `确认上传菜单配置到微信服务器?`,
+      onOk() {
+        $sync({ payload: { id: id }, callback: paging });
+      },
+    };
+    Modal.confirm(props);
   };
 
   /**
@@ -205,29 +221,11 @@ class index extends React.Component {
     });
   };
 
-  onClickCloseCreateModal = () => {
-    this.setState({
-      visibleCreate: false,
-    }, this.paging);
+  onClickGotoCreate = () => {
+    let { searchValue: { appid = '' } } = this.state;
+    Goto.menuAdd(appid);
   };
 
-  onClickCloseUpdateModal = () => {
-    this.setState({
-      visibleUpdate: false,
-    }, this.paging);
-  };
-
-  onClickShowCreateModal = () => {
-    this.setState({
-      visibleCreate: true,
-    });
-  };
-
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
-    });
-  };
 }
 
 export default index;

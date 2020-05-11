@@ -1,5 +1,7 @@
 import UiUtils from '@/utils/UiUtils';
 import WxMpMenuApi from '@/services/WxMpMenu';
+import qs from 'query-string';
+import { pathToRegexp } from 'path-to-regexp';
 
 export default {
   namespace: 'wxMpMenu',
@@ -35,15 +37,27 @@ export default {
     },
     // 新增
     * insert({ payload = {}, callback }, { call, put }) {
-
+      let result = yield WxMpMenuApi.insert(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {
-
+      let result = yield WxMpMenuApi.update(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
 
+    },
+    * sync({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpMenuApi.sync(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
   },
   reducers: {
@@ -57,5 +71,17 @@ export default {
       return { ...state, detail: payload };
     },
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }, done) {
+      return history.listen(({ pathname, search }) => {
+        const query = qs.parse(search);
+        // 订单详情
+        if (pathToRegexp('/wx/mp-menu/:id(\\d+)').test(pathname)) {
+          let index = pathname.lastIndexOf('/');
+          let id = pathname.substr(index + 1);
+          dispatch({ type: 'getOne', payload: { id } });
+        }
+      });
+    },
+  },
 };

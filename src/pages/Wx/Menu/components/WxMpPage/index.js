@@ -2,42 +2,55 @@ import React from 'react';
 import styles from './index.less';
 import PropTypes from 'prop-types';
 import * as classnames from 'classnames';
-import { Button, Card, Form, Input, Radio } from 'antd';
+import { Button, Card, Form, Input, Radio, Select, Switch } from 'antd';
 import { connect } from 'dva';
 
+let { Option } = Select;
 const formLayout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 13 },
 };
 
-@connect(({ global, dataDict: { allWxMenuType }, loading, ...rest }) => {
+@connect(({ global, dataDict: { allWxMenuType }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
     allWxMenuType: allWxMenuType,
+    allMpConfig: all,
   };
 }, dispatch => ({
   $getAllWxMenuType: (args = {}) => dispatch({ type: 'dataDict/getAllWxMenuType', ...args }),
+  $getAllWithWxMpConfig: (args = {}) => dispatch({ type: 'wxMpConfig/getAll', ...args }),
 }))
-class Index extends React.PureComponent {
+class Index extends React.Component {
   createForm = React.createRef();
   ruleForm = React.createRef();
+
   state = {
     buttonIndex: null,
     subButtonIndex: null,
     activeLevel: null,
     button: [],
-    menuType: 0,
+    base: {},
   };
 
   componentDidMount() {
-    let { $getAllWxMenuType } = this.props;
+    let { $getAllWxMenuType, $getAllWithWxMpConfig } = this.props;
     $getAllWxMenuType();
+    $getAllWithWxMpConfig();
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      base: props.base,
+      button: props.button,
+    };
+  }
 
   render() {
-    let { buttonIndex, subButtonIndex, button = [], activeLevel, menuType } = this.state;
+    let { buttonIndex, subButtonIndex, button = [], base = {}, activeLevel } = this.state;
     let buttons = button || [];
-    let { confirmLoading, allWxMenuType } = this.props;
+    let fbase = base || {};
+    let { confirmLoading, allWxMenuType, allMpConfig } = this.props;
 
     return (<div className={styles.component}>
       <div className={styles.wxMpPage}>
@@ -78,13 +91,24 @@ class Index extends React.PureComponent {
       <div className={classnames(styles.wxMpMenuPanel, {})}>
         <Card title="基础信息" style={{ width: 700 }}>
           {/* 基础信息 */}
-          <Form ref={this.ruleForm} initialValues={{
-            menuType,
-          }}>
+          <Form ref={this.ruleForm} onValuesChange={this.onValuesChangeWithBase}
+                initialValues={{ ...fbase }}>
+            <Form.Item {...formLayout} label="APP ID"
+                       rules={[{ required: true, message: '请选择APP ID' }]}
+                       name="appid">
+              <Select>
+                {(allMpConfig).map(({ title: key, appid: value }) => <Option value={`${value}`}>{key}</Option>)}
+              </Select>
+            </Form.Item>
             <Form.Item {...formLayout} label="菜单组名称"
                        rules={[{ required: true, message: '请输入菜单组名称' }]}
-                       name="name">
+                       name="title">
               <Input style={{ width: '100%' }} placeholder="请输入菜单名称"/>
+            </Form.Item>
+            <Form.Item {...formLayout} label="启用状态"
+                       valuePropName="checked"
+                       name="enabled">
+              <Switch checkedChildren="开" unCheckedChildren="关"/>
             </Form.Item>
             <Form.Item {...formLayout} label="菜单组类型"
                        rules={[{ required: true, message: '请选择菜单组类型' }]}
@@ -93,7 +117,7 @@ class Index extends React.PureComponent {
                 {(allWxMenuType).map(({ key, value }) => <Radio.Button value={value * 1}>{key}</Radio.Button>)}
               </Radio.Group>
             </Form.Item>
-            {menuType === 1 && <>
+            {fbase.menuType === 1 && <>
               <Form.Item {...formLayout} label="用户标签"
                          name="tagId">
                 <Input style={{ width: '100%' }} placeholder="请输入用户标签"/>
@@ -122,9 +146,9 @@ class Index extends React.PureComponent {
           </Form>
 
           {/* 选中菜单 */}
-          <Card title="菜单名称" className={classnames({ [styles.wxMpMenuPanelHidden]: activeLevel === null })}
+          <Card title="菜单名称" className={classnames({ [styles.wxMpMenuPanelHidden]: !activeLevel })}
                 extra={<a onClick={this.onClickDeleteMenu}>删除菜单</a>}>
-            <Form ref={this.createForm} onValuesChange={this.onValuesChange}>
+            <Form ref={this.createForm} onValuesChange={this.onValuesChangeWithButton}>
               <Form.Item {...formLayout} label="菜单名称"
                          rules={[{ required: true, message: '请输入菜单名称' }]}
                          name="name">
@@ -151,20 +175,49 @@ class Index extends React.PureComponent {
     </div>);
   }
 
+  onValuesChangeWithBase = (changedValues, allValues) => {
+    this.setState(({ base }) => {
+      return {
+        base: {
+          ...base,
+          ...changedValues,
+        },
+      };
+    });
+  };
+
   onChangeMenuType = (e) => this.setState({ menuType: e.target.value });
 
   onDone = () => {
-    let { button = [], matchRule } = this.state;
+    let { id, appid, button = [], base = {} } = this.state;
     let { onDone } = this.props;
 
-    onDone({
-      button: [...button],
-      matchRule: matchRule,
-    });
+    this.ruleForm.current.validateFields()
+      .then(baseValues => {
+        this.createForm.current.validateFields()
+          .then(menuValues => {
+            onDone({
+              id,
+              appid: appid,
+              button: [...button],
+              enabled: base.enabled,
+              menuType: base.menuType,
+              title: base.title,
+              matchRule: {
+                tagId: base.tagId,
+                sex: base.sex,
+                country: base.country,
+                province: base.province,
+                clientPlatformType: base.clientPlatformType,
+                language: base.language,
+              },
+            });
+          });
+      });
 
   };
 
-  onValuesChange = (changedValues, allValues) => {
+  onValuesChangeWithButton = (changedValues, allValues) => {
     this.setState(({ button, activeLevel, buttonIndex, subButtonIndex }) => {
       if (activeLevel === 1) {
         button[buttonIndex] = {
@@ -259,7 +312,7 @@ class Index extends React.PureComponent {
     this.setState(({ buttonIndex, subButtonIndex }) => ({
       buttonIndex: index,
       activeLevel: 1,
-      activeButton: this.getButton(index, -1),
+      activeButton: this.updateButton(index, -1),
     }));
   };
 
@@ -268,28 +321,37 @@ class Index extends React.PureComponent {
     this.setState(({ buttonIndex, subButtonIndex }) => ({
       subButtonIndex: index,
       activeLevel: 2,
-      activeButton: this.getButton(buttonIndex, index),
+      activeButton: this.updateButton(buttonIndex, index),
     }));
+  };
+
+  defaultMenu = {
+    type: 'view',
+    mediaId: null,
+    pagepath: null,
+    subButton: [],
+    url: null,
+    key: null,
   };
 
   onClickAppendButton = () => {
     let { button } = this.state;
     this.setState({
-      button: [...button, { name: '菜单名称', type: 'view' }],
+      button: [...button, { name: '菜单名称', ...this.defaultMenu }],
     });
   };
 
   onClickAppendSubButton = (buttonIndex) => {
     this.setState(({ button }) => {
       let buttonItem = button[buttonIndex];
-      button[buttonIndex].subButton = [...(buttonItem.subButton || []), { name: '子菜单名称', type: 'view' }];
+      button[buttonIndex].subButton = [...(buttonItem.subButton || []), { name: '子菜单名称', ...this.defaultMenu }];
       return {
         button: button,
       };
     }, this.forceUpdate);
   };
 
-  getButton = (buttonIndex, subButtonIndex) => {
+  updateButton = (buttonIndex, subButtonIndex) => {
     let { button = [] } = this.state;
     let btn1Ele = button[buttonIndex];
 
@@ -317,13 +379,18 @@ class Index extends React.PureComponent {
 
   static propTypes = {
     onDone: PropTypes.func,
+    base: PropTypes.object,
+    button: PropTypes.arrayOf(PropTypes.object),
     confirmLoading: PropTypes.bool,
+    id: PropTypes.number,
   };
 
   static defaultProps = {
     onDone: () => {
     },
     confirmLoading: false,
+    button: [],
+    base: {},
   };
 }
 

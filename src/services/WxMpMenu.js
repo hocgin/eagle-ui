@@ -28,6 +28,15 @@ export default class WxMpMenuApi {
     });
   }
 
+  static sync({ id, ...payload }) {
+    return request(`/api/wx-mp/menu/sync/${id}`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
   static paging(payload) {
     return request(`/api/wx-mp/menu/_paging`, {
       method: 'POST',
