@@ -57,8 +57,8 @@ class Index extends React.Component {
         <div className={styles.wxMpNav}/>
         <div className={styles.wxMpFooter}>
           <ul className={classnames(styles.wxMpButton, styles.btnGroup1)}>
-            {buttons.map(({ name, subButton }, index) => {
-              let subButtons = subButton || [];
+            {buttons.map(({ name, subButtons }, index) => {
+              subButtons = subButtons || [];
               return (<>
                 <li className={classnames(styles.li1, {
                   [styles.btnActive]: index === buttonIndex,
@@ -225,8 +225,8 @@ class Index extends React.Component {
           ...changedValues,
         };
       } else if (activeLevel === 2) {
-        button[buttonIndex].subButton[subButtonIndex] = {
-          ...button[buttonIndex].subButton[subButtonIndex],
+        button[buttonIndex].subButtons[subButtonIndex] = {
+          ...button[buttonIndex].subButtons[subButtonIndex],
           ...changedValues,
         };
       }
@@ -242,7 +242,7 @@ class Index extends React.Component {
       return <>
         <Form.Item {...formLayout} label="MEDIA ID"
                    rules={[{ required: true, message: '请输入MEDIA ID' }]}
-                   name="media_id">
+                   name="mediaId">
           <Input style={{ width: '100%' }}/>
         </Form.Item>
       </>;
@@ -250,7 +250,7 @@ class Index extends React.Component {
       return <>
         <Form.Item {...formLayout} label="MEDIA ID"
                    rules={[{ required: true, message: '请输入MEDIA ID' }]}
-                   name="media_id">
+                   name="mediaId">
           <Input style={{ width: '100%' }}/>
         </Form.Item>
       </>;
@@ -296,7 +296,7 @@ class Index extends React.Component {
       if (activeLevel === 1) {
         (button || []).splice(buttonIndex, 1);
       } else {
-        (button[buttonIndex].subButton || []).splice(subButtonIndex, 1);
+        (button[buttonIndex].subButtons || []).splice(subButtonIndex, 1);
       }
       return ({
         subButtonIndex: null,
@@ -329,7 +329,7 @@ class Index extends React.Component {
     type: 'view',
     mediaId: null,
     pagepath: null,
-    subButton: [],
+    subButtons: [],
     url: null,
     key: null,
   };
@@ -344,7 +344,7 @@ class Index extends React.Component {
   onClickAppendSubButton = (buttonIndex) => {
     this.setState(({ button }) => {
       let buttonItem = button[buttonIndex];
-      button[buttonIndex].subButton = [...(buttonItem.subButton || []), { name: '子菜单名称', ...this.defaultMenu }];
+      button[buttonIndex].subButtons = [...(buttonItem.subButtons || []), { name: '子菜单名称', ...this.defaultMenu }];
       return {
         button: button,
       };
@@ -359,8 +359,8 @@ class Index extends React.Component {
     if (subButtonIndex === -1) {
       ele = btn1Ele || {};
     } else {
-      let subButton = btn1Ele.subButton || [];
-      ele = subButton[subButtonIndex] || {};
+      let subButtons = btn1Ele.subButtons || [];
+      ele = subButtons[subButtonIndex] || {};
     }
 
     this.createForm.current.setFieldsValue({
@@ -373,7 +373,7 @@ class Index extends React.Component {
     if (activeLevel === 1) {
       return button[buttonIndex] || {};
     } else if (activeLevel === 2) {
-      return button[buttonIndex].subButton[subButtonIndex] || {};
+      return button[buttonIndex].subButtons[subButtonIndex] || {};
     }
   };
 

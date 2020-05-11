@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select, Tooltip } from 'antd';
+import { Button, Divider, Dropdown, Form, Input, Menu, message, Modal, Select, Tooltip } from 'antd';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -183,7 +183,12 @@ class index extends React.Component {
     let props = {
       content: `确认上传菜单配置到微信服务器?`,
       onOk() {
-        $sync({ payload: { id: id }, callback: paging });
+        $sync({
+          payload: { id: id }, callback: () => {
+            message.success('同步成功');
+            paging();
+          },
+        });
       },
     };
     Modal.confirm(props);
