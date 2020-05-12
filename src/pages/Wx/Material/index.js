@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './index.less';
+import VoiceCard from '@/components/VoiceCard';
 
 class index extends React.Component {
 
@@ -10,7 +11,7 @@ class index extends React.Component {
   render() {
     let {} = this.props;
     return (<div className={styles.page}>
-      微信素材um > Wait
+      <VoiceCard/>
     </div>);
   }
 }
