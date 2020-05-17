@@ -1,0 +1,179 @@
+@import "~@/mixin.less";
+
+.component {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+.wxMpPage {
+  position: absolute;
+  left: 20px;
+  top: 100px;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+
+  .wxMpNews {
+    overflow-y: auto;
+    width: 300px;
+    background-color: #fff;
+    border: 1px solid #e7e7eb;
+    .imageResize() {
+      background-size: cover;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-color: #f6f8f9;
+    }
+
+    .active {
+      border: 2px solid #07c160;
+    }
+
+    .wxMpNewsFirst {
+      position: relative;
+      height: 155px;
+      .imageResize();
+      background-color: #e1e1e1;
+
+      .title {
+        color: #fff;
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 400;
+        z-index: 1;
+      }
+    }
+
+    .wxMpNewsItem {
+      display: flex;
+      flex-direction: row;
+      padding: 12px;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+
+      .title {
+        color: #353535;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 400;
+        z-index: 1;
+      }
+
+      .wxMpNewsItemImage {
+        .imageResize();
+        width: 48px;
+        height: 48px;
+      }
+
+      &:before {
+        content: " ";
+        position: absolute;
+        left: 15px;
+        right: 78px;
+        top: 0;
+        height: 1px;
+        background-color: #e4e8eb;
+      }
+    }
+
+    .addWxMpNewsItem {
+      border-top: 1px solid #e4e8eb;
+      cursor: pointer;
+      height: 90px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .title {
+        color: #9a9a9a;
+      }
+    }
+  }
+
+  .wxMpToolbar {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.wxMpMenuPanel {
+  @width: 768px;
+
+  width: @width;
+  background: #fff;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.05);
+  position: relative;
+  margin: 30px auto 0;
+
+  .wxMpEditorWrapper {
+    padding: 30px 95px 72px 95px;
+  }
+
+  .wxMpEditor {
+    min-height: 560px;
+    :global {
+      .ant-input {
+        border: 0;
+
+        &:focus {
+          box-shadow: none;
+          border: unset;
+        }
+      }
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .author {
+      font-family: inherit;
+      font-size: 100%;
+    }
+
+    .textArea {
+      word-break: break-word;
+      cursor: text;
+      min-height: 440px;
+      word-wrap: break-word;
+      overflow-y: hidden;
+    }
+  }
+
+  // 封面和摘要
+  .coverAndDigest {
+    display: flex;
+    flex-direction: row;
+
+    .cover {
+      flex: 0;
+    }
+
+    .digest {
+      flex: 1;
+      margin-bottom: 4px;
+    }
+  }
+
+  .bottomToolbar {
+    text-align: right;
+    width: @width;
+    padding: 30px 60px 15px 30px;
+    position: fixed;
+    bottom: 0;
+    background-color: #fff;
+    border-top: 1px solid #d9dadc;
+    z-index: 118;
+    border-top-width: 0;
+    box-shadow: 0 -1px 4px 0 rgba(0, 0, 0, 0.05);
+  }
+}

@@ -75,7 +75,7 @@ export default class Goto {
 
   static menuAdd(appid = '') {
     history.push({
-      pathname: `/wx/mp-menu/add`, query: {
+      pathname: `/wx/mp-menu/create`, query: {
         appid: `${appid}`,
       },
     });

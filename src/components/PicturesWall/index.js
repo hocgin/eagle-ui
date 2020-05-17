@@ -76,7 +76,6 @@ class Index extends React.Component {
       }
       return file;
     });
-    console.log('fileList', fileList);
     this.setState({ fileList });
     onChange(fileList.filter(({ url }) => url).map(({ url, name }) => ({ url, name })));
   };

@@ -16,6 +16,7 @@ export default {
     allGroupMemberSource: [],
     allAccountGroupType: [],
     allWxMenuType: [],
+    allWxMpMaterialType: [],
   },
   effects: {
     * paging({ payload = {}, callback }, { call, put }) {
@@ -96,6 +97,13 @@ export default {
       let result = yield DataDictApi.getAllDataDict({ code: 'wxMenuType' });
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillData', payload: { field: 'allWxMenuType', data: result.data } });
+        if (callback) callback(result);
+      }
+    },
+    * getAllWxMpMaterialType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'wxMaterialType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allWxMpMaterialType', data: result.data } });
         if (callback) callback(result);
       }
     },

@@ -159,16 +159,27 @@ export default [
               path: '/wx/mp-menu',
               component: '../pages/Wx/Menu',
             }, {
-              code: 'wx:mp-menu:add',
-              path: '/wx/mp-menu/add',
-              component: '../pages/Wx/Menu/Add',
+              code: 'wx:mp-menu:create',
+              path: '/wx/mp-menu/create',
+              component: '../pages/Wx/Menu/Create',
             }, {
               code: 'wx:mp-menu:detail',
               path: '/wx/mp-menu/:id(\\d+)',
               component: '../pages/Wx/Menu/Detail',
             }],
           },
-          { code: 'wx:mp-material', path: '/wx/mp-material', component: '../pages/Wx/Material' },
+          {
+            code: 'wx:mp-material', path: '/wx/mp-material', hideChildrenInMenu: true,
+            routes: [{
+              code: 'wx:mp-material',
+              path: '/wx/mp-material',
+              component: '../pages/Wx/Material',
+            }, {
+              code: 'wx:mp-material:create-news',
+              path: '/wx/mp-material/create-news',
+              component: '../pages/Wx/Material/Create/MpNews',
+            }],
+          },
         ],
       },
     ],
