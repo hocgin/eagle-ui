@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.less';
-import VoiceCard from '@/components/VoiceCard';
+import VoiceCircle from '@/components/VoiceCircle';
 
 class index extends React.Component {
 
@@ -11,7 +11,7 @@ class index extends React.Component {
   render() {
     let {} = this.props;
     return (<div className={styles.page}>
-      <VoiceCard/>
+      <VoiceCircle/>
     </div>);
   }
 }

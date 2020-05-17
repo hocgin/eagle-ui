@@ -33,6 +33,13 @@ export default {
         if (callback) callback(result);
       }
     },
+    // 刷新用户列表
+    * refresh({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpUserApi.refresh(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
     // 新增
     * insert({ payload = {}, callback }, { call, put }) {
 

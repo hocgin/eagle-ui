@@ -52,4 +52,14 @@ export default class WxMpUserApi {
     });
   }
 
+
+  static refresh({ ...payload }) {
+    return request(`/api/wx-mp/user/refresh`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
 }

@@ -101,15 +101,16 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleDetail, visibleUpdate, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
+    let toolbarChildren = (<>
+        <Button htmlType="button" icon={<PlusOutlined/>} type="primary"
+                onClick={this.onClickGotoCreate}>新建</Button>
+      </>
+    );
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
-      <ComplexTable toolbarTitle={'微信菜单配置'}
+      <ComplexTable toolbarTitle={<>微信菜单配置 {this.renderAppIdWithSelect()}</>}
                     toolbarMenu={BatchMenus}
-                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                             onClick={this.onClickGotoCreate}>新建</Button>}
+                    toolbarChildren={toolbarChildren}
                     searchBarChildren={[
-                      <Form.Item label="公众号" name="appid">
-                        {this.renderAppIdWithSelect()}
-                      </Form.Item>,
                       <Form.Item key="keyword" label="关键词搜索" name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
                       </Form.Item>,
@@ -130,12 +131,18 @@ class index extends React.Component {
   renderAppIdWithSelect() {
     let { allMpConfig = [] } = this.props;
 
-    return (<Select defaultValue={null}>
+    return (<Select defaultValue={null} onSelect={this.onSelectAppId}>
       <Select.Option key={-1} value={null}>全部</Select.Option>
       {(allMpConfig || []).map(({ appid, title }, index) => <Select.Option key={index}
                                                                            value={`${appid}`}>{title}</Select.Option>)}
     </Select>);
   }
+
+  onSelectAppId = (value) => {
+    this.setState(({ searchValue }) => ({
+      searchValue: { ...searchValue, appid: value },
+    }));
+  };
 
   /**
    * 条件变更
@@ -145,14 +152,13 @@ class index extends React.Component {
    * @param sorter
    */
   onChangeStandardTable = ({ pageSize, current }, filtersArg, sorter) => {
-    let { searchValue } = this.state;
-    this.setState({
+    this.setState(({ searchValue }) => ({
       searchValue: {
         ...searchValue,
         size: pageSize,
         page: current,
       },
-    }, this.paging);
+    }), this.paging);
   };
 
   /**
@@ -199,11 +205,12 @@ class index extends React.Component {
    * @param values
    */
   onClickSearch = (values) => {
-    this.setState({
+    this.setState(({ searchValue }) => ({
       searchValue: {
+        ...searchValue,
         ...values,
       },
-    }, this.paging);
+    }), this.paging);
   };
 
   /**

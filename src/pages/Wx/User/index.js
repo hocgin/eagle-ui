@@ -2,8 +2,8 @@ import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select } from 'antd';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, Dropdown, Form, Input, Menu, message, Modal, Select } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import DetailModal from '@/pages/Wx/User/Modal/DetailModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
@@ -18,6 +18,7 @@ import { WxEnum } from '@/pages/Wx/WxEnum';
   };
 }, dispatch => ({
   $paging: (args = {}) => dispatch({ type: 'wxMpUser/paging', ...args }),
+  $syncWxUser: (args = {}) => dispatch({ type: 'wxMpUser/refresh', ...args }),
   $getAllWithWxMpConfig: (args = {}) => dispatch({ type: 'wxMpConfig/getAll', ...args }),
 }))
 class index extends React.Component {
@@ -106,14 +107,16 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
+    let toolbarChildren = (
+      <Button htmlType="button" type="primary"
+              onClick={this.onClickShowSyncModal}>同步用户列表</Button>
+    );
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
-      <ComplexTable toolbarTitle={<span>微信用户列表</span>}
+      <ComplexTable toolbarTitle={<>微信用户列表 {this.renderAppIdWithSelect()}</>}
                     rowKey={`appid`}
                     toolbarMenu={BatchMenus}
+                    toolbarChildren={toolbarChildren}
                     searchBarChildren={[
-                      <Form.Item label="公众号" name="appid">
-                        {this.renderAppIdWithSelect()}
-                      </Form.Item>,
                       <Form.Item label="关键词搜索"
                                  name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
@@ -138,11 +141,17 @@ class index extends React.Component {
   renderAppIdWithSelect() {
     let { allMpConfig = [] } = this.props;
 
-    return (<Select defaultValue={null}>
+    return (<Select defaultValue={null} onSelect={this.onSelectAppId}>
       <Select.Option>全部</Select.Option>
       {(allMpConfig || []).map(({ appid, title }) => <Select.Option value={appid}>{title}</Select.Option>)}
     </Select>);
   }
+
+  onSelectAppId = (value) => {
+    this.setState(({ searchValue }) => ({
+      searchValue: { ...searchValue, appid: value },
+    }));
+  };
 
   /**
    * 条件变更
@@ -152,14 +161,13 @@ class index extends React.Component {
    * @param sorter
    */
   onChangeStandardTable = ({ pageSize, current }, filtersArg, sorter) => {
-    let { searchValue } = this.state;
-    this.setState({
+    this.setState(({ searchValue }) => ({
       searchValue: {
         ...searchValue,
         size: pageSize,
         page: current,
       },
-    }, this.paging);
+    }), this.paging);
   };
 
   /**
@@ -187,11 +195,12 @@ class index extends React.Component {
    * @param values
    */
   onClickSearch = (values) => {
-    this.setState({
+    this.setState(({ searchValue }) => ({
       searchValue: {
+        ...searchValue,
         ...values,
       },
-    }, this.paging);
+    }), this.paging);
   };
 
   /**
@@ -205,6 +214,26 @@ class index extends React.Component {
         ...searchValue,
       },
     });
+  };
+
+  onClickShowSyncModal = () => {
+    let { searchValue: { appid } } = this.state;
+    let { $syncWxUser } = this.props;
+    if (!(appid ?? false)) {
+      message.error('请选择公众号');
+      return;
+    }
+
+    let props = {
+      content: `确认是否同步微信用户列表?`,
+      onCancel() {
+        Modal.destroyAll();
+      },
+      onOk() {
+        $syncWxUser({ payload: { appid: appid }, callback: message.success('操作成功，请稍后') });
+      },
+    };
+    Modal.confirm(props);
   };
 
   onChangeSelectRow = (rows) => {
