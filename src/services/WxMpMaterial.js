@@ -52,4 +52,13 @@ export default class WxMpMaterialApi {
     });
   }
 
+  static uploadNews({ id, ...payload }) {
+    return request(`/api/wx-mp/material/upload/news`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
 }

@@ -34,8 +34,11 @@ export default {
       }
     },
     // 新增
-    * insert({ payload = {}, callback }, { call, put }) {
-
+    * uploadNews({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpMaterialApi.uploadNews(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {

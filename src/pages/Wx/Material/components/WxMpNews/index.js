@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.less';
 import PropTypes from 'prop-types';
 import * as classnames from 'classnames';
-import { Button, Divider, Form, Input, Switch, Upload } from 'antd';
+import { Button, Divider, Form, Input, message, Switch, Upload } from 'antd';
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
@@ -17,21 +17,16 @@ class Index extends React.PureComponent {
   createForm = React.createRef();
 
   state = {
-    clickIndex: null,
-    newsItems: [{
-      title: '你好',
-      originalUrl: 'https://mmbiz.qlogo.cn/mmbiz_jpg/nTfKo9kUbTbQ35DW1ICGJ4riaQIGe0ckjheYNZtmRox9h8SB5e2u3wdwaUnXv6gezPwRy31r0YibUmsTOCUX9wgw/0?wx_fmt=jpeg',
-      thumbMediaId: null,
-    }, {
-      title: '你好',
-      originalUrl: 'https://mmbiz.qlogo.cn/mmbiz_jpg/nTfKo9kUbTbQ35DW1ICGJ4riaQIGe0ckjheYNZtmRox9h8SB5e2u3wdwaUnXv6gezPwRy31r0YibUmsTOCUX9wgw/0?wx_fmt=jpeg',
-      thumbMediaId: null,
-    }, {
-      title: '你好',
-      originalUrl: 'https://mmbiz.qlogo.cn/mmbiz_jpg/nTfKo9kUbTbQ35DW1ICGJ4riaQIGe0ckjheYNZtmRox9h8SB5e2u3wdwaUnXv6gezPwRy31r0YibUmsTOCUX9wgw/0?wx_fmt=jpeg',
-      thumbMediaId: null,
-    }],
+    clickIndex: 0,
+    newsItems: [],
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      newsItems: props.newsItems,
+    };
+  }
 
   render() {
     let { confirmLoading } = this.props;
@@ -164,7 +159,6 @@ class Index extends React.PureComponent {
     if (result) {
       if (UiUtils.showErrorMessageIfExits(result)) {
         file.url = result.data;
-        console.log('file.url', file.url);
         this.setState(({ clickIndex, newsItems }) => {
           newsItems[clickIndex].originalUrl = file.url;
           return {
@@ -196,7 +190,8 @@ class Index extends React.PureComponent {
           id,
           newsItems: [...newsItems],
         });
-      });
+      })
+      .catch(err => message.error(UiUtils.getErrorMessage(err)));
   };
 
   onClickAppendNewsItem = () => {
@@ -250,7 +245,7 @@ class Index extends React.PureComponent {
     onDone: () => {
     },
     confirmLoading: false,
-    newsItems: [],
+    newsItems: [{}],
   };
 }
 
