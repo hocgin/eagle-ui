@@ -9,6 +9,8 @@ import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { DownOutlined } from '@ant-design/icons';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
+import Goto from '@/utils/Goto';
+import ValidUtils from '@/utils/ValidUtils';
 
 @connect(({ global, wxMpMaterial: { paging }, dataDict: { allWxMpMaterialType }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
@@ -103,8 +105,13 @@ class index extends React.Component {
     let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading, allWxMpMaterialType } = this.props;
     const BatchMenus = null;
-    let toolbarChildren = (<Button htmlType="button" icon={<PlusOutlined/>}
-                                   type="primary" onClick={this.onClickShowCreateModal}>创建素材</Button>);
+    const CreateMenus = (<Menu onClick={this.onClickToolbarButton}>
+      <Menu.Item key="createNews">创建图文素材</Menu.Item>
+    </Menu>);
+
+    let toolbarChildren = (<Dropdown overlay={CreateMenus}>
+      <Button type="primary" icon={<PlusOutlined/>} htmlType="button">创建素材 <DownOutlined/></Button>
+    </Dropdown>);
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={<>素材管理 {this.renderAppIdWithSelect()}</>}
                     toolbarMenu={BatchMenus}
@@ -187,6 +194,21 @@ class index extends React.Component {
         Modal.error({
           content: '无效操作',
         });
+      }
+    }
+  };
+
+  onClickToolbarButton = ({ key }) => {
+    let { searchValue: { appid } } = this.state;
+    switch (key) {
+      case `createNews`: {
+        if (ValidUtils.isTrue(!!appid, '请选择公众号')) {
+          Goto.wxMaterialCreateNews(appid);
+        }
+        break;
+      }
+      default: {
+        Modal.error({ content: '无效操作' });
       }
     }
   };

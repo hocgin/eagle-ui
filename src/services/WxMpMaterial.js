@@ -61,4 +61,13 @@ export default class WxMpMaterialApi {
     });
   }
 
+  static uploadVoice({ id, ...payload }) {
+    return request(`/api/wx-mp/material/upload/voice`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
 }

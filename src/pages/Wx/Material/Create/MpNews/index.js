@@ -3,6 +3,7 @@ import styles from './index.less';
 import WxMpNews from '@/pages/Wx/Material/components/WxMpNews';
 import { connect } from 'dva';
 import { message } from 'antd';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 @connect(({ global, wxMpMaterial: { paging }, loading, ...rest }) => {
   return {
@@ -16,9 +17,10 @@ class index extends React.Component {
 
   render() {
     let { uploadNewsLoading } = this.props;
-    return (<div className={styles.page}>
+    return (<PageHeaderWrapper wrapperClassName={styles.page}
+                               title="新建图文素材">
       <WxMpNews onDone={this.onDone} confirmLoading={uploadNewsLoading}/>
-    </div>);
+    </PageHeaderWrapper>);
   }
 
 

@@ -1,4 +1,58 @@
 @import "~@/mixin.less";
 
 .component {
+  width: 200px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, .3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, .3);
+  position: relative;
+  overflow: hidden;
+}
+
+.top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: #fff;
+  font-size: 16px;
+  padding: 8px;
+  display: flex;
+  .title {
+    flex: 1 1 auto;
+    word-break: break-all;
+    font-weight: 700!important;
+    text-align: left;
+  }
+  .btn {
+    height: 28px;
+    min-width: 28px;
+    -webkit-appearance: button;
+    background-color: transparent;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    cursor: pointer;
+    border: unset;
+    font-size: 1.4rem;
+    flex: 0 0 auto;
+    justify-content: center;
+    &:focus {
+      outline: unset;
+    }
+  }
+}
+
+.canvasWrapper {
+  height: 100px;
+  .canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+  }
+}
+
+.audio {
+  display: none;
+  height: 0;
 }

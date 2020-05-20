@@ -178,6 +178,10 @@ export default [
               code: 'wx:mp-material:create-news',
               path: '/wx/mp-material/create-news',
               component: '../pages/Wx/Material/Create/MpNews',
+            }, {
+              code: 'wx:mp-material:create-voice',
+              path: '/wx/mp-material/create-voice',
+              component: '../pages/Wx/Material/Create/Voice',
             }],
           },
         ],

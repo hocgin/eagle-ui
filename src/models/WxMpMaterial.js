@@ -40,6 +40,12 @@ export default {
         if (callback) callback(result);
       }
     },
+    * uploadVoice({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpMaterialApi.uploadVoice(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {
 

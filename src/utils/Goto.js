@@ -80,4 +80,12 @@ export default class Goto {
       },
     });
   }
+
+  static wxMaterialCreateNews(appid) {
+    history.push({
+      pathname: `/wx/mp-material/create-news`, query: {
+        appid: `${appid}`,
+      },
+    });
+  }
 };
