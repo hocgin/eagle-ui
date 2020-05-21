@@ -182,6 +182,14 @@ export default [
               code: 'wx:mp-material:create-voice',
               path: '/wx/mp-material/create-voice',
               component: '../pages/Wx/Material/Create/Voice',
+            }, {
+              code: 'wx:mp-material:create-video',
+              path: '/wx/mp-material/create-video',
+              component: '../pages/Wx/Material/Create/Video',
+            }, {
+              code: 'wx:mp-material:create-image',
+              path: '/wx/mp-material/create-image',
+              component: '../pages/Wx/Material/Create/Image',
             }],
           },
         ],

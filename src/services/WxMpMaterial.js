@@ -70,4 +70,22 @@ export default class WxMpMaterialApi {
     });
   }
 
+  static uploadVideo({ id, ...payload }) {
+    return request(`/api/wx-mp/material/upload/video`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
+  static uploadImage({ id, ...payload }) {
+    return request(`/api/wx-mp/material/upload/image`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
 }

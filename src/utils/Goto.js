@@ -88,4 +88,28 @@ export default class Goto {
       },
     });
   }
+
+  static wxMaterialCreateVoice(appid) {
+    history.push({
+      pathname: `/wx/mp-material/create-voice`, query: {
+        appid: `${appid}`,
+      },
+    });
+  }
+
+  static wxMaterialCreateImage(appid) {
+    history.push({
+      pathname: `/wx/mp-material/create-image`, query: {
+        appid: `${appid}`,
+      },
+    });
+  }
+
+  static wxMaterialCreateVideo(appid) {
+    history.push({
+      pathname: `/wx/mp-material/create-video`, query: {
+        appid: `${appid}`,
+      },
+    });
+  }
 };

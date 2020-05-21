@@ -10,4 +10,13 @@ export default class ValidUtils {
     return true;
   }
 
+  static notNull(object: any, msg: String) {
+    if (object === null) {
+      message.error(msg);
+      return false;
+    }
+    return true;
+  }
+
+
 };

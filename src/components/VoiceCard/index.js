@@ -55,14 +55,14 @@ class Index extends React.PureComponent {
 
   componentWillUnmount() {
     let audio = this.audioRef.current;
-    audio.removeEventListener('playing');
-    audio.removeEventListener('pause');
+    audio.removeEventListener('playing', null);
+    audio.removeEventListener('pause', null);
   }
 
   render() {
-    let { height, width, src } = this.props;
+    let { height, width, src, ...rest } = this.props;
     let { isPause, voiceName } = this.state;
-    return (<div className={styles.component}>
+    return (<div className={styles.component} {...rest}>
       <div className={styles.top}>
         <div className={styles.title}>{voiceName}</div>
         <button className={styles.btn} onClick={this.onClickToggle}>
@@ -158,14 +158,14 @@ class Index extends React.PureComponent {
     children: PropTypes.node,
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    src: PropTypes.string.isRequired,
+    src: PropTypes.string,
   };
 
   static defaultProps = {
     children: <></>,
     width: 400,
     height: 400,
-    src: 'https://web.codelabo.cn/demo/22716475.mp3',
+    src: null,
   };
 }
 

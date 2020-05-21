@@ -3,11 +3,12 @@ import styles from './index.less';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import VoiceCard from '@/components/VoiceCard';
 import { connect } from 'dva';
-import { Button, Card, Form } from 'antd';
+import { Button, Card, Form, message } from 'antd';
 import Upload from '@/components/Upload';
 import UiUtils from '@/utils/UiUtils';
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
-import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
+import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined';
+import ValidUtils from '@/utils/ValidUtils';
 
 const formLayout = {
   labelCol: { span: 7 },
@@ -22,35 +23,34 @@ const formLayout = {
   $uploadVoice: (args = {}) => dispatch({ type: 'wxMpMaterial/uploadVoice', ...args }),
 }))
 class index extends React.Component {
+  createForm = React.createRef();
   state = {
-    appid: null,
-    url: `https://daigou-test.oss-cn-beijing.aliyuncs.com/ef35038e29ef252eb0da6d90a88a18f5/Day5-实用价值.mp3`,
+    url: null,
   };
 
   render() {
     let { confirmLoading } = this.props;
     let { url } = this.state;
     let loading = null;
-    const button = (<div>
-      {loading ? <LoadingOutlined/> : <PlusOutlined/>}
-      <div>选择音频</div>
-    </div>);
+    const button = (<Button>
+      {loading ? <LoadingOutlined/> : <UploadOutlined/>}
+      {url ? `重新选择` : `选择音频`}
+    </Button>);
 
     return (<PageHeaderWrapper className={styles.page}>
       <Card>
-        <Form>
-          <Form.Item {...formLayout} label="音频"
-                     rules={[{ required: true, message: '请上传音频' }]}
-                     name="title">
+        <Form ref={this.createForm}>
+          <Form.Item {...formLayout} label="音频">
             <Upload name="file"
-                    listType="picture-card"
                     showUploadList={false}
                     onChange={this.handleChange}>
-              {url ? `点击重新选择` : button}
+              {button}
             </Upload>
-            <VoiceCard width={200} height={100}/>
           </Form.Item>
-          <Form.Item {...{ wrapperCol: { span: 5, push: 5 } }}>
+          <Form.Item wrapperCol={{ span: 13, offset: 7 }}>
+            <VoiceCard width={200} height={100} style={{ marginTop: 10 }} src={url}/>
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 7 }}>
             <Button loading={confirmLoading} key="submit" htmlType="button" type="primary"
                     onClick={this.onDone}>保存</Button>
           </Form.Item>
@@ -58,6 +58,23 @@ class index extends React.Component {
       </Card>
     </PageHeaderWrapper>);
   }
+
+  onDone = () => {
+    let { $uploadVoice, location: { query: { appid } } } = this.props;
+    let { url } = this.state;
+    if (ValidUtils.notNull(appid, '请选择公众号')
+      && ValidUtils.notNull(url, '请选择音频')) {
+      $uploadVoice({
+        payload: {
+          appid,
+          url: url,
+        },
+        callback: () => {
+          message.success('上传成功');
+        },
+      });
+    }
+  };
 
   handleChange = ({ file, fileList }) => {
     let result = file.response;

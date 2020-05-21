@@ -107,6 +107,9 @@ class index extends React.Component {
     const BatchMenus = null;
     const CreateMenus = (<Menu onClick={this.onClickToolbarButton}>
       <Menu.Item key="createNews">创建图文素材</Menu.Item>
+      <Menu.Item key="createVoice">创建音频素材</Menu.Item>
+      <Menu.Item key="createVideo">创建视频素材</Menu.Item>
+      <Menu.Item key="createImage">创建图片素材</Menu.Item>
     </Menu>);
 
     let toolbarChildren = (<Dropdown overlay={CreateMenus}>
@@ -204,6 +207,24 @@ class index extends React.Component {
       case `createNews`: {
         if (ValidUtils.isTrue(!!appid, '请选择公众号')) {
           Goto.wxMaterialCreateNews(appid);
+        }
+        break;
+      }
+      case `createVoice`: {
+        if (ValidUtils.isTrue(!!appid, '请选择公众号')) {
+          Goto.wxMaterialCreateVoice(appid);
+        }
+        break;
+      }
+      case `createImage`: {
+        if (ValidUtils.isTrue(!!appid, '请选择公众号')) {
+          Goto.wxMaterialCreateImage(appid);
+        }
+        break;
+      }
+      case `createVideo`: {
+        if (ValidUtils.isTrue(!!appid, '请选择公众号')) {
+          Goto.wxMaterialCreateVideo(appid);
         }
         break;
       }

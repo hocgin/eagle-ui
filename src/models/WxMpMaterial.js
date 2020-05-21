@@ -46,9 +46,18 @@ export default {
         if (callback) callback(result);
       }
     },
+    * uploadVideo({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpMaterialApi.uploadVideo(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
     // 更新
-    * update({ payload = {}, callback }, { call, put }) {
-
+    * uploadImage({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpMaterialApi.uploadImage(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
