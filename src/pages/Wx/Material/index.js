@@ -43,10 +43,11 @@ class index extends React.Component {
   }
 
   tableColumns = [{
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    title: 'Media ID',
+    dataIndex: 'materialResult',
+    key: 'materialResult',
     fixed: 'left',
+    render: ({ mediaId }) => <span>{mediaId}</span>,
   }, {
     title: 'APP ID',
     dataIndex: 'appid',
