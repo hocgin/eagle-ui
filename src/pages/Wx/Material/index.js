@@ -4,13 +4,14 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
 import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select } from 'antd';
 import UiUtils from '@/utils/UiUtils';
-import DetailModal from '@/pages/Wx/User/Modal/DetailModal';
+import DetailModal from '@/pages/Wx/Material/Modal/DetailModal';
 import { connect } from 'dva';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { DownOutlined } from '@ant-design/icons';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 import Goto from '@/utils/Goto';
 import ValidUtils from '@/utils/ValidUtils';
+import { WxMaterial } from '@/pages/Wx/Material/WxMaterial';
 
 @connect(({ global, wxMpMaterial: { paging }, dataDict: { allWxMpMaterialType }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
@@ -56,6 +57,14 @@ class index extends React.Component {
     key: 'materialTypeName',
     render: (val, { materialType }) => <span>{val}</span>,
   }, {
+    title: '素材URL',
+    dataIndex: 'materialType',
+    key: 'materialType',
+    render: (val, { materialType, appid, materialResult: { mediaId } }) => {
+      let mediaUrl = WxMaterial.getMediaUrl(materialType, appid, mediaId);
+      return mediaUrl ? <a href={`${mediaUrl}`} target="_blank">下载</a> : `暂无`;
+    },
+  }, {
     title: '创建时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
@@ -82,7 +91,7 @@ class index extends React.Component {
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
         <Menu.Item key="rowRefresh">
-          <del>刷新用户信息</del>
+          <del>下载</del>
         </Menu.Item>
       </Menu>);
 
@@ -120,16 +129,16 @@ class index extends React.Component {
                     toolbarMenu={BatchMenus}
                     toolbarChildren={toolbarChildren}
                     searchBarChildren={[
-                      <Form.Item label="关键词搜索"
+                      <Form.Item key="0" label="关键词搜索"
                                  name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
                       </Form.Item>,
-                      <Form.Item label="素材类型"
+                      <Form.Item key="1" label="素材类型"
                                  name="materialType">
                         <Select defaultValue={null}>
                           <Select.Option>全部</Select.Option>
-                          {(allWxMpMaterialType || []).map(({ key, value }) => <Select.Option
-                            value={value}>{key}</Select.Option>)}
+                          {(allWxMpMaterialType || []).map(({ key, value }) =>
+                            <Select.Option value={value}>{key}</Select.Option>)}
                         </Select>
                       </Form.Item>,
                     ]}
