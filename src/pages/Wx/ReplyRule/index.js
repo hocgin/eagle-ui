@@ -10,6 +10,7 @@ import UpdateModal from '@/pages/Wx/ReplyRule/Modal/UpdateModal';
 import DetailModal from '@/pages/Wx/ReplyRule/Modal/DetailModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { WxReplyRule } from '@/pages/Wx/ReplyRule/WxReplyRule';
 
 @connect(({ global, wxMpReplyRule: { paging }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
@@ -53,6 +54,11 @@ class index extends React.Component {
     title: '回复类型',
     dataIndex: 'replyMsgTypeName',
     key: 'replyMsgTypeName',
+  }, {
+    title: '回复内容',
+    dataIndex: 'replyContent',
+    key: 'replyContent',
+    render: (val, { replyMsgType }) => WxReplyRule.getReplyContent(replyMsgType, val),
   }, {
     title: '优先级',
     dataIndex: 'sort',
