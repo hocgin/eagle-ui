@@ -17,6 +17,8 @@ export default {
     allAccountGroupType: [],
     allWxMenuType: [],
     allWxMpMaterialType: [],
+    allWxMatchMsgType: [],
+    allWxReplyMsgType: [],
   },
   effects: {
     * paging({ payload = {}, callback }, { call, put }) {
@@ -118,6 +120,20 @@ export default {
       let result = yield DataDictApi.getAllDataDict({ code: 'accountGroupType' });
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillData', payload: { field: 'allAccountGroupType', data: result.data } });
+        if (callback) callback(result);
+      }
+    },
+    * getAllWxMatchMsgType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'wxMatchMsgType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allWxMatchMsgType', data: result.data } });
+        if (callback) callback(result);
+      }
+    },
+    * getAllWxReplyMsgType({ payload = {}, callback }, { call, put }) {
+      let result = yield DataDictApi.getAllDataDict({ code: 'wxReplyMsgType' });
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillData', payload: { field: 'allWxReplyMsgType', data: result.data } });
         if (callback) callback(result);
       }
     },

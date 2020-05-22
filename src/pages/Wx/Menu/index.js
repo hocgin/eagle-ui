@@ -130,11 +130,10 @@ class index extends React.Component {
 
   renderAppIdWithSelect() {
     let { allMpConfig = [] } = this.props;
-
     return (<Select defaultValue={null} onSelect={this.onSelectAppId}>
       <Select.Option key={-1} value={null}>全部</Select.Option>
-      {(allMpConfig || []).map(({ appid, title }, index) => <Select.Option key={index}
-                                                                           value={`${appid}`}>{title}</Select.Option>)}
+      {(allMpConfig || []).map(({ appid, title }, index) =>
+        <Select.Option key={index} value={`${appid}`}>{title}</Select.Option>)}
     </Select>);
   }
 
