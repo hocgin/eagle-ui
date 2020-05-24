@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { Button, Divider, Dropdown, Form, Input, Menu, message, Modal, Select } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import DetailModal from '@/pages/Wx/UserTags/Modal/DetailModal';
+import CreateModal from '@/pages/Wx/UserTags/Modal/CreateModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
 import UiUtils from '@/utils/UiUtils';
@@ -16,6 +17,7 @@ import UiUtils from '@/utils/UiUtils';
   };
 }, dispatch => ({
   $paging: (args = {}) => dispatch({ type: 'wxMpUserTags/paging', ...args }),
+  $deleteOne: (args = {}) => dispatch({ type: 'wxMpUserTags/delete', ...args }),
   $refresh: (args = {}) => dispatch({ type: 'wxMpUserTags/refresh', ...args }),
   $getAllWithWxMpConfig: (args = {}) => dispatch({ type: 'wxMpConfig/getAll', ...args }),
 }))
@@ -36,14 +38,10 @@ class index extends React.Component {
   }
 
   tableColumns = [{
-    title: 'id',
-    dataIndex: 'id',
-    key: 'id',
-    fixed: 'left',
-  }, {
     title: '标签ID',
     dataIndex: 'tagId',
     key: 'tagId',
+    fixed: 'left',
   }, {
     title: 'AppID',
     dataIndex: 'appid',
@@ -68,8 +66,8 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowRefresh">
-          <del>删除标签</del>
+        <Menu.Item key="rowDelete">
+          删除标签
         </Menu.Item>
       </Menu>);
 
@@ -89,13 +87,13 @@ class index extends React.Component {
   }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, searchValue: { appid }, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    let toolbarChildren = (
-      <Button htmlType="button" type="primary"
-              onClick={this.onClickShowSyncModal}>同步标签</Button>
-    );
+    let toolbarChildren = (<>
+      <Button htmlType="button" type="primary" onClick={this.onClickShowSyncModal} danger>同步标签</Button>
+      <Button htmlType="button" type="primary" onClick={this.onClickShowCreateModal}>新建标签</Button>
+    </>);
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={<>用户标签 {this.renderAppIdWithSelect()}</>}
                     rowKey={`appid`}
@@ -117,6 +115,9 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
+      <CreateModal visible={visibleCreate}
+                   appid={appid}
+                   onClose={this.onClickCloseCreateModal}/>
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
@@ -162,9 +163,12 @@ class index extends React.Component {
   onClickMenuRowItem = ({ key }) => {
     switch (key) {
       case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
-        });
+        this.setState({ visibleDetail: true });
+        break;
+      }
+      case 'rowDelete': {
+        let { $deleteOne } = this.props;
+        UiUtils.showConfirmModal({ ids: [this.state.operateRow], dispatch: $deleteOne, callback: this.paging });
         break;
       }
       default: {
@@ -233,6 +237,14 @@ class index extends React.Component {
       visibleDetail: false,
     });
   };
+
+  onClickCloseCreateModal = () => this.setState({
+    visibleCreate: false,
+  }, this.paging);
+
+  onClickShowCreateModal = () => this.setState({
+    visibleCreate: true,
+  });
 }
 
 export default index;

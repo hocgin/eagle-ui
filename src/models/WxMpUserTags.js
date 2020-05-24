@@ -42,7 +42,10 @@ export default {
     },
     // 新增
     * insert({ payload = {}, callback }, { call, put }) {
-
+      let result = yield WxMpUserTagsApi.insert(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
     // 更新
     * update({ payload = {}, callback }, { call, put }) {
@@ -50,7 +53,10 @@ export default {
     },
     // 删除
     * delete({ payload = {}, callback }, { call, put }) {
-
+      let result = yield WxMpUserTagsApi.delete(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
     },
   },
   reducers: {
