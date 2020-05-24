@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import TextRow from '@/components/TextRow';
 import ComplexCollapse from '@/components/ComplexCollapse';
 import { WxMaterial } from '@/pages/Wx/Material/WxMaterial';
+import ClickCopy from '@/components/ClickCopy';
 
 const { Panel } = Collapse;
 
@@ -46,8 +47,9 @@ class DetailModal extends PureComponent {
         <Panel header="基础信息" key="1">
           <TextRow first={true} title={'appid'}>{appid || '暂无'}</TextRow>
           <TextRow title={'素材类型'}>{materialTypeName}</TextRow>
-          <TextRow title={'mediaId'}>{mediaId}</TextRow>
-          <TextRow title={'素材URL'}>{mediaUrl ? <a href={`${mediaUrl}`}>点击下载</a> : `暂无`}</TextRow>
+          <TextRow title={'mediaId'}>{mediaId} <ClickCopy text={`${mediaId}`}/></TextRow>
+          <TextRow title={'素材URL'}>{mediaUrl ? <><a href={`${mediaUrl}`}>点击下载</a> <ClickCopy
+            text={`${mediaUrl}`}/></> : `暂无`}</TextRow>
           <TextRow title={'素材内容'}>{JSON.stringify(materialContent)}</TextRow>
         </Panel>
       </ComplexCollapse>

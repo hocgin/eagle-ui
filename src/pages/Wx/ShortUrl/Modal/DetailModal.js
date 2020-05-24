@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import TextRow from '@/components/TextRow';
 import ComplexCollapse from '@/components/ComplexCollapse';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
+import ClickCopy from '@/components/ClickCopy';
 
 const { Panel } = Collapse;
 
@@ -45,8 +46,8 @@ class DetailModal extends PureComponent {
       <ComplexCollapse defaultActiveKey={['1']}>
         <Panel header={`基础信息(${id})`} key="1">
           <TextRow first={true} title={'AppID'}>{appid || '暂无'}</TextRow>
-          <TextRow title={'长链接'}>{longUrl}</TextRow>
-          <TextRow title={'短链接'}>{shortUrl}</TextRow>
+          <TextRow title={'长链接'}>{longUrl} <ClickCopy text={`${longUrl}`}/></TextRow>
+          <TextRow title={'短链接'}>{shortUrl} <ClickCopy text={`${shortUrl}`}/></TextRow>
           <TextRow title={'创建时间'}>{DateFormatter.timestampAs(createdAt)}</TextRow>
           <TextRow title={'创建人'}>{creatorName}</TextRow>
         </Panel>

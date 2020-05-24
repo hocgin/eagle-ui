@@ -2,12 +2,13 @@
 
 .component {
   position: relative;
-  display: block;
   padding: 10px 15px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
 
   &.borderTop {
     border-top: 1px solid #ddd;
@@ -17,11 +18,14 @@
     font-weight: 700;
     margin-right: 10px;
     font-size: 110%;
-    width: 6em;
     text-align: right;
   }
 
   .text {
+    flex: 1 1;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
   }
 
 }

@@ -48,13 +48,10 @@ class index extends React.Component {
     dataIndex: 'appid',
     key: 'appid',
   }, {
-    title: '场景值(Int)',
-    dataIndex: 'sceneId',
-    key: 'sceneId',
-  }, {
-    title: '场景值(String)',
+    title: '场景值',
     dataIndex: 'sceneStr',
     key: 'sceneStr',
+    render: (val, { sceneId }) => sceneId ?? val,
   }, {
     title: '过期时间',
     dataIndex: 'expireAt',

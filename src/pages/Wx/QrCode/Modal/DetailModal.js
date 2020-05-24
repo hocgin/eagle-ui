@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import TextRow from '@/components/TextRow';
 import ComplexCollapse from '@/components/ComplexCollapse';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
+import ClickCopy from '@/components/ClickCopy';
 
 const { Panel } = Collapse;
 
@@ -55,7 +56,7 @@ class DetailModal extends PureComponent {
           <TextRow title={'场景值(Int)'}>{sceneId}</TextRow>
           <TextRow title={'场景值(String)'}>{sceneStr}</TextRow>
           <TextRow title={'Ticket'}>{ticket}</TextRow>
-          <TextRow title={'Url'}>{url}</TextRow>
+          <TextRow title={'Url'}>{url} <ClickCopy text={`${url}`}/></TextRow>
           <TextRow title={'二维码'}><img src={qrcodeUrl} alt="二维码" width={80}/></TextRow>
           <TextRow title={'创建时间'}>{DateFormatter.timestampAs(createdAt)}</TextRow>
           <TextRow title={'创建人'}>{creatorName}</TextRow>

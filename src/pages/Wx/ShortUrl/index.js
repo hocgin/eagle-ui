@@ -6,6 +6,7 @@ import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select } from 'ant
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import DetailModal from '@/pages/Wx/ShortUrl/Modal/DetailModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import ClickCopy from '@/components/ClickCopy';
 import ComplexTable from '@/components/ComplexTable';
 import UiUtils from '@/utils/UiUtils';
 import CreateModal from '@/pages/Wx/ShortUrl/Modal/CreateModal';
@@ -38,9 +39,9 @@ class index extends React.Component {
   }
 
   tableColumns = [{
-    title: '短链接',
-    dataIndex: 'shortUrl',
-    key: 'shortUrl',
+    title: '长链接',
+    dataIndex: 'longUrl',
+    key: 'longUrl',
     fixed: 'left',
   }, {
     title: 'AppID',
@@ -50,6 +51,7 @@ class index extends React.Component {
     title: '短链接',
     dataIndex: 'shortUrl',
     key: 'shortUrl',
+    render: val => <span>{val} <ClickCopy text={`${val}`}/></span>,
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',
