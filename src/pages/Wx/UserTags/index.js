@@ -66,8 +66,9 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowDelete">
-          删除标签
+        <Menu.Item key="rowDelete">删除标签</Menu.Item>
+        <Menu.Item key="rowSet">
+          <del>标记用户</del>
         </Menu.Item>
       </Menu>);
 

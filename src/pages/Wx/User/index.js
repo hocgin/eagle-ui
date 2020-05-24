@@ -5,6 +5,8 @@ import { DateFormatter } from '@/utils/formatter/DateFormatter';
 import { Button, Divider, Dropdown, Form, Input, Menu, message, Modal, Select } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import DetailModal from '@/pages/Wx/User/Modal/DetailModal';
+import SendMessageToUserModal from '@/pages/Wx/User/Modal/SendMessageToUserModal';
+import SendPreviewMessageModal from '@/pages/Wx/User/Modal/SendPreviewMessageModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
 import UiUtils from '@/utils/UiUtils';
@@ -29,6 +31,8 @@ class index extends React.Component {
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
+    visibleSendMessageToUser: false,
+    visibleSendPreviewMessage: false,
   };
 
   componentDidMount() {
@@ -83,9 +87,11 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowRefresh">
+        <Menu.Item key="row">
           <del>刷新用户信息</del>
         </Menu.Item>
+        <Menu.Item key="rowSendMessage">发送消息</Menu.Item>
+        <Menu.Item key="rowSendPreviewMessage">发送预览消息</Menu.Item>
       </Menu>);
 
       return <>
@@ -104,13 +110,15 @@ class index extends React.Component {
   }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleSendPreviewMessage, visibleDetail, visibleSendMessageToUser, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    let toolbarChildren = (
-      <Button htmlType="button" type="primary"
-              onClick={this.onClickShowSyncModal}>同步用户列表</Button>
-    );
+    let toolbarChildren = (<>
+      <Button htmlType="button" type="primary" onClick={this.onClickShowSyncModal} danger>同步用户列表</Button>
+      <Button htmlType="button" type="primary">
+        <del>群发消息</del>
+      </Button>
+    </>);
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={<>微信用户列表 {this.renderAppIdWithSelect()}</>}
                     rowKey={`appid`}
@@ -132,6 +140,12 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
+      {visibleSendMessageToUser && <SendMessageToUserModal visible={visibleSendMessageToUser}
+                                                           onClose={this.onClickCloseSendMessageToUserModal}
+                                                           toUsers={[operateRow]}/>}
+      {visibleSendPreviewMessage && <SendPreviewMessageModal visible={visibleSendPreviewMessage}
+                                                             onClose={this.onClickCloseSendPreviewMessageModal}
+                                                             toUsers={[operateRow]}/>}
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
@@ -179,6 +193,18 @@ class index extends React.Component {
       case 'rowDetail': {
         this.setState({
           visibleDetail: true,
+        });
+        break;
+      }
+      case 'rowSendMessage': {
+        this.setState({
+          visibleSendMessageToUser: true,
+        });
+        break;
+      }
+      case 'rowSendPreviewMessage': {
+        this.setState({
+          visibleSendPreviewMessage: true,
         });
         break;
       }
@@ -243,11 +269,18 @@ class index extends React.Component {
     });
   };
 
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
-    });
-  };
+  onClickCloseDetailModal = () => this.setState({
+    visibleDetail: false,
+  });
+
+  onClickCloseSendMessageToUserModal = () => this.setState({
+    visibleSendMessageToUser: false,
+  });
+
+  onClickCloseSendPreviewMessageModal = () => this.setState({
+    visibleSendPreviewMessage: false,
+  });
+
 }
 
 export default index;
