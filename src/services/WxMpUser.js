@@ -37,6 +37,15 @@ export default class WxMpUserApi {
     });
   }
 
+  static getComplete(payload) {
+    return request(`/api/wx-mp/user/_complete`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
   static getAll(payload) {
     return request(`/api/wx-mp/user/all`, {
       method: 'GET',

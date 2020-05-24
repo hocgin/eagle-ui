@@ -6,6 +6,7 @@ export default {
   state: {
     paging: null,
     detail: null,
+    complete: [],
     all: [],
   },
   effects: {
@@ -22,6 +23,14 @@ export default {
       let result = yield WxMpUserApi.paging(payload); // API
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillPaging', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
+    // 查询
+    * getComplete({ payload = {}, callback }, { call, put }) {
+      let result = yield WxMpUserApi.getComplete(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        yield put({ type: 'fillComplete', payload: result.data });
         if (callback) callback(result);
       }
     },
@@ -54,6 +63,9 @@ export default {
     },
   },
   reducers: {
+    fillComplete(state, { payload }) {
+      return { ...state, complete: payload };
+    },
     fillAll(state, { payload }) {
       return { ...state, all: payload };
     },

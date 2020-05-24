@@ -6,8 +6,16 @@ enum MsgType {
   TEXT = 'text',
 }
 
+enum TemplateMessagePageType {
+  MiniProgram = 'miniProgram',
+  URL = 'url',
+}
+
 export class Data {
 
+  /**
+   * 消息类型
+   */
   public static getMsgType() {
     return [{
       key: '音频',
@@ -24,6 +32,19 @@ export class Data {
     }, {
       key: '图文',
       value: MsgType.MPNEWS,
+    }];
+  }
+
+  /**
+   * 模版消息内容
+   */
+  public static getTemplateMessagePageType() {
+    return [{
+      key: '小程序',
+      value: TemplateMessagePageType.MiniProgram,
+    }, {
+      key: 'URL',
+      value: TemplateMessagePageType.URL,
     }];
   }
 

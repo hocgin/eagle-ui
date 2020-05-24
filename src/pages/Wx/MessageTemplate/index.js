@@ -8,6 +8,7 @@ import DetailModal from '@/pages/Wx/MessageTemplate/Modal/DetailModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import ComplexTable from '@/components/ComplexTable';
 import UiUtils from '@/utils/UiUtils';
+import SendTemplateMessageModal from '@/pages/Wx/MessageTemplate/Modal/SendTemplateMessageModal';
 
 @connect(({ global, wxMpMessageTemplate: { paging }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
@@ -25,9 +26,11 @@ class index extends React.Component {
     searchValue: {},
     selectedRows: [],
     operateRow: null,
+    operateAppid: null,
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
+    visibleSendTemplateMessage: false,
   };
 
   componentDidMount() {
@@ -45,6 +48,10 @@ class index extends React.Component {
     title: '模版标题',
     dataIndex: 'title',
     key: 'title',
+  }, {
+    title: '消息模版',
+    dataIndex: 'content',
+    key: 'content',
   }, {
     title: 'AppID',
     dataIndex: 'appid',
@@ -71,6 +78,7 @@ class index extends React.Component {
       const onClickOperateRow = (record, e) => {
         this.setState({
             operateRow: record.id,
+            operateAppid: record.appid,
           },
           () => {
             this.onClickMenuRowItem(e, record);
@@ -78,9 +86,7 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowRefresh">
-          <del>发送模版消息</del>
-        </Menu.Item>
+        <Menu.Item key="rowSendTemplateMessage">发送模版消息</Menu.Item>
       </Menu>);
 
       return <>
@@ -99,13 +105,12 @@ class index extends React.Component {
   }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleUpdate, visibleDetail, visibleGrant, operateRow } = this.state;
+    let { selectedRows, visibleCreate, operateAppid, visibleDetail, visibleSendTemplateMessage, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
-    let toolbarChildren = (
-      <Button htmlType="button" type="primary"
-              onClick={this.onClickShowSyncModal}>同步消息模版</Button>
-    );
+    let toolbarChildren = (<>
+      <Button htmlType="button" type="primary" onClick={this.onClickShowSyncModal} danger>同步消息模版</Button>,
+    </>);
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={<>消息模版 {this.renderAppIdWithSelect()}</>}
                     rowKey={`appid`}
@@ -127,6 +132,9 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
+      {visibleSendTemplateMessage && <SendTemplateMessageModal visible={visibleSendTemplateMessage}
+                                                               id={operateRow}
+                                                               onClose={this.onClickCloseSendTemplateMessageModal}/>}
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
@@ -172,15 +180,15 @@ class index extends React.Component {
   onClickMenuRowItem = ({ key }) => {
     switch (key) {
       case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
-        });
+        this.setState({ visibleDetail: true });
+        break;
+      }
+      case 'rowSendTemplateMessage': {
+        this.setState({ visibleSendTemplateMessage: true });
         break;
       }
       default: {
-        Modal.error({
-          content: '无效操作',
-        });
+        Modal.error({ content: '无效操作' });
       }
     }
   };
@@ -238,11 +246,17 @@ class index extends React.Component {
     });
   };
 
-  onClickCloseDetailModal = () => {
-    this.setState({
-      visibleDetail: false,
-    });
-  };
+  onClickCloseDetailModal = () => this.setState({
+    visibleDetail: false,
+  });
+
+  onClickCloseSendTemplateMessageModal = () => this.setState({
+    visibleSendTemplateMessage: false,
+  });
+
+  onClickShowSendTemplateMessageModal = () => this.setState({
+    visibleSendTemplateMessage: true,
+  });
 }
 
 export default index;
