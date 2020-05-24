@@ -1,34 +1,31 @@
 import React from 'react';
 import styles from './index.less';
-import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select, Tooltip } from 'antd';
-import ComplexTable from '@/components/ComplexTable';
 import { connect } from 'dva';
-import UiUtils from '@/utils/UiUtils';
 import { DateFormatter } from '@/utils/formatter/DateFormatter';
-import CreateModal from '@/pages/Wx/ReplyRule/Modal/CreateModal';
-import UpdateModal from '@/pages/Wx/ReplyRule/Modal/UpdateModal';
-import DetailModal from '@/pages/Wx/ReplyRule/Modal/DetailModal';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { Button, Divider, Dropdown, Form, Input, Menu, Modal, Select } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { WxReplyRule } from '@/pages/Wx/ReplyRule/WxReplyRule';
-import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
+import DetailModal from '@/pages/Wx/ShortUrl/Modal/DetailModal';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import ComplexTable from '@/components/ComplexTable';
+import UiUtils from '@/utils/UiUtils';
+import CreateModal from '@/pages/Wx/ShortUrl/Modal/CreateModal';
 
-@connect(({ global, wxMpReplyRule: { paging }, wxMpConfig: { all }, loading, ...rest }) => {
+@connect(({ global, wxMpShortUrl: { paging }, wxMpConfig: { all }, loading, ...rest }) => {
   return {
-    allMpConfig: all,
     paging: paging,
-    pagingLoading: loading.effects['wxMpReplyRule/paging'],
+    allMpConfig: all,
+    pagingLoading: loading.effects['wxMpShortUrl/paging'],
   };
 }, dispatch => ({
-  $paging: (args = {}) => dispatch({ type: 'wxMpReplyRule/paging', ...args }),
+  $paging: (args = {}) => dispatch({ type: 'wxMpShortUrl/paging', ...args }),
   $getAllWithWxMpConfig: (args = {}) => dispatch({ type: 'wxMpConfig/getAll', ...args }),
 }))
 class index extends React.Component {
-
   state = {
     searchValue: {},
     selectedRows: [],
     operateRow: null,
+    operateAppid: null,
     visibleCreate: false,
     visibleUpdate: false,
     visibleDetail: false,
@@ -41,34 +38,18 @@ class index extends React.Component {
   }
 
   tableColumns = [{
-    title: '规则名称',
-    dataIndex: 'title',
+    title: '短链接',
+    dataIndex: 'shortUrl',
+    key: 'shortUrl',
     fixed: 'left',
-    key: 'title',
-    ellipsis: true,
-    render: (val, { remark }) => <Tooltip placement="top" title={`${remark}`}>{val}</Tooltip>,
   }, {
-    title: '匹配类型',
-    dataIndex: 'matchMsgTypeName',
-    key: 'matchMsgTypeName',
+    title: 'AppID',
+    dataIndex: 'appid',
+    key: 'appid',
   }, {
-    title: '回复类型',
-    dataIndex: 'replyMsgTypeName',
-    key: 'replyMsgTypeName',
-  }, {
-    title: '回复内容',
-    dataIndex: 'replyContent',
-    key: 'replyContent',
-    render: (val, { replyMsgType }) => WxReplyRule.getReplyContent(replyMsgType, val),
-  }, {
-    title: '优先级',
-    dataIndex: 'sort',
-    key: 'sort',
-  }, {
-    title: '启用状态',
-    dataIndex: 'enabledName',
-    key: 'enabledName',
-    render: (val, { enabled }) => EnumFormatter.enabledStatus(enabled, val),
+    title: '短链接',
+    dataIndex: 'shortUrl',
+    key: 'shortUrl',
   }, {
     title: '创建时间',
     dataIndex: 'createdAt',
@@ -83,6 +64,7 @@ class index extends React.Component {
       const onClickOperateRow = (record, e) => {
         this.setState({
             operateRow: record.id,
+            operateAppid: record.appid,
           },
           () => {
             this.onClickMenuRowItem(e, record);
@@ -90,7 +72,9 @@ class index extends React.Component {
       };
 
       const MoreMenus = (<Menu onClick={onClickOperateRow.bind(this, record)}>
-        <Menu.Item key="rowUpdate">修改</Menu.Item>
+        <Menu.Item key="rowDelete">
+          <del>删除</del>
+        </Menu.Item>
       </Menu>);
 
       return <>
@@ -99,7 +83,8 @@ class index extends React.Component {
            onClick={onClickOperateRow.bind(this, record, { key: 'rowDetail' })}>查看详情</a>
         <Divider type="vertical"/>
         <Dropdown overlay={MoreMenus}>
-          <a href={null} rel="noopener noreferrer">
+          <a href={null}
+             rel="noopener noreferrer">
             更多操作 <DownOutlined/>
           </a>
         </Dropdown>
@@ -108,16 +93,20 @@ class index extends React.Component {
   }];
 
   render() {
-    let { selectedRows, visibleCreate, visibleDetail, visibleUpdate, operateRow } = this.state;
+    let { selectedRows, visibleCreate, searchValue: { appid }, visibleDetail, operateRow } = this.state;
     let { paging, pagingLoading } = this.props;
     const BatchMenus = null;
+    let toolbarChildren = (<>
+      <Button htmlType="button" type="primary" icon={<PlusOutlined/>} onClick={this.onClickShowCreateModal}>新建</Button>,
+    </>);
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
-      <ComplexTable toolbarTitle={<>回复规则 {this.renderAppIdWithSelect()}</>}
+      <ComplexTable toolbarTitle={<>短链接 {this.renderAppIdWithSelect()}</>}
+                    rowKey={`appid`}
                     toolbarMenu={BatchMenus}
-                    toolbarChildren={<Button htmlType="button" icon={<PlusOutlined/>} type="primary"
-                                             onClick={this.onClickShowCreateModal}>新建</Button>}
+                    toolbarChildren={toolbarChildren}
                     searchBarChildren={[
-                      <Form.Item key="keyword" label="关键词搜索" name="keyword">
+                      <Form.Item label="关键词搜索"
+                                 name="keyword">
                         <Input style={{ width: '100%' }} placeholder="请输入关键词"/>
                       </Form.Item>,
                     ]}
@@ -131,11 +120,9 @@ class index extends React.Component {
                     onClickSearch={this.onClickSearch}
                     onChangeStandardTable={this.onChangeStandardTable}
                     tableColumns={this.tableColumns}/>
-      {visibleCreate && <CreateModal visible={visibleCreate}
-                                     onClose={this.onClickCloseCreateModal}/>}
-      {visibleUpdate && <UpdateModal visible={visibleUpdate}
-                                     id={operateRow}
-                                     onClose={this.onClickCloseUpdateModal}/>}
+      <CreateModal visible={visibleCreate}
+                   appid={appid}
+                   onClose={this.onClickCloseCreateModal}/>
       {visibleDetail && <DetailModal visible={visibleDetail}
                                      id={operateRow}
                                      onClose={this.onClickCloseDetailModal}/>}
@@ -144,10 +131,10 @@ class index extends React.Component {
 
   renderAppIdWithSelect() {
     let { allMpConfig = [] } = this.props;
+
     return (<Select defaultValue={null} onSelect={this.onSelectAppId}>
-      <Select.Option key={-1} value={null}>全部</Select.Option>
-      {(allMpConfig || []).map(({ appid, title }, index) =>
-        <Select.Option key={index} value={`${appid}`}>{title}</Select.Option>)}
+      <Select.Option>全部</Select.Option>
+      {(allMpConfig || []).map(({ appid, title }) => <Select.Option value={appid}>{title}</Select.Option>)}
     </Select>);
   }
 
@@ -180,22 +167,12 @@ class index extends React.Component {
    */
   onClickMenuRowItem = ({ key }) => {
     switch (key) {
-      case 'rowUpdate': {
-        this.setState({
-          visibleUpdate: true,
-        });
-        break;
-      }
       case 'rowDetail': {
-        this.setState({
-          visibleDetail: true,
-        });
+        this.setState({ visibleDetail: true });
         break;
       }
       default: {
-        Modal.error({
-          content: '无效操作',
-        });
+        Modal.error({ content: '无效操作' });
       }
     }
   };
@@ -233,20 +210,16 @@ class index extends React.Component {
     });
   };
 
+  onClickCloseDetailModal = () => this.setState({
+    visibleDetail: false,
+  });
+
   onClickCloseCreateModal = () => this.setState({
     visibleCreate: false,
   }, this.paging);
 
-  onClickCloseUpdateModal = () => this.setState({
-    visibleUpdate: false,
-  }, this.paging);
-
   onClickShowCreateModal = () => this.setState({
     visibleCreate: true,
-  });
-
-  onClickCloseDetailModal = () => this.setState({
-    visibleDetail: false,
   });
 }
 

@@ -42,10 +42,15 @@ class index extends React.Component {
   }
 
   tableColumns = [{
+    title: '微信头像',
+    dataIndex: 'headimgurl',
+    key: 'headimgurl',
+    fixed: 'left',
+    render: val => <img src={val} alt="微信头像" width={50}/>,
+  }, {
     title: '微信昵称',
     dataIndex: 'nickname',
     key: 'nickname',
-    fixed: 'left',
   }, {
     title: '性别',
     dataIndex: 'sex',

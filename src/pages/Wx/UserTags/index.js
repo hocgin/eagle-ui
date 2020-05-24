@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
 import { Button, Divider, Dropdown, Form, Input, Menu, message, Modal, Select } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import DetailModal from '@/pages/Wx/UserTags/Modal/DetailModal';
 import CreateModal from '@/pages/Wx/UserTags/Modal/CreateModal';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -93,7 +93,7 @@ class index extends React.Component {
     const BatchMenus = null;
     let toolbarChildren = (<>
       <Button htmlType="button" type="primary" onClick={this.onClickShowSyncModal} danger>同步标签</Button>
-      <Button htmlType="button" type="primary" onClick={this.onClickShowCreateModal}>新建标签</Button>
+      <Button htmlType="button" type="primary" icon={<PlusOutlined/>} onClick={this.onClickShowCreateModal}>新建标签</Button>
     </>);
     return (<PageHeaderWrapper wrapperClassName={styles.page}>
       <ComplexTable toolbarTitle={<>用户标签 {this.renderAppIdWithSelect()}</>}

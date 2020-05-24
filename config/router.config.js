@@ -195,6 +195,8 @@ export default [
           { code: 'wx:mp-message-template', path: '/wx/message-template', component: '../pages/Wx/MessageTemplate' },
           { code: 'wx:mp-reply-rule', path: '/wx/reply-rule', component: '../pages/Wx/ReplyRule' },
           { code: 'wx:mp-user-tags', path: '/wx/user-tags', component: '../pages/Wx/UserTags' },
+          { code: 'wx:mp-short-url', path: '/wx/short-url', component: '../pages/Wx/ShortUrl' },
+          { code: 'wx:mp-qrcode', path: '/wx/qrcode', component: '../pages/Wx/QrCode' },
         ],
       },
     ],
