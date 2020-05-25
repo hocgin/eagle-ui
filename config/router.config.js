@@ -14,6 +14,7 @@ export default [
     component: '../layouts/EmptyLayout',
     routes: [
       { path: '/login', component: '../pages/login/index' },
+      { path: '/login/2', component: '../pages/Login2/index' },
     ],
   }, {
     path: '/',

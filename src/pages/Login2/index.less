@@ -1,0 +1,94 @@
+@import "~@/mixin.less";
+
+.page {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+.left {
+  width: 450px;
+  background-image: url("~@/assets/login.jpg");
+  position: relative;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  .mask {
+    background-image: linear-gradient(179deg, rgba(20, 21, 22, 0) 0%, rgba(20, 21, 22, 0.07) 21%, rgb(43, 51, 65) 97%);
+    height: 600px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+  .desc {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    line-height: 1.5;
+    width: 354px;
+    position: absolute;
+    bottom: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+.right {
+  flex: 1 1;
+  display: flex;
+  align-items: center;
+  .box {
+    width: 400px;
+    margin: 0 auto 100px;
+    .header {
+      margin-bottom: 30px;
+      .logo {
+        color: #a0aec0;
+        font-size: 16px;
+        font-weight: 700;
+        .space {
+          font-size: 12px;
+          margin: 0 8px;
+        }
+        .heart {
+          color: #F22E3C;
+        }
+      }
+      .title {
+        font-size: 32px;
+        color: rgb(31, 41, 46);
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+    }
+    .primaryBar {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0 20px 0;
+      font-size: 14px;
+      color: rgb(125, 134, 149);
+      .social {
+        font-size: 18px;
+        a {
+          color: unset;
+          margin-right: 5px;
+        }
+      }
+      .forgot {
+        color: rgb(125, 134, 149);
+      }
+    }
+    .submit {
+      width: 100%;
+    }
+    .toolbar {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+}
+
