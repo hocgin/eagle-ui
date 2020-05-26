@@ -2,10 +2,17 @@ import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
 import classnames from 'classnames';
-import { Button, Checkbox, Divider, Form, Input } from 'antd';
-import { HeartFilled, LockOutlined, UserOutlined } from '@ant-design/icons';
-import WechatOutlined from '@ant-design/icons/lib/icons/WechatOutlined';
-import QqOutlined from '@ant-design/icons/lib/icons/QqOutlined';
+import LoginBox from '@/pages/Login2/components/LoginBox';
+import RegisterBox from '@/pages/Login2/components/RegisterBox';
+import ForgotBox from '@/pages/Login2/components/ForgotBox';
+import { Divider } from 'antd';
+import { HeartFilled } from '@ant-design/icons';
+
+export const Action = {
+  LOGIN: 1,
+  REGISTER: 2,
+  FORGOT: 3,
+};
 
 @connect(({ global, loading }) => {
   return {};
@@ -13,9 +20,13 @@ import QqOutlined from '@ant-design/icons/lib/icons/QqOutlined';
   $login: (args = {}) => dispatch({ type: 'apps/login', ...args }),
 }))
 class index extends React.Component {
-  loginForm = React.createRef();
+  form = React.createRef();
+  state = {
+    action: Action.LOGIN,
+  };
 
   render() {
+    let { action } = this.state;
     return (<div className={styles.page}>
       <div className={styles.left}>
         <div className={styles.mask}/>
@@ -27,46 +38,20 @@ class index extends React.Component {
       <div className={styles.right}>
         <div className={styles.box}>
           <div className={styles.header}>
-            <div className={styles.logo}>EAGLE<span className={styles.space}>X</span><HeartFilled className={classnames(styles.heartbeat, styles.heart)}/></div>
+            <div className={styles.logo}>EAGLE<span className={styles.space}>X</span><HeartFilled
+              className={classnames(styles.heartbeat, styles.heart)}/></div>
             <span className={styles.title}>登录 EAGLE.</span>
           </div>
-          <Divider />
-          <Form className={styles.form}>
-            <Form.Item name="username"
-                       rules={[{ required: true, message: '请输入你的账号' }]}>
-              <Input style={{ width: '100%' }}
-                     prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }}/>}
-                     placeholder="账号"/>
-            </Form.Item>
-            <Form.Item name="password"
-                       rules={[{ required: true, message: '请输入你的密码' }]} noStyle>
-              <Input style={{ width: '100%' }}
-                     type="password"
-                     prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }}/>}
-                     placeholder="密码"/>
-            </Form.Item>
-            <div className={styles.primaryBar}>
-              <div className={styles.social}>
-                <a href=""><WechatOutlined style={{color: '#6AD278'}}/></a>
-                <a href=""><QqOutlined style={{color: '#3FC7FA'}}/></a>
-              </div>
-              <a className={styles.forgot} href="">忘记密码?</a>
-            </div>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" className={styles.submit}>
-                登录
-              </Button>
-            </Form.Item>
-            <div className={styles.toolbar}>
-              <a href="">手机验证码登录</a>
-              <a href="">注册账号</a>
-            </div>
-          </Form>
-
+          <Divider/>
+          {action === Action.LOGIN && <LoginBox onChange={this.onChange}/>}
+          {action === Action.REGISTER && <RegisterBox onChange={this.onChange}/>}
+          {action === Action.FORGOT && <ForgotBox onChange={this.onChange}/>}
         </div>
       </div>
     </div>);
   }
+
+  onChange = action => this.setState({ action });
 
   onSubmit = values => {
     let { $login } = this.props;
