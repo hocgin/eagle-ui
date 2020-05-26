@@ -10,10 +10,8 @@ export default class Config {
    * @type {{}}
    */
   static defaultConfig = {
-    // 请求地址
-    host: 'http://127.0.0.1:8080',
     // 开发模式
-    dev: true,
+    dev: false,
   };
 
   /**
@@ -21,7 +19,7 @@ export default class Config {
    * @returns {boolean}
    */
   static isDev() {
-    return this.defaultConfig.dev;
+    return this.defaultConfig.dev || ['localhost', '127.0.0.1'].includes(`${window.location.host}`);
   }
 
   /**
@@ -32,7 +30,7 @@ export default class Config {
     if (Config.isDev()) {
       return `http://127.0.0.1:8080`;
     }
-    return 'http://127.0.0.1:9090';
+    return 'http://120.79.64.153:8080';
   }
 
   /**
