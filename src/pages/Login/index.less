@@ -32,6 +32,9 @@
     flex-direction: column;
     align-items: flex-end;
   }
+  @media only screen and (max-width: 950px) {
+    display: none;
+  }
 }
 .right {
   flex: 1 1;
@@ -39,21 +42,30 @@
   align-items: center;
   .box {
     width: 400px;
+    .mobile({
+      width: 300px;
+    });
+
     margin: 0 auto 180px;
+
     .header {
       margin-bottom: 30px;
+
       .logo {
         color: #a0aec0;
         font-size: 16px;
         font-weight: 700;
+
         .space {
           font-size: 12px;
           margin: 0 8px;
         }
+
         .heart {
           color: #F22E3C;
         }
       }
+
       .title {
         font-size: 32px;
         color: rgb(31, 41, 46);
@@ -62,6 +74,7 @@
       }
 
     }
+
     .primaryBar {
       display: flex;
       flex-direction: row;
@@ -70,22 +83,27 @@
       margin: 10px 0 20px 0;
       font-size: 14px;
       color: rgb(125, 134, 149);
+
       .social {
         font-size: 18px;
+
         a {
           color: unset;
           margin-right: 8px;
         }
       }
+
       .forgot {
         color: rgb(125, 134, 149);
       }
     }
+
     .submit {
       width: 100%;
       height: 40px;
       font-size: 18px;
     }
+
     .toolbar {
       display: flex;
       flex-direction: row;

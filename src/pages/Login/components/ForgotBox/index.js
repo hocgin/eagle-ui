@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './index.less';
 import { Button, Col, Form, Input, Row } from 'antd';
-import { Action } from '@/pages/Login2';
+import { Action } from '@/pages/Login';
 import PropTypes from 'prop-types';
 
 const ForgotType = {

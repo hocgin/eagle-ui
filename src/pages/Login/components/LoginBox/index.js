@@ -2,13 +2,19 @@ import React from 'react';
 import styles from './index.less';
 import { Button, Col, Form, Input, Row } from 'antd';
 import PropTypes from 'prop-types';
-import { Action } from '@/pages/Login2';
+import { Action } from '@/pages/Login';
+import { connect } from 'dva';
 
 const LoginType = {
   UsePassword: 0,
   UseSmsCode: 1,
 };
 
+@connect(({ global, loading }) => {
+  return {};
+}, dispatch => ({
+  $login: (args = {}) => dispatch({ type: 'apps/login', ...args }),
+}))
 class index extends React.PureComponent {
   state = {
     loginType: LoginType.UsePassword,
@@ -63,7 +69,7 @@ class index extends React.PureComponent {
               <Input style={{ width: '100%' }} size="large" placeholder="验证码"/>
             </Form.Item>
           </Col>
-          <Col span={7}><Button style={{height: '100%', width: '100%'}}>发送验证码</Button></Col>
+          <Col span={7}><Button style={{ height: '100%', width: '100%' }}>发送验证码</Button></Col>
         </Row>
       </Form.Item>
     </>;
@@ -87,8 +93,14 @@ class index extends React.PureComponent {
     </>;
   };
 
-  onFinish = (values) => {
-    console.log('onFinish', values);
+  onFinish = ({ username, password }) => {
+    let { $login } = this.props;
+    $login({
+      payload: {
+        username: username,
+        password: password,
+      },
+    });
   };
 
   static propTypes = {

@@ -2,9 +2,9 @@ import React from 'react';
 import styles from './index.less';
 import { connect } from 'dva';
 import classnames from 'classnames';
-import LoginBox from '@/pages/Login2/components/LoginBox';
-import RegisterBox from '@/pages/Login2/components/RegisterBox';
-import ForgotBox from '@/pages/Login2/components/ForgotBox';
+import LoginBox from '@/pages/Login/components/LoginBox';
+import RegisterBox from '@/pages/Login/components/RegisterBox';
+import ForgotBox from '@/pages/Login/components/ForgotBox';
 import { Divider } from 'antd';
 import { HeartFilled } from '@ant-design/icons';
 
@@ -40,7 +40,7 @@ class index extends React.Component {
           <div className={styles.header}>
             <div className={styles.logo}>EAGLE<span className={styles.space}>X</span><HeartFilled
               className={classnames(styles.heartbeat, styles.heart)}/></div>
-            <span className={styles.title}>登录 EAGLE.</span>
+            <span className={styles.title}>{this.getTitle()}</span>
           </div>
           <Divider/>
           {action === Action.LOGIN && <LoginBox onChange={this.onChange}/>}
@@ -50,6 +50,19 @@ class index extends React.Component {
       </div>
     </div>);
   }
+
+  getTitle = () => {
+    let { action } = this.state;
+    switch (action) {
+      case Action.REGISTER:
+        return '注册 EAGLE.';
+      case Action.FORGOT:
+        return '忘记密码';
+      case Action.LOGIN:
+      default:
+        return '登录 EAGLE.';
+    }
+  };
 
   onChange = action => this.setState({ action });
 
