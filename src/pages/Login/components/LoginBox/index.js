@@ -4,6 +4,7 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import PropTypes from 'prop-types';
 import { Action } from '@/pages/Login';
 import { connect } from 'dva';
+import ValidUtils from '@/utils/ValidUtils';
 
 const LoginType = {
   UsePassword: 0,
@@ -14,8 +15,12 @@ const LoginType = {
   return {};
 }, dispatch => ({
   $login: (args = {}) => dispatch({ type: 'apps/login', ...args }),
+  $loginUseSmsCode: (args = {}) => dispatch({ type: 'apps/loginUseSmsCode', ...args }),
+  $sendSmsCode: (args = {}) => dispatch({ type: 'apps/sendSmsCode', ...args }),
 }))
 class index extends React.PureComponent {
+  form = React.createRef();
+
   state = {
     loginType: LoginType.UsePassword,
   };
@@ -24,7 +29,7 @@ class index extends React.PureComponent {
     let { onChange } = this.props;
     let { loginType } = this.state;
     return (<div className={styles.page}>
-      <Form onFinish={this.onFinish}>
+      <Form ref={this.form} onFinish={this.onFinish}>
         {loginType === LoginType.UsePassword && this.renderLoginUsePassword()}
         {loginType === LoginType.UseSmsCode && this.renderLoginUsePhone()}
         <div className={styles.primaryBar}>
@@ -58,8 +63,7 @@ class index extends React.PureComponent {
 
   renderLoginUsePhone = () => {
     return <>
-      <Form.Item name="phone"
-                 rules={[{ required: true, message: '请输入你的手机号' }]}>
+      <Form.Item name="phone" rules={[{ required: true, message: '请输入你的手机号' }]}>
         <Input style={{ width: '100%' }} size="large" placeholder="手机号"/>
       </Form.Item>
       <Form.Item noStyle>
@@ -69,7 +73,7 @@ class index extends React.PureComponent {
               <Input style={{ width: '100%' }} size="large" placeholder="验证码"/>
             </Form.Item>
           </Col>
-          <Col span={7}><Button style={{ height: '100%', width: '100%' }}>发送验证码</Button></Col>
+          <Col span={7}><Button style={{ height: '100%', width: '100%' }} onClick={this.onClickSendSmsCode}>验证码</Button></Col>
         </Row>
       </Form.Item>
     </>;
@@ -93,14 +97,21 @@ class index extends React.PureComponent {
     </>;
   };
 
-  onFinish = ({ username, password }) => {
-    let { $login } = this.props;
-    $login({
-      payload: {
-        username: username,
-        password: password,
-      },
-    });
+  onClickSendSmsCode = () => {
+    let { $sendSmsCode } = this.props;
+    let { phone } = this.form.current.getFieldValue();
+    ValidUtils.notNull(phone, '请输入手机号码');
+    $sendSmsCode({ payload: { phone } });
+  };
+
+  onFinish = ({ username, password, phone, smsCode }) => {
+    let { $login, $loginUseSmsCode } = this.props;
+    let { loginType } = this.state;
+    if (LoginType.UsePassword === loginType) {
+      $login({ payload: { username, password } });
+    } else if (LoginType.UseSmsCode === loginType) {
+      $loginUseSmsCode({ payload: { phone, smsCode } });
+    }
   };
 
   static propTypes = {

@@ -55,6 +55,20 @@ export default class AccountApi {
     });
   }
 
+  static loginUseSmsCode(payload) {
+    return request(`/api/account/authenticate:sms-code`, {
+      method: 'POST',
+      body: { ...payload },
+    });
+  }
+
+  static changePasswordUseSmsCode(payload) {
+    return request(`/api/change-password:sms-code`, {
+      method: 'POST',
+      body: { ...payload },
+    });
+  }
+
   static getCurrentAccount(payload) {
     let queryString = stringify(payload);
     return request(`/api/account?${queryString}`, {

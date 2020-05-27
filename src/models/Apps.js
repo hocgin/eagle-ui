@@ -4,6 +4,7 @@ import LocalStorage from '@/utils/LocalStorage';
 import { history } from 'umi';
 import { Global } from '@/utils/constant/global';
 import UiUtils from '@/utils/UiUtils';
+import AppsApi from '@/services/Apps';
 
 export default {
   namespace: 'apps',
@@ -28,6 +29,22 @@ export default {
         history.push(Global.INDEX_PAGE);
       }
     },
+    * loginUseSmsCode({ payload = {}, callback }, { call, put }) {
+      let result = yield AccountApi.loginUseSmsCode(payload);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+        LocalStorage.setToken(result.data);
+        history.push(Global.INDEX_PAGE);
+      }
+    },
+    * changePasswordUseSmsCode({ payload = {}, callback }, { call, put }) {
+      let result = yield AccountApi.changePasswordUseSmsCode(payload);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+        LocalStorage.setToken(result.data);
+        history.push(Global.INDEX_PAGE);
+      }
+    },
     * getCurrentAccountInfo({ payload = {}, callback }, { call, put }) {
       let result = yield AccountApi.getCurrentAccount(payload);
       if (UiUtils.showErrorMessageIfExits(result)) {
@@ -41,6 +58,18 @@ export default {
       let result = yield AccountApi.getCurrentAccountAuthority(payload);
       if (UiUtils.showErrorMessageIfExits(result)) {
         yield put({ type: 'fillCurrentAccountAuthority', payload: result.data });
+        if (callback) callback(result);
+      }
+    },
+    * signUp({ payload = {}, callback }, { call, put }) {
+      let result = yield AppsApi.signUp(payload);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
+    * sendSmsCode({ payload = {}, callback }, { call, put }) {
+      let result = yield AppsApi.sendSmsCode(payload);
+      if (UiUtils.showErrorMessageIfExits(result)) {
         if (callback) callback(result);
       }
     },

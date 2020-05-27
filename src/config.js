@@ -19,7 +19,7 @@ export default class Config {
    * @returns {boolean}
    */
   static isDev() {
-    return this.defaultConfig.dev || ['localhost', '127.0.0.1'].includes(`${window.location.host}`);
+    return this.defaultConfig.dev || ['localhost', '127.0.0.1'].includes(`${window.location.hostname}`);
   }
 
   /**

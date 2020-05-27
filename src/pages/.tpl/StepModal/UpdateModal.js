@@ -179,7 +179,6 @@ class UpdateModal extends PureComponent {
           ...this.state.formValue,
           ...values,
         };
-        console.log('formValue', this.setState);
         this.setState({ formValue }, () => {
           if (step + 1 < this.Footer().length) {
             this.setState({
