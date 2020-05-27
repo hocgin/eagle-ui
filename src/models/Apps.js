@@ -65,6 +65,8 @@ export default {
       let result = yield AppsApi.signUp(payload);
       if (UiUtils.showErrorMessageIfExits(result)) {
         if (callback) callback(result);
+        LocalStorage.setToken(result.data);
+        history.push(Global.INDEX_PAGE);
       }
     },
     * sendSmsCode({ payload = {}, callback }, { call, put }) {

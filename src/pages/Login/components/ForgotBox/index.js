@@ -104,7 +104,7 @@ class index extends React.PureComponent {
     let { $sendSmsCode } = this.props;
     let { phone } = this.form.current.getFieldValue();
     ValidUtils.notNull(phone, '请输入手机号码');
-    $sendSmsCode({ payload: { phone } });
+    $sendSmsCode({ payload: { phone }, callback: ()=>{message.success("发送成功")} });
   };
 
   onNextOrDone = () => {

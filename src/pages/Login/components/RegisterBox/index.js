@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.less';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, message, Row } from 'antd';
 import { Action } from '@/pages/Login';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
@@ -62,7 +62,7 @@ class index extends React.PureComponent {
     let { $sendSmsCode } = this.props;
     let { phone } = this.form.current.getFieldValue();
     ValidUtils.notNull(phone, '请输入手机号码');
-    $sendSmsCode({ payload: { phone } });
+    $sendSmsCode({ payload: { phone }, callback: ()=>{message.success("发送成功")} });
   };
 
   static propTypes = {
