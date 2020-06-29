@@ -16,6 +16,7 @@ const ForgotType = {
   return {};
 }, dispatch => ({
   $sendSmsCode: (args = {}) => dispatch({ type: 'apps/sendSmsCode', ...args }),
+  $sendResetPasswordUseMail: (args = {}) => dispatch({ type: 'apps/sendResetPasswordUseMail', ...args }),
   $changePasswordUseSmsCode: (args = {}) => dispatch({ type: 'apps/changePasswordUseSmsCode', ...args }),
 }))
 class index extends React.PureComponent {
@@ -68,7 +69,8 @@ class index extends React.PureComponent {
               </Form.Item>
             </Col>
             <Col span={7}>
-              <Button style={{ height: '100%', width: '100%' }} onClick={this.onClickSendSmsCode}>{time ? `${time}秒` : '验证码'}</Button>
+              <Button style={{ height: '100%', width: '100%' }}
+                      onClick={this.onClickSendSmsCode}>{time ? `${time}秒` : '验证码'}</Button>
             </Col>
           </Row>
         </Form.Item>
@@ -163,16 +165,6 @@ class index extends React.PureComponent {
       });
   };
 
-  onFinish = ({ username, password, phone, smsCode }) => {
-    let { $login } = this.props;
-    let { forgotType } = this.state;
-    if (forgotType === ForgotType.UseSmsCode) {
-
-    } else if (forgotType === ForgotType.UseEmail) {
-
-    }
-  };
-
   renderForgotBoxUseEmail = () => {
     return <>
       <Form.Item name="email"
@@ -180,11 +172,26 @@ class index extends React.PureComponent {
         <Input style={{ width: '100%' }} size="large" placeholder="邮箱"/>
       </Form.Item>
       <Form.Item noStyle>
-        <Button type="primary" htmlType="submit" className={styles.submit}>
+        <Button type="primary" htmlType="submit" className={styles.submit}
+                onClick={this.onSendResetPasswordUseMail}>
           发送验证邮件
         </Button>
       </Form.Item>
     </>;
+  };
+
+  onSendResetPasswordUseMail = () => {
+    let { $sendResetPasswordUseMail } = this.props;
+    let form = this.form.current;
+    form.validateFields()
+      .then(({ email }) => {
+        const formValue = {
+          email,
+        };
+        this.setState({ formValue }, () => {
+          $sendResetPasswordUseMail({ payload: { ...formValue } }, ()=>{message.success('发送成功，请检查邮箱')});
+        });
+      });
   };
 
   static propTypes = {

@@ -26,4 +26,16 @@ export default class AppsApi {
     });
   }
 
+  /**
+   * 发送验证邮件
+   * @param payload
+   * @return {Promise<unknown>}
+   */
+  static sendResetPasswordUseMail(payload) {
+    return request(`/api/reset-password:mail`, {
+      method: 'POST',
+      body: { ...payload },
+    });
+  }
+
 }

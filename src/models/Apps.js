@@ -75,6 +75,12 @@ export default {
         if (callback) callback(result);
       }
     },
+    * sendResetPasswordUseMail({ payload = {}, callback }, { call, put }) {
+      let result = yield AppsApi.sendResetPasswordUseMail(payload);
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
   },
   reducers: {
     fillNotifySummary(state, { payload }) {
