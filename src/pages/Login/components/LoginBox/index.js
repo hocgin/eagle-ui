@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Action } from '@/pages/Login';
 import { connect } from 'dva';
 import ValidUtils from '@/utils/ValidUtils';
+import { Global } from '@/utils/constant/global';
 
 const LoginType = {
   UsePassword: 0,
@@ -23,6 +24,7 @@ class index extends React.PureComponent {
 
   state = {
     loginType: LoginType.UsePassword,
+    time: null,
   };
 
   render() {
@@ -62,6 +64,7 @@ class index extends React.PureComponent {
   };
 
   renderLoginUsePhone = () => {
+    let { time } = this.state;
     return <>
       <Form.Item name="phone" rules={[{ required: true, message: '请输入你的手机号' }]}>
         <Input style={{ width: '100%' }} size="large" placeholder="手机号"/>
@@ -73,7 +76,7 @@ class index extends React.PureComponent {
               <Input style={{ width: '100%' }} size="large" placeholder="验证码"/>
             </Form.Item>
           </Col>
-          <Col span={7}><Button style={{ height: '100%', width: '100%' }} onClick={this.onClickSendSmsCode}>验证码</Button></Col>
+          <Col span={7}><Button style={{ height: '100%', width: '100%' }} onClick={this.onClickSendSmsCode}>{time ? `${time}秒` : '验证码'}</Button></Col>
         </Row>
       </Form.Item>
     </>;
@@ -101,7 +104,39 @@ class index extends React.PureComponent {
     let { $sendSmsCode } = this.props;
     let { phone } = this.form.current.getFieldValue();
     ValidUtils.notNull(phone, '请输入手机号码');
-    $sendSmsCode({ payload: { phone }, callback: ()=>{message.success("发送成功")} });
+    if (this.state.time != null) {
+      return;
+    }
+    $sendSmsCode({
+      payload: { phone }, callback: () => {
+        message.success('发送成功');
+        this.startTimer();
+      },
+    });
+  };
+
+  startTimer = (maxSeconds = Global.MAX_SMS_CODE_SECONDS) => {
+    // 检查时间
+    let checkTime = () => {
+      if (this.state.time <= 0) {
+        clearInterval(this.timer);
+        this.setState({ time: null });
+      } else {
+        this.forceUpdate();
+      }
+    };
+
+    // 启动
+    let startInterval = () => {
+      this.timer = setInterval(() => {
+        this.setState({ time: --this.state.time }, checkTime);
+      }, 1000);
+    };
+
+    if (this.state.time == null) {
+      clearInterval(this.timer);
+      this.setState({ time: maxSeconds }, startInterval);
+    }
   };
 
   onFinish = ({ username, password, phone, smsCode }) => {

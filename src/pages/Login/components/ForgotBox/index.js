@@ -5,6 +5,7 @@ import { Action } from '@/pages/Login';
 import PropTypes from 'prop-types';
 import ValidUtils from '@/utils/ValidUtils';
 import { connect } from 'dva';
+import { Global } from '@/utils/constant/global';
 
 const ForgotType = {
   UseSmsCode: 0,
@@ -24,6 +25,7 @@ class index extends React.PureComponent {
     forgotType: ForgotType.UseSmsCode,
     step: 0,
     formValue: {},
+    time: null,
   };
 
   render() {
@@ -51,7 +53,7 @@ class index extends React.PureComponent {
   };
 
   renderForgotBoxUseSmsCode = () => {
-    let { step } = this.state;
+    let { step, time } = this.state;
     const Step0 = () => {
       return <>
         <Form.Item name="phone"
@@ -66,7 +68,7 @@ class index extends React.PureComponent {
               </Form.Item>
             </Col>
             <Col span={7}>
-              <Button style={{ height: '100%', width: '100%' }} onClick={this.onClickSendSmsCode}>验证码</Button>
+              <Button style={{ height: '100%', width: '100%' }} onClick={this.onClickSendSmsCode}>{time ? `${time}秒` : '验证码'}</Button>
             </Col>
           </Row>
         </Form.Item>
@@ -104,7 +106,39 @@ class index extends React.PureComponent {
     let { $sendSmsCode } = this.props;
     let { phone } = this.form.current.getFieldValue();
     ValidUtils.notNull(phone, '请输入手机号码');
-    $sendSmsCode({ payload: { phone }, callback: ()=>{message.success("发送成功")} });
+    if (this.state.time != null) {
+      return;
+    }
+    $sendSmsCode({
+      payload: { phone }, callback: () => {
+        message.success('发送成功');
+        this.startTimer();
+      },
+    });
+  };
+
+  startTimer = (maxSeconds = Global.MAX_SMS_CODE_SECONDS) => {
+    // 检查时间
+    let checkTime = () => {
+      if (this.state.time <= 0) {
+        clearInterval(this.timer);
+        this.setState({ time: null });
+      } else {
+        this.forceUpdate();
+      }
+    };
+
+    // 启动
+    let startInterval = () => {
+      this.timer = setInterval(() => {
+        this.setState({ time: --this.state.time }, checkTime);
+      }, 1000);
+    };
+
+    if (this.state.time == null) {
+      clearInterval(this.timer);
+      this.setState({ time: maxSeconds }, startInterval);
+    }
   };
 
   onNextOrDone = () => {
@@ -124,7 +158,7 @@ class index extends React.PureComponent {
             });
             return;
           }
-          $changePasswordUseSmsCode({payload: { ...formValue }});
+          $changePasswordUseSmsCode({ payload: { ...formValue } });
         });
       });
   };
