@@ -35,28 +35,56 @@ class index extends React.Component {
     fixed: 'left',
     key: 'uri',
     ellipsis: true,
+    width: 200,
     render: (val, { method }) => <Tooltip placement="top" title={`${method} ${val}`}>{method} {val}</Tooltip>,
   }, {
     title: '入口描述',
     dataIndex: 'enterRemark',
     key: 'enterRemark',
+    width: 200,
   }, {
     title: '用户昵称',
     dataIndex: 'creatorName',
     key: 'creatorName',
+    width: 150,
   }, {
     title: '用户IP',
     dataIndex: 'clientIp',
     key: 'clientIp',
+    width: 150,
+  }, {
+    title: '用户地址',
+    dataIndex: 'nation',
+    key: 'nation',
+    width: 200,
+    render: (val, { nation, province, city }) => `${nation} / ${province} / ${city}`,
+  }, {
+    title: '运营商',
+    dataIndex: 'operator',
+    key: 'operator',
+    width: 150,
+  }, {
+    title: '设备类型',
+    dataIndex: 'platform',
+    key: 'platform',
+    width: 150,
+  }, {
+    title: '系统',
+    dataIndex: 'systemOs',
+    key: 'systemOs',
+    width: 150,
+    render: (val, { systemOs, systemVersion }) => `${systemOs}(${systemVersion})`,
   }, {
     title: '请求耗时',
     dataIndex: 'totalTimeMillis',
     key: 'totalTimeMillis',
+    width: 100,
     render: (val) => `${val}ms`,
   }, {
     title: '操作时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
+    width: 200,
     render: val => <span>{DateFormatter.timestampAs(val)}</span>,
   }, {
     title: '操作',

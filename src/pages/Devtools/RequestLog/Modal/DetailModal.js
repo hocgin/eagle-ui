@@ -40,9 +40,25 @@ class DetailModal extends PureComponent {
       enterRemark,
       creatorName,
       method,
+      nation,
+      city,
+      province,
+      operator,
       uri,
       args,
       ret,
+      platform,
+      zipCode,
+      cityCode,
+      netType,
+      systemOs,
+      systemVersion,
+      engine,
+      engineVersion,
+      supporter,
+      supporterVersion,
+      shell,
+      shellVersion,
     } = detail;
     return (<Modal width={640}
                    bodyStyle={{ padding: '10px 20px 48px' }}
@@ -58,6 +74,16 @@ class DetailModal extends PureComponent {
           <TextRow title={'用户 IP'}>{clientIp}</TextRow>
           <TextRow title={'Host'}>{host}</TextRow>
           <TextRow title={'User-Agent'}>{userAgent}</TextRow>
+          <TextRow title={'用户地址'}>{`${nation} / ${province} / ${city}`}</TextRow>
+          <TextRow title={'网络类型'}>{netType}</TextRow>
+          <TextRow title={'运营商'}>{operator}</TextRow>
+          <TextRow title={'设备类型'}>{platform}</TextRow>
+          <TextRow title={'邮编号码'}>{zipCode}</TextRow>
+          <TextRow title={'城市区号'}>{cityCode}</TextRow>
+          <TextRow title={'系统(版本)'}>{`${systemOs}(${systemVersion})`}</TextRow>
+          <TextRow title={'内核(版本)'}>{`${engine}(${engineVersion})`}</TextRow>
+          <TextRow title={'载体(版本)'}>{`${supporter}(${supporterVersion})`}</TextRow>
+          <TextRow title={'外壳(版本)'}>{`${shell}(${shellVersion})`}</TextRow>
           <TextRow title={'触发位置'}>{mapping}</TextRow>
           <TextRow title={'异常信息'}>{exception || 'N/A'}</TextRow>
           <TextRow title={'请求耗时'}>{totalTimeMillis} ms</TextRow>
