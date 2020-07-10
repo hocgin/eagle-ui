@@ -334,7 +334,7 @@ class index extends React.PureComponent {
 
   onChangeTableValue = (name, index, value) => {
     let { formValue } = this.state;
-    formValue.sku[index][name] = value || [];
+    formValue.sku[index][name] = value;
     this.setState({
       formValue,
     });
