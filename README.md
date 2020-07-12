@@ -29,5 +29,5 @@
 <img src="http://cdn.hocgin.top/mobile.gif" width="404" alt="UI"/>
 
 ### 管理平台
-<img src="http://cdn.hocgin.top/pc.gif" width="800" alt="UI"/>
+<img src="http://cdn.hocgin.top/pcc.gif" width="800" alt="UI"/>
 <img src="http://cdn.hocgin.top/3A30AEEC-9D0B-40C1-B271-BCA9C37F7113.png" width="404" alt="UI"/>
