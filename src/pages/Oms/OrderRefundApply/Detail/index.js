@@ -33,13 +33,13 @@ class index extends React.Component {
     const {
       id,
       detailLoading, detail: {
-        applySn, orderItem,
+        applySn, orderItem = null,
         handleRemark, handlerName, handlerAt,
         receiveRemark, receiveName, receiveAt,
       },
     } = this.props;
     let { visibleHandle, handleType } = this.state;
-    const orderItems = [orderItem];
+    const orderItems = orderItem === null ? [] : [orderItem];
     let goodsData = orderItems;
     const renderContent = (value, row, index) => {
       const obj = {
