@@ -3,6 +3,15 @@ import { stringify } from 'qs';
 
 export default class CouponAccountApi {
 
+  static revoke({ id, ...payload }) {
+    return request(`/api/coupon-account/${id}/revoke`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
   static insert(payload) {
     return request(`/api/worked`, {
       method: 'POST',

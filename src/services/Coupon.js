@@ -46,6 +46,15 @@ export default class CouponApi {
     });
   }
 
+  static revoke({ id, ...payload }) {
+    return request(`/api/coupon/${id}/revoke`, {
+      method: 'POST',
+      body: {
+        ...payload,
+      },
+    });
+  }
+
   static getAll(payload) {
     return request(`/api/coupon/all`, {
       method: 'POST',

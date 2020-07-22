@@ -16,7 +16,7 @@ const ButtonGroup = Button.Group;
 
 @connect(({ global, orderRefundApply: { detail = {} }, loading, ...rest }) => {
   return {
-    detail: detail,
+    detail: detail || {},
     id: (detail || {}).id,
     detailLoading: loading.effects['orderRefundApply/getOne'],
   };

@@ -17,6 +17,12 @@ export default {
         if (callback) callback(result);
       }
     },
+    * revoke({ payload = {}, callback }, { call, put }) {
+      let result = yield CouponAccountApi.revoke(payload); // API
+      if (UiUtils.showErrorMessageIfExits(result)) {
+        if (callback) callback(result);
+      }
+    },
     // 分页查询
     * paging({ payload = {}, callback }, { call, put }) {
       let result = yield CouponAccountApi.paging(payload); // API

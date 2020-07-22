@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.less';
-import { Card, Col, Row } from 'antd';
+import { Button, Card, Col, message, Modal, Row } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import { connect } from 'dva';
 import { LangFormatter } from '@/utils/formatter/LangFormatter';
@@ -9,6 +9,8 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import StandardTable from '@/components/StandardTable';
 import UiUtils from '@/utils/UiUtils';
 import { EnumFormatter } from '@/utils/formatter/EnumFormatter';
+
+const ButtonGroup = Button.Group;
 
 const { Description } = DescriptionList;
 
@@ -24,6 +26,7 @@ const tabList = [{
 @connect(({ global, coupon: { detail }, couponAccount: { paging }, loading, ...rest }) => {
   return {
     detail: detail || {},
+    id: (detail || {}).id,
     couponAccountPaging: paging,
     detailLoading: loading.effects['coupon/getOne'],
     couponAccountPagingLoading: loading.effects['couponAccount/paging'],
@@ -31,17 +34,31 @@ const tabList = [{
 }, dispatch => ({
   $getOne: (args = {}) => dispatch({ type: 'coupon/getOne', ...args }),
   $pagingCouponAccount: (args = {}) => dispatch({ type: 'couponAccount/paging', ...args }),
+  $revokeCoupon: (args = {}) => dispatch({ type: 'coupon/revoke', ...args }),
+  $revokeAccountCoupon: (args = {}) => dispatch({ type: 'couponAccount/revoke', ...args }),
 }))
 class index extends React.Component {
   state = {
     operationKey: 'tab1',
+    operateRow: null,
   };
 
   render() {
     const { detailLoading, detail: { title } } = this.props;
     let { operationKey } = this.state;
+
+    const action = (
+      <>
+        <ButtonGroup>
+          <Button key="revoke" type="primary"
+                  onClick={this.onClickRevokeCoupon}
+                  danger>撤回</Button>
+        </ButtonGroup>
+      </>);
+
     return (<PageHeaderWrapper title={`优惠券名称: ${title}`}
                                loading={detailLoading}
+                               action={action}
                                content={this.renderPageHeaderContent()}
                                extraContent={this.renderExtra()}
                                onTabChange={this.onChangeTab}
@@ -136,6 +153,26 @@ class index extends React.Component {
       dataIndex: 'endAt',
       key: 'endAt',
       render: (val, { endAt }) => <span>{DateFormatter.timestampAs(val)}</span>,
+    }, {
+      title: '操作',
+      key: 'operation',
+      fixed: 'right',
+      width: 100,
+      render: (text, record) => {
+        const onClickOperateRow = (record, e) => {
+          this.setState({
+              operateRow: record.id,
+            },
+            () => {
+              this.onClickMenuRowItem(e, record);
+            });
+        };
+        return <>
+          <a href={null}
+             rel="noopener noreferrer"
+             onClick={onClickOperateRow.bind(this, record, { key: 'rowRevoke' })}>撤回</a>
+        </>;
+      },
     }];
     return (<>
       <div className={styles.title}>用户列表</div>
@@ -191,12 +228,64 @@ class index extends React.Component {
         size: pageSize,
         page: current,
       },
-    }, this.props.$pagingCouponAccount);
+    }, this.paging);
+  };
+
+  paging = () => {
+    let { $pagingCouponAccount } = this.props;
+    $pagingCouponAccount();
   };
 
   onChangeTab = (key) => {
     this.setState({ operationKey: key });
   };
+
+  onClickRevokeCoupon = () => {
+    let { $revokeCoupon, id } = this.props;
+    let callback = () => {
+      message.success('操作成功');
+      this.paging();
+    };
+    Modal.confirm({
+      title: '确认',
+      content: '确认撤回所有未使用的优惠券?',
+      onOk() {
+        $revokeCoupon({
+          payload: { id: id }, callback: callback,
+        });
+      },
+    });
+  };
+
+  onClickMenuRowItem = ({ key }) => {
+    let { operateRow } = this.state;
+    switch (key) {
+      case 'rowRevoke': {
+        this.onClickRevokeAccountCoupon(operateRow);
+        break;
+      }
+      default: {
+      }
+    }
+  };
+
+  onClickRevokeAccountCoupon = (id) => {
+    let { $revokeAccountCoupon } = this.props;
+    let callback = () => {
+      message.success('操作成功');
+      this.paging();
+    };
+    Modal.confirm({
+      title: '确认',
+      content: '确认撤回指定未使用的优惠券?',
+      onOk() {
+        $revokeAccountCoupon({
+          payload: { id: id }, callback: callback,
+        });
+      },
+    });
+  };
+
 }
 
 export default index;
