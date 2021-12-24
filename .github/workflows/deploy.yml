@@ -1,0 +1,59 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      use_cache:
+        description: '是否使用 NPM 缓存'
+        required: true
+        default: 'true'
+  push:
+    tags:
+      - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - 'scripts/**'
+      - '*.md'
+      - '*.editorconfig'
+      - '*.gitignore'
+
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Actions
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Cache node modules
+        if: ${{ github.event.inputs.use_cache != 'false' }}
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install npm dependencies
+        run: npm install
+      - name: Run build
+        run: npm run build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          ARGS: "-rltgoDzvO --delete"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          SOURCE: "dist/"
+          EXCLUDE: "/dist/, /node_modules/"
