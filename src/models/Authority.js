@@ -1,4 +1,4 @@
-import AuthorityApi from '@/services/authority';
+import AuthorityApi from '@/services/Authority';
 import UiUtils from '@/utils/UiUtils';
 
 export default {
